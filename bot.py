@@ -1,15 +1,23 @@
+import os
 import asyncio
 import random
-import os
-from aiohttp import web
 from datetime import datetime, time, timedelta
+from aiohttp import web
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
-from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
+from aiogram.types import (
+    CallbackQuery, 
+    InlineKeyboardMarkup, 
+    InlineKeyboardButton, 
+    Message,
+    ReplyKeyboardMarkup,
+    KeyboardButton
+)
 
 # Sizning bot tokeningiz va guruh ID raqamingiz
-TOKEN = "8843755987:AAGv5bETK_19ONTppu9APSkGJHmmeTNF2y8"
+TOKEN = "8843755987:AAEy-VnJ0biQJBop80PwgnCUdKGuv_qgOwc"
 GROUP_CHAT_ID = -1004349705982
+ADMIN_ID = 123456789  # O'zingizning Telegram ID raqamingizni yozing (Kerak bo'lsa)
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
@@ -19,7 +27,7 @@ users = {}
 attendance_today = set()
 attendance_active = False
 
-# Inglizcha produktiv iqtiboslar
+# Inglizcha va motivatsion iqtiboslar
 QUOTES = [
     "“The secret of getting ahead is getting started.” — Mark Twain",
     "“Don't watch the clock; do what it does. Keep going.” — Sam Levenson",
@@ -29,154 +37,210 @@ QUOTES = [
     "“Win the morning, win the day.” — Tim Ferriss",
 ]
 
+# --- LICHKA MENYULARI ---
+def get_user_menu():
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="📊 Mening statistikam"), KeyboardButton(text="🏆 Top Reyting")],
+            [KeyboardButton(text="💡 Tonggi motivatsiya"), KeyboardButton(text="⚙️ Vaqtni o'zgartirish")],
+            [KeyboardButton(text="ℹ️ Yordam / Qoidalar")]
+        ],
+        resize_keyboard=True
+    )
+
+def get_admin_menu():
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="📊 Mening statistikam"), KeyboardButton(text="🏆 Top Reyting")],
+            [KeyboardButton(text="💡 Tonggi motivatsiya"), KeyboardButton(text="⚙️ Vaqtni o'zgartirish")],
+            [KeyboardButton(text="📢 Broadcast (Xabar yuborish)"), KeyboardButton(text="👥 Ishtirokchilar")]
+        ],
+        resize_keyboard=True
+    )
 
 def get_attendance_keyboard():
-  keyboard = InlineKeyboardMarkup(
-      inline_keyboard=[[
-          InlineKeyboardButton(
-              text="✅ Davomatdan o'tish (Check-in)",
-              callback_data="check_in",
-          )
-      ]]
-  )
-  return keyboard
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="✅ Davomatdan o'tish (Check-in)",
+                    callback_data="check_in",
+                )
+            ]
+        ]
+    )
 
-
+# --- /start BUYRUQI ---
 @dp.message(Command("start"))
 async def cmd_start(message: Message):
-  if message.chat.type == "private":
-    await message.answer(
-        "Salom! Bu 5 AM Club jamoasi uchun davomat boti.\nIltimos, guruhimizda"
-        " botni admin qiling va ishtirok eting."
-    )
+    if message.chat.type == "private":
+        if message.from_user.id == ADMIN_ID:
+            await message.answer("Assalomu alaykum, Admin! Xush kelibsiz.", reply_markup=get_admin_menu())
+        else:
+            await message.answer("Xush kelibsiz! 5 AM Club botiga marhamat. Kerakli tugmani tanlang:", reply_markup=get_user_menu())
+    else:
+        await message.answer("Bot guruhda ishlamoqda. Shaxsiy statistika va menyular uchun menga lichkada yozing!")
 
 
-# Davomat tugmasi bosilganda
+# --- DAVOMAT TUGMASI BOSILGANDA ---
 @dp.callback_query(F.data == "check_in")
 async def process_check_in(callback: CallbackQuery):
-  global attendance_active
-  if not attendance_active:
-    await callback.answer(
-        "Hozir davomat vaqti emas! Davomat 04:30 dan 06:00 gacha ochiq.",
-        show_alert=True,
-    )
-    return
+    global attendance_active
+    if not attendance_active:
+        await callback.answer(
+            "Hozir davomat vaqti emas! Davomat 20:10 dan 20:20 gacha ochiq.",
+            show_alert=True,
+        )
+        return
 
-  user_id = callback.from_user.id
-  user_name = callback.from_user.first_name
-  today_str = datetime.now().strftime("%Y-%m-%d")
+    user_id = callback.from_user.id
+    user_name = callback.from_user.first_name
+    today_str = datetime.now().strftime("%Y-%m-%d")
 
-  if user_id not in users:
-    users[user_id] = {"name": user_name, "streak": 0, "last_date": ""}
+    if user_id not in users:
+        users[user_id] = {"name": user_name, "streak": 0, "last_date": ""}
 
-  # Agar bugun allaqachon bosmagan bo'lsa
-  if user_id not in attendance_today:
-    attendance_today.add(user_id)
+    # Agar bugun allaqachon bosmagan bo'lsa
+    if user_id not in attendance_today:
+        attendance_today.add(user_id)
 
-    # Streakni hisoblash
-    last_date = users[user_id]["last_date"]
-    yesterday_str = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+        # Streakni hisoblash
+        last_date = users[user_id]["last_date"]
+        yesterday_str = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 
-    if last_date == yesterday_str or last_date == "":
-      users[user_id]["streak"] += 1
-    elif last_date != today_str:
-      users[user_id]["streak"] = (
-          1  # Agar bir kun qoldirsa streak boshidan boshlanadi
-      )
+        if last_date == yesterday_str or last_date == "":
+            users[user_id]["streak"] += 1
+        elif last_date != today_str:
+            users[user_id]["streak"] = 1  # Agar bir kun qoldirsa streak boshidan boshlanadi
 
-    users[user_id]["last_date"] = today_str
-    await callback.answer(
-        "Tabriklaymiz! Tonggi uyg'onishingiz qayd etildi! 🔥", show_alert=True
-    )
-  else:
-    await callback.answer(
-        "Siz allaqachon bugun ro'yxatdan o'tgansiz!", show_alert=True
-    )
+        users[user_id]["last_date"] = today_str
+        await callback.answer(
+            "Tabriklaymiz! O'g'onishingiz / ishtirokingiz qayd etildi! 🔥", show_alert=True
+        )
+    else:
+        await callback.answer(
+            "Siz allaqachon bugun ro'yxatdan o'tgansiz!", show_alert=True
+        )
 
 
-# Reyting va streakni ko'rish buyrug'i
+# --- REYTING (Lichka yoki guruh uchun) ---
+@dp.message(F.text == "🏆 Top Reyting")
 @dp.message(Command("ranking"))
 async def cmd_ranking(message: Message):
-  if not users:
-    await message.answer("Hozircha reytingda ishtirokchilar yo'q.")
-    return
+    if not users:
+        await message.answer("Hozircha reytingda ishtirokchilar yo'q.")
+        return
 
-  # Streak bo'yicha saralash
-  sorted_users = sorted(
-      users.values(), key=lambda x: x["streak"], reverse=True
-  )
+    # Streak bo'yicha saralash
+    sorted_users = sorted(
+        users.values(), key=lambda x: x["streak"], reverse=True
+    )
 
-  text = "🏆 **5 AM Club Intizom Reytingi (Streak):**\n\n"
-  for idx, u in enumerate(sorted_users[:10], 1):
-    text += f"{idx}. {u['name']} — 🔥 {u['streak']} kun ketma-ket\n"
+    text = "🏆 **5 AM Club Intizom Reytingi (Streak):**\n\n"
+    for idx, u in enumerate(sorted_users[:10], 1):
+        text += f"{idx}. {u['name']} — 🔥 {u['streak']} kun ketma-ket\n"
 
-  await message.answer(text, parse_mode="Markdown")
+    await message.answer(text, parse_mode="Markdown")
 
 
-# Fon jarayonlari: Har kuni 4:30 da ochish, 6:00 da yopish va quote yuborish
+# --- LICHKA TUGMALARI ---
+@dp.message(F.text == "📊 Mening statistikam")
+async def user_stats(message: Message):
+    user_id = message.from_user.id
+    user_data = users.get(user_id, {"streak": 0})
+    streak = user_data.get("streak", 0)
+    await message.answer(f"📊 **Sizning statistikangiz:**\n\n- Joriy streak: {streak} kun")
+
+@dp.message(F.text == "💡 Tonggi motivatsiya")
+async def morning_motivation(message: Message):
+    await message.answer(f"💡 **Kun motivatsiyasi:**\n\n{random.choice(QUOTES)}")
+
+@dp.message(F.text == "⚙️ Vaqtni o'zgartirish")
+async def change_time(message: Message):
+    await message.answer("⏰ O'zingizga qulay vaqtni tanlash funksiyasi tez orada ishga tushadi!")
+
+@dp.message(F.text == "ℹ️ Yordam / Qoidalar")
+async def help_rules(message: Message):
+    await message.answer("ℹ️ **Qoidalar:**\nBelgilangan vaqtda bot tashlagan xabarga kirib, davomat tugmasini bosishingiz kerak.")
+
+@dp.message(F.text == "📢 Broadcast (Xabar yuborish)")
+async def admin_broadcast(message: Message):
+    if message.from_user.id == ADMIN_ID:
+        await message.answer("📢 Hammaga yuboriladigan xabar matnini kiriting:")
+    else:
+        await message.answer("Kechirasiz, bu buyruq faqat admin uchun.")
+
+@dp.message(F.text == "👥 Ishtirokchilar")
+async def admin_users(message: Message):
+    if message.from_user.id == ADMIN_ID:
+        await message.answer(f"👥 Jami ro'yxatdan o'tganlar soni: {len(users)} ta")
+    else:
+        await message.answer("Kechirasiz, bu buyruq faqat admin uchun.")
+
+
+# --- TEST REJIMI UCHUN SCHEDULER (20:10, 20:20, 20:30) ---
 async def scheduler():
-  global attendance_active
-  while True:
-    now = datetime.now()
-    current_time = now.time()
+    global attendance_active
+    while True:
+        now = datetime.now()
+        current_time = now.time()
 
-    # Soat 04:30 da davomatni ochish
-    if current_time.hour == 4 and current_time.minute == 30:
-      attendance_active = True
-      attendance_today.clear()
-      await bot.send_message(
-          GROUP_CHAT_ID,
-          "🌅 **Xayrli tong, 5 AM Club!**\nTonggi davomat boshlandi! Soat"
-          " 06:00 gacha quyidagi tugmani bosing va uyg'onganingizni"
-          " tasdiqlang!",
-          reply_markup=get_attendance_keyboard(),
-          parse_mode="Markdown",
-      )
-      await asyncio.sleep(60)
+        # 1. Soat 20:10 da davomatni ochish
+        if current_time.hour == 20 and current_time.minute == 10:
+            attendance_active = True
+            attendance_today.clear()
+            try:
+                await bot.send_message(
+                    GROUP_CHAT_ID,
+                    "🌅 **Test davomat boshlandi!**\nSoat 20:20 gacha quyidagi tugmani bosing va ishtirokingizni tasdiqlang!",
+                    reply_markup=get_attendance_keyboard(),
+                    parse_mode="Markdown",
+                )
+            except Exception as e:
+                print(f"Xatolik (20:10): {e}")
+            await asyncio.sleep(60)
 
-    # Soat 06:00 da davomatni yopish va natijalarni chiqarish
-    elif current_time.hour == 6 and current_time.minute == 0:
-      if attendance_active:
-        attendance_active = False
+        # 2. Soat 20:20 da davomatni yopish va hisobot berish
+        elif current_time.hour == 20 and current_time.minute == 20:
+            if attendance_active:
+                attendance_active = False
 
-        present_list = [users[uid]["name"] for uid in attendance_today]
-        absent_list = [
-            u["name"] for uid, u in users.items() if uid not in attendance_today
-        ]
+                present_list = [users[uid]["name"] for uid in attendance_today]
+                absent_list = [
+                    u["name"] for uid, u in users.items() if uid not in attendance_today
+                ]
 
-        report = "📊 **Tonggi davomat yakunlandi (06:00):**\n\n"
-        report += (
-            f"✅ **Uyg'onganlar ({len(present_list)}):**\n"
-            + (
-                "\n".join([f"- {name}" for name in present_list])
-                if present_list
-                else "Hech kim yo'q"
-            )
-            + "\n\n"
-        )
-        report += (
-            f"❌ **Uyg'onmaganlar / Qolganlar ({len(absent_list)}):**\n"
-            + (
-                "\n".join([f"- {name}" for name in absent_list])
-                if absent_list
-                else "Hamma uyg'ongan!"
-            )
-        )
+                report = "📊 **Test davomat yakunlandi (20:20):**\n\n"
+                report += (
+                    f"✅ **Ishtirok etganlar ({len(present_list)}):**\n"
+                    + ("\n".join([f"- {name}" for name in present_list]) if present_list else "Hech kim yo'q")
+                    + "\n\n"
+                )
+                report += (
+                    f"❌ **Ishtirok etmaganlar ({len(absent_list)}):**\n"
+                    + ("\n".join([f"- {name}" for name in absent_list]) if absent_list else "Hamma qatnashdi!")
+                )
 
-        await bot.send_message(GROUP_CHAT_ID, report, parse_mode="Markdown")
-      await asyncio.sleep(60)
+                try:
+                    await bot.send_message(GROUP_CHAT_ID, report, parse_mode="Markdown")
+                except Exception as e:
+                    print(f"Xatolik (20:20): {e}")
+            await asyncio.sleep(60)
 
-    # Har kuni soat 08:00 da motivatsion quote yuborish
-    elif current_time.hour == 8 and current_time.minute == 0:
-      quote = random.choice(QUOTES)
-      await bot.send_message(
-          GROUP_CHAT_ID,
-          f"💡 **Daily Motivation:**\n\n{quote}",
-          parse_mode="Markdown",
-      )
-      await asyncio.sleep(60)
+        # 3. Soat 20:30 da iqtibos (quote) yuborish
+        elif current_time.hour == 20 and current_time.minute == 30:
+            quote = random.choice(QUOTES)
+            try:
+                await bot.send_message(
+                    GROUP_CHAT_ID,
+                    f"💡 **Daily Motivation:**\n\n{quote}",
+                    parse_mode="Markdown",
+                )
+            except Exception as e:
+                print(f"Xatolik (20:30): {e}")
+            await asyncio.sleep(60)
 
-    await asyncio.sleep(30)
+        await asyncio.sleep(30)
 
 
 # --- RENDER UCHUN YOLG'ONCHI SERVER ---
@@ -191,19 +255,14 @@ async def web_server():
     port = int(os.environ.get("PORT", 8080))
     site = web.TCPSite(runner, '0.0.0.0', port)
     await site.start()
-# --------------------------------------
 
 async def main():
-    # Agar sizda taymer (scheduler) ishga tushadigan kod bo'lsa, u shu yerda qolsin:
-    # scheduler.start() 
-    
-    # 1. Yolg'onchi serverni ishga tushiramiz (Render aldanishi uchun)
-    import asyncio
+    # 1. Yolg'onchi serverni ishga tushiramiz
     asyncio.create_task(web_server())
-    
-    # 2. Botni ishga tushiramiz
+    # 2. Vaqtni o'lchaydigan taymerni (scheduler) ishga tushiramiz
+    asyncio.create_task(scheduler())
+    # 3. Botni ishga tushiramiz
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    import asyncio
     asyncio.run(main())
