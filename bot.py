@@ -1,5 +1,7 @@
 import asyncio
 import random
+import os
+from aiohttp import web
 from datetime import datetime, time, timedelta
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
@@ -177,10 +179,31 @@ async def scheduler():
     await asyncio.sleep(30)
 
 
-async def main():
-  asyncio.create_task(scheduler())
-  await dp.start_polling(bot)
+# --- RENDER UCHUN YOLG'ONCHI SERVER ---
+async def handle(request):
+    return web.Response(text="Bot muvaffaqiyatli ishlayapti!")
 
+async def web_server():
+    app = web.Application()
+    app.add_routes([web.get('/', handle)])
+    runner = web.AppRunner(app)
+    await runner.setup()
+    port = int(os.environ.get("PORT", 8080))
+    site = web.TCPSite(runner, '0.0.0.0', port)
+    await site.start()
+# --------------------------------------
+
+async def main():
+    # Agar sizda taymer (scheduler) ishga tushadigan kod bo'lsa, u shu yerda qolsin:
+    # scheduler.start() 
+    
+    # 1. Yolg'onchi serverni ishga tushiramiz (Render aldanishi uchun)
+    import asyncio
+    asyncio.create_task(web_server())
+    
+    # 2. Botni ishga tushiramiz
+    await dp.start_polling(bot)
 
 if __name__ == "__main__":
-  asyncio.run(main())
+    import asyncio
+    asyncio.run(main())
