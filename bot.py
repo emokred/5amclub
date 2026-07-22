@@ -14,15 +14,15 @@ from aiogram.types import (
     KeyboardButton
 )
 
-# Sizning bot tokeningiz va guruh ID raqamingiz
-TOKEN = "8843755987:AAEy-VnJ0biQJBop80PwgnCUdKGuv_qgOwc"
+# Yangi token va guruh ID
+TOKEN = "8843755987:AAF4gGBSVa1SKr8oxq26kX__C3b8WSkTFz4"
 GROUP_CHAT_ID = -1004349705982
 ADMIN_ID = 123456789  # O'zingizning Telegram ID raqamingizni yozing
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
-# Vaqtincha ma'lumotlar bazasi (Xotirada saqlash uchun)
+# Foydalanuvchilar bazasi (lichkada /start bosganlar ham shu yerga yoziladi)
 users = {}
 attendance_today = set()
 attendance_active = False
@@ -32,7 +32,7 @@ async def get_random_quote_from_internet():
     url = "https://zenquotes.io/api/random"
     async with aiohttp.ClientSession() as session:
         try:
-            async with session.get(url) as response:
+            async with session.get(url, timeout=5) as response:
                 if response.status == 200:
                     data = await response.json()
                     quote_text = data[0]['q']
@@ -40,7 +40,7 @@ async def get_random_quote_from_internet():
                     return f"“{quote_text}” — {author}"
         except Exception:
             pass
-    # Agar internetda xatolik bo'lsa, zaxiradagi matn chiqadi
+    # Agar internetda muammo bo'lsa, zaxiradagi motivatsiya chiqadi
     return "“Small disciplines repeated with consistency every day lead to great achievements.” — Robin Sharma"
 
 # --- LICHKA MENYULARI ---
@@ -79,8 +79,15 @@ def get_attendance_keyboard():
 # --- /start BUYRUQI ---
 @dp.message(Command("start"))
 async def cmd_start(message: Message):
+    user_id = message.from_user.id
+    user_name = message.from_user.first_name
+
+    # Foydalanuvchini bazaga qo'shib qo'yamiz (lichkaga xabar yuborish uchun kerak)
+    if user_id not in users:
+        users[user_id] = {"name": user_name, "streak": 0, "last_date": ""}
+
     if message.chat.type == "private":
-        if message.from_user.id == ADMIN_ID:
+        if user_id == ADMIN_ID:
             await message.answer("Assalomu alaykum, Admin! Xush kelibsiz.", reply_markup=get_admin_menu())
         else:
             await message.answer("Xush kelibsiz! 5 AM Club botiga marhamat. Kerakli tugmani tanlang:", reply_markup=get_user_menu())
@@ -94,7 +101,7 @@ async def process_check_in(callback: CallbackQuery):
     global attendance_active
     if not attendance_active:
         await callback.answer(
-            "Hozir davomat vaqti emas! Davomat 20:20 dan 20:25 gacha ochiq.",
+            "Hozir davomat vaqti emas! Davomat 20:30 dan 20:35 gacha ochiq.",
             show_alert=True,
         )
         return
@@ -106,22 +113,20 @@ async def process_check_in(callback: CallbackQuery):
     if user_id not in users:
         users[user_id] = {"name": user_name, "streak": 0, "last_date": ""}
 
-    # Agar bugun allaqachon bosmagan bo'lsa
     if user_id not in attendance_today:
         attendance_today.add(user_id)
 
-        # Streakni hisoblash
         last_date = users[user_id]["last_date"]
         yesterday_str = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 
         if last_date == yesterday_str or last_date == "":
             users[user_id]["streak"] += 1
         elif last_date != today_str:
-            users[user_id]["streak"] = 1  # Agar bir kun qoldirsa streak boshidan boshlanadi
+            users[user_id]["streak"] = 1 
 
         users[user_id]["last_date"] = today_str
         await callback.answer(
-            "Tabriklaymiz! O'g'onishingiz / ishtirokingiz qayd etildi! 🔥", show_alert=True
+            "Tabriklaymiz! Ishtirokingiz qayd etildi! 🔥", show_alert=True
         )
     else:
         await callback.answer(
@@ -129,7 +134,7 @@ async def process_check_in(callback: CallbackQuery):
         )
 
 
-# --- REYTING (Lichka yoki guruh uchun) ---
+# --- REYTING ---
 @dp.message(F.text == "🏆 Top Reyting")
 @dp.message(Command("ranking"))
 async def cmd_ranking(message: Message):
@@ -137,7 +142,6 @@ async def cmd_ranking(message: Message):
         await message.answer("Hozircha reytingda ishtirokchilar yo'q.")
         return
 
-    # Streak bo'yicha saralash
     sorted_users = sorted(
         users.values(), key=lambda x: x["streak"], reverse=True
     )
@@ -185,30 +189,47 @@ async def admin_users(message: Message):
         await message.answer("Kechirasiz, bu buyruq faqat admin uchun.")
 
 
-# --- TEST REJIMI UCHUN SCHEDULER (20:20, 20:25, 20:30) ---
+# --- SCHEDULER (20:30, 20:35, 20:40) ---
 async def scheduler():
     global attendance_active
     while True:
         now = datetime.now()
         current_time = now.time()
 
-        # 1. Soat 20:20 da davomatni ochish
-        if current_time.hour == 20 and current_time.minute == 20:
+        # 1. Soat 20:30 da davomatni ochish (Guruhga va barcha start bosganlarga yuborish)
+        if current_time.hour == 20 and current_time.minute == 30:
             attendance_active = True
             attendance_today.clear()
+            
+            msg_text = "🌅 **Davomat boshlandi!**\nSoat 20:35 gacha quyidagi tugmani bosing va ishtirokingizni tasdiqlang!"
+            
+            # Guruhga yuborish
             try:
                 await bot.send_message(
                     GROUP_CHAT_ID,
-                    "🌅 **Test davomat boshlandi!**\nSoat 20:25 gacha quyidagi tugmani bosing va ishtirokingizni tasdiqlang!",
+                    msg_text,
                     reply_markup=get_attendance_keyboard(),
                     parse_mode="Markdown",
                 )
             except Exception as e:
-                print(f"Xatolik (20:20): {e}")
+                print(f"Guruhga yuborishda xatolik (20:30): {e}")
+
+            # Botga /start bosgan barcha foydalanuvchilarga lichkaga yuborish
+            for uid in users.keys():
+                try:
+                    await bot.send_message(
+                        uid,
+                        msg_text,
+                        reply_markup=get_attendance_keyboard(),
+                        parse_mode="Markdown",
+                    )
+                except Exception:
+                    pass # Agar foydalanuvchi botni bloklagan bo'lsa xatolik tashlamaydi
+
             await asyncio.sleep(60)
 
-        # 2. Soat 20:25 da davomatni yopish va hisobot berish
-        elif current_time.hour == 20 and current_time.minute == 25:
+        # 2. Soat 20:35 da davomatni yopish va hisobot berish
+        elif current_time.hour == 20 and current_time.minute == 35:
             if attendance_active:
                 attendance_active = False
 
@@ -217,7 +238,7 @@ async def scheduler():
                     u["name"] for uid, u in users.items() if uid not in attendance_today
                 ]
 
-                report = "📊 **Test davomat yakunlandi (20:25):**\n\n"
+                report = "📊 **Davomat yakunlandi (20:35):**\n\n"
                 report += (
                     f"✅ **Ishtirok etganlar ({len(present_list)}):**\n"
                     + ("\n".join([f"- {name}" for name in present_list]) if present_list else "Hech kim yo'q")
@@ -231,11 +252,11 @@ async def scheduler():
                 try:
                     await bot.send_message(GROUP_CHAT_ID, report, parse_mode="Markdown")
                 except Exception as e:
-                    print(f"Xatolik (20:25): {e}")
+                    print(f"Xatolik (20:35): {e}")
             await asyncio.sleep(60)
 
-        # 3. Soat 20:30 da internetdan olingan iqtibosni (quote) yuborish
-        elif current_time.hour == 20 and current_time.minute == 30:
+        # 3. Soat 20:40 da internetdan olingan iqtibosni (quote) yuborish
+        elif current_time.hour == 20 and current_time.minute == 40:
             quote = await get_random_quote_from_internet()
             try:
                 await bot.send_message(
@@ -244,13 +265,13 @@ async def scheduler():
                     parse_mode="Markdown",
                 )
             except Exception as e:
-                print(f"Xatolik (20:30): {e}")
+                print(f"Xatolik (20:40): {e}")
             await asyncio.sleep(60)
 
         await asyncio.sleep(30)
 
 
-# --- RENDER UCHUN YOLG'ONCHI SERVER ---
+# --- RENDER UCHUN SERVER ---
 async def handle(request):
     return web.Response(text="Bot muvaffaqiyatli ishlayapti!")
 
@@ -264,11 +285,8 @@ async def web_server():
     await site.start()
 
 async def main():
-    # 1. Yolg'onchi serverni ishga tushiramiz
     asyncio.create_task(web_server())
-    # 2. Vaqtni o'lchaydigan taymerni (scheduler) ishga tushiramiz
     asyncio.create_task(scheduler())
-    # 3. Botni ishga tushiramiz (eski seanslarni tozalovchi parametr bilan)
     await dp.start_polling(bot, drop_pending_updates=True)
 
 if __name__ == "__main__":
