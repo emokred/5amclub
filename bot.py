@@ -17,7 +17,7 @@ from aiogram.types import (
 # Sizning bot tokeningiz va guruh ID raqamingiz
 TOKEN = "8843755987:AAEy-VnJ0biQJBop80PwgnCUdKGuv_qgOwc"
 GROUP_CHAT_ID = -1004349705982
-ADMIN_ID = 123456789  # O'zingizning Telegram ID raqamingizni yozing (Kerak bo'lsa)
+ADMIN_ID = 123456789  # O'zingizning Telegram ID raqamingizni yozing
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
@@ -27,15 +27,21 @@ users = {}
 attendance_today = set()
 attendance_active = False
 
-# Inglizcha va motivatsion iqtiboslar
-QUOTES = [
-    "“The secret of getting ahead is getting started.” — Mark Twain",
-    "“Don't watch the clock; do what it does. Keep going.” — Sam Levenson",
-    "“Success is not final; failure is not fatal: It is the courage to continue that counts.” — Winston Churchill",
-    "“Either you run the day, or the day runs you.” — Jim Rohn",
-    "“Small disciplines repeated with consistency every day lead to great achievements.” — Robin Sharma",
-    "“Win the morning, win the day.” — Tim Ferriss",
-]
+# Internetdan avtomatik iqtibos (quote) olib keluvchi funksiya
+async def get_random_quote_from_internet():
+    url = "https://zenquotes.io/api/random"
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    quote_text = data[0]['q']
+                    author = data[0]['a']
+                    return f"“{quote_text}” — {author}"
+        except Exception:
+            pass
+    # Agar internetda xatolik bo'lsa, zaxiradagi matn chiqadi
+    return "“Small disciplines repeated with consistency every day lead to great achievements.” — Robin Sharma"
 
 # --- LICHKA MENYULARI ---
 def get_user_menu():
@@ -88,7 +94,7 @@ async def process_check_in(callback: CallbackQuery):
     global attendance_active
     if not attendance_active:
         await callback.answer(
-            "Hozir davomat vaqti emas! Davomat 20:10 dan 20:20 gacha ochiq.",
+            "Hozir davomat vaqti emas! Davomat 20:20 dan 20:25 gacha ochiq.",
             show_alert=True,
         )
         return
@@ -153,7 +159,8 @@ async def user_stats(message: Message):
 
 @dp.message(F.text == "💡 Tonggi motivatsiya")
 async def morning_motivation(message: Message):
-    await message.answer(f"💡 **Kun motivatsiyasi:**\n\n{random.choice(QUOTES)}")
+    quote = await get_random_quote_from_internet()
+    await message.answer(f"💡 **Kun motivatsiyasi:**\n\n{quote}")
 
 @dp.message(F.text == "⚙️ Vaqtni o'zgartirish")
 async def change_time(message: Message):
@@ -178,30 +185,30 @@ async def admin_users(message: Message):
         await message.answer("Kechirasiz, bu buyruq faqat admin uchun.")
 
 
-# --- TEST REJIMI UCHUN SCHEDULER (20:10, 20:20, 20:30) ---
+# --- TEST REJIMI UCHUN SCHEDULER (20:20, 20:25, 20:30) ---
 async def scheduler():
     global attendance_active
     while True:
         now = datetime.now()
         current_time = now.time()
 
-        # 1. Soat 20:10 da davomatni ochish
-        if current_time.hour == 20 and current_time.minute == 10:
+        # 1. Soat 20:20 da davomatni ochish
+        if current_time.hour == 20 and current_time.minute == 20:
             attendance_active = True
             attendance_today.clear()
             try:
                 await bot.send_message(
                     GROUP_CHAT_ID,
-                    "🌅 **Test davomat boshlandi!**\nSoat 20:20 gacha quyidagi tugmani bosing va ishtirokingizni tasdiqlang!",
+                    "🌅 **Test davomat boshlandi!**\nSoat 20:25 gacha quyidagi tugmani bosing va ishtirokingizni tasdiqlang!",
                     reply_markup=get_attendance_keyboard(),
                     parse_mode="Markdown",
                 )
             except Exception as e:
-                print(f"Xatolik (20:10): {e}")
+                print(f"Xatolik (20:20): {e}")
             await asyncio.sleep(60)
 
-        # 2. Soat 20:20 da davomatni yopish va hisobot berish
-        elif current_time.hour == 20 and current_time.minute == 20:
+        # 2. Soat 20:25 da davomatni yopish va hisobot berish
+        elif current_time.hour == 20 and current_time.minute == 25:
             if attendance_active:
                 attendance_active = False
 
@@ -210,7 +217,7 @@ async def scheduler():
                     u["name"] for uid, u in users.items() if uid not in attendance_today
                 ]
 
-                report = "📊 **Test davomat yakunlandi (20:20):**\n\n"
+                report = "📊 **Test davomat yakunlandi (20:25):**\n\n"
                 report += (
                     f"✅ **Ishtirok etganlar ({len(present_list)}):**\n"
                     + ("\n".join([f"- {name}" for name in present_list]) if present_list else "Hech kim yo'q")
@@ -224,12 +231,12 @@ async def scheduler():
                 try:
                     await bot.send_message(GROUP_CHAT_ID, report, parse_mode="Markdown")
                 except Exception as e:
-                    print(f"Xatolik (20:20): {e}")
+                    print(f"Xatolik (20:25): {e}")
             await asyncio.sleep(60)
 
-        # 3. Soat 20:30 da iqtibos (quote) yuborish
+        # 3. Soat 20:30 da internetdan olingan iqtibosni (quote) yuborish
         elif current_time.hour == 20 and current_time.minute == 30:
-            quote = random.choice(QUOTES)
+            quote = await get_random_quote_from_internet()
             try:
                 await bot.send_message(
                     GROUP_CHAT_ID,
@@ -261,8 +268,8 @@ async def main():
     asyncio.create_task(web_server())
     # 2. Vaqtni o'lchaydigan taymerni (scheduler) ishga tushiramiz
     asyncio.create_task(scheduler())
-    # 3. Botni ishga tushiramiz
-    await dp.start_polling(bot)
+    # 3. Botni ishga tushiramiz (eski seanslarni tozalovchi parametr bilan)
+    await dp.start_polling(bot, drop_pending_updates=True)
 
 if __name__ == "__main__":
     asyncio.run(main())
