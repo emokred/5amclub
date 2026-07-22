@@ -1,7 +1,7 @@
 import os
 import asyncio
 import random
-import aiohttp  # Xatolikni bartaraf etish uchun aiohttp to'liq ulandi
+import aiohttp
 from datetime import datetime, timedelta
 from aiohttp import web
 from aiogram import Bot, Dispatcher, F
@@ -15,29 +15,30 @@ from aiogram.types import (
     KeyboardButton
 )
 
-# Yangi token va guruh ID
+# Configuration
 TOKEN = "8843755987:AAF4gGBSVa1SKr8oxq26kX__C3b8WSkTFz4"
 GROUP_CHAT_ID = -1004349705982
-ADMIN_ID = 123456789  # O'zingizning Telegram ID raqamingizni yozing
+ADMIN_ID = 6377617416  # Updated Admin ID
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
-# Bazalar va holatlar
+# Databases & States
 users = {}
 attendance_today = set()
 attendance_active = False
 
-# Zaxiradagi motivatsion iqtiboslar (Internet qotib qolsa shulardan foydalanadi)
+# Backup motivational quotes (in English)
 LOCAL_QUOTES = [
     "“Small disciplines repeated with consistency every day lead to great achievements.” — Robin Sharma",
     "“We are what we repeatedly do. Excellence, then, is not an act, but a habit.” — Will Durant",
     "“Success is not final; failure is not fatal: It is the courage to continue that counts.” — Winston Churchill",
     "“Believe you can and you're halfway there.” — Theodore Roosevelt",
-    "“The secret of getting ahead is getting started.” — Mark Twain"
+    "“The secret of getting ahead is getting started.” — Mark Twain",
+    "“You don't have to be great to start, but you have to start to be great.” — Zig Ziglar"
 ]
 
-# API orqali quote olish funksiyasi (xatolar to'liq bartaraf etildi)
+# Fetch daily quote from API
 async def get_random_quote_from_internet():
     url = "https://zenquotes.io/api/random"
     try:
@@ -47,16 +48,15 @@ async def get_random_quote_from_internet():
                     data = await response.json()
                     return f"“{data[0]['q']}” — {data[0]['a']}"
     except Exception as e:
-        print(f"Quote olishda xatolik: {e}")
-    # Agar API ishlamasa, mahalliy ro'yxatdan bittasini tanlaydi
+        print(f"Error fetching quote: {e}")
     return random.choice(LOCAL_QUOTES)
 
-# --- MENYULAR ---
+# --- KEYBOARDS ---
 def get_user_menu():
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="📊 Mening statistikam"), KeyboardButton(text="🏆 Top Reyting")],
-            [KeyboardButton(text="💡 Tonggi motivatsiya"), KeyboardButton(text="ℹ️ Yordam / Qoidalar")]
+            [KeyboardButton(text="📊 My Stats"), KeyboardButton(text="🏆 Leaderboard")],
+            [KeyboardButton(text="💡 Daily Spark"), KeyboardButton(text="❓ How It Works")]
         ],
         resize_keyboard=True
     )
@@ -64,9 +64,9 @@ def get_user_menu():
 def get_admin_menu():
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="📊 Mening statistikam"), KeyboardButton(text="🏆 Top Reyting")],
-            [KeyboardButton(text="💡 Tonggi motivatsiya"), KeyboardButton(text="ℹ️ Yordam / Qoidalar")],
-            [KeyboardButton(text="👥 Ishtirokchilar")]
+            [KeyboardButton(text="📊 My Stats"), KeyboardButton(text="🏆 Leaderboard")],
+            [KeyboardButton(text="💡 Daily Spark"), KeyboardButton(text="❓ How It Works")],
+            [KeyboardButton(text="👥 Members List")]
         ],
         resize_keyboard=True
     )
@@ -76,14 +76,14 @@ def get_attendance_keyboard():
         inline_keyboard=[
             [
                 InlineKeyboardButton(
-                    text="✅ Davomatdan o'tish (Check-in)",
+                    text="⚡ Check In Now!",
                     callback_data="check_in",
                 )
             ]
         ]
     )
 
-# --- /start ---
+# --- COMMANDS ---
 @dp.message(Command("start"))
 async def cmd_start(message: Message):
     user_id = message.from_user.id
@@ -94,19 +94,19 @@ async def cmd_start(message: Message):
 
     if message.chat.type == "private":
         if user_id == ADMIN_ID:
-            await message.answer("Assalomu alaykum, Admin!", reply_markup=get_admin_menu())
+            await message.answer("Hey Admin! 👑 Welcome back to the command center.", reply_markup=get_admin_menu())
         else:
-            await message.answer("Xush kelibsiz! 5 AM Club botiga marhamat.", reply_markup=get_user_menu())
+            await message.answer("Welcome to the **5 AM Club**! 🌅\nBig goals start with early mornings. Use the menu below to stay on track:", reply_markup=get_user_menu())
     else:
-        await message.answer("Bot guruhda ishlamoqda. Shaxsiy statistika uchun menga lichkada yozing!")
+        await message.answer("5 AM Club Bot is active! 🚀 Direct message me to view your personal stats and commands.")
 
-# --- CHECK-IN ---
+# --- CHECK-IN CALLBACK ---
 @dp.callback_query(F.data == "check_in")
 async def process_check_in(callback: CallbackQuery):
     global attendance_active
     if not attendance_active:
         await callback.answer(
-            "Hozir davomat vaqti emas! Davomat 20:40 dan 20:45 gacha ochiq bo'ladi.",
+            "Check-in is currently closed! ⏰ Doors open from 04:30 AM to 06:00 AM.",
             show_alert=True,
         )
         return
@@ -129,59 +129,59 @@ async def process_check_in(callback: CallbackQuery):
             users[user_id]["streak"] = 1 
 
         users[user_id]["last_date"] = today_str
-        await callback.answer("Tabriklaymiz! Ishtirokingiz qayd etildi! 🔥", show_alert=True)
+        await callback.answer("Boom! You're checked in for today! Keep that streak burning 🔥", show_alert=True)
     else:
-        await callback.answer("Siz allaqachon bugun ro'yxatdan o'tgansiz!", show_alert=True)
+        await callback.answer("You've already checked in today! Solid discipline 👊", show_alert=True)
 
-# --- REYTING VA TUGMALAR ---
-@dp.message(F.text == "🏆 Top Reyting")
+# --- MENU BUTTON HANDLERS ---
+@dp.message(F.text == "🏆 Leaderboard")
 @dp.message(Command("ranking"))
 async def cmd_ranking(message: Message):
     if not users:
-        await message.answer("Hozircha reytingda ishtirokchilar yo'q.")
+        await message.answer("No members registered yet. Be the first!")
         return
     sorted_users = sorted(users.values(), key=lambda x: x["streak"], reverse=True)
-    text = "🏆 **5 AM Club Intizom Reytingi (Streak):**\n\n"
+    text = "🏆 **5 AM Club Discipline Leaderboard:**\n\n"
     for idx, u in enumerate(sorted_users[:10], 1):
-        text += f"{idx}. {u['name']} — 🔥 {u['streak']} kun ketma-ket\n"
+        text += f"{idx}. {u['name']} — 🔥 {u['streak']} days streak\n"
     await message.answer(text, parse_mode="Markdown")
 
-@dp.message(F.text == "📊 Mening statistikam")
+@dp.message(F.text == "📊 My Stats")
 async def user_stats(message: Message):
     user_data = users.get(message.from_user.id, {"streak": 0})
-    await message.answer(f"📊 **Sizning statistikangiz:**\n\n- Joriy streak: {user_data.get('streak', 0)} kun")
+    await message.answer(f"📊 **Your Personal Discipline Stats:**\n\n- Current Streak: **{user_data.get('streak', 0)} days** 🔥\n\n*Keep showing up every morning!*")
 
-@dp.message(F.text == "💡 Tonggi motivatsiya")
+@dp.message(F.text == "💡 Daily Spark")
 async def morning_motivation(message: Message):
     quote = await get_random_quote_from_internet()
-    await message.answer(f"💡 **Motivatsiya:**\n\n{quote}")
+    await message.answer(f"💡 **Daily Mindset Booster:**\n\n{quote}")
 
-@dp.message(F.text == "ℹ️ Yordam / Qoidalar")
+@dp.message(F.text == "❓ How It Works")
 async def help_rules(message: Message):
-    await message.answer("ℹ️ **Qoidalar:**\nBelgilangan vaqtda (20:40) bot tashlagan xabarga kirib, davomat tugmasini bosishingiz kerak.")
+    await message.answer("⚡ **5 AM Club Rules:**\n\n1. Check-in opens at **04:30 AM** daily.\n2. Tap the **Check In Now!** button before **06:00 AM**.\n3. Build your daily streak and claim the top of the leaderboard!")
 
-@dp.message(F.text == "👥 Ishtirokchilar")
+@dp.message(F.text == "👥 Members List")
 async def admin_users(message: Message):
     if message.from_user.id == ADMIN_ID:
-        await message.answer(f"👥 Jami ro'yxatdan o'tganlar soni: {len(users)} ta")
+        await message.answer(f"👥 Total registered members: **{len(users)}**")
 
-# --- SCHEDULER (Yangi vaqtlar: 20:40, 20:45, 20:50) ---
+# --- SCHEDULER (04:30, 06:00, 08:00) ---
 async def scheduler():
     global attendance_active
     while True:
         now = datetime.now()
         current_time = now.time()
 
-        # 1. Soat 20:40 - Davomatni ochish
-        if current_time.hour == 20 and current_time.minute == 40:
+        # 1. 04:30 AM — Open Check-in
+        if current_time.hour == 4 and current_time.minute == 30:
             attendance_active = True
             attendance_today.clear()
-            msg_text = "🌅 **Davomat boshlandi!**\nSoat 20:45 gacha quyidagi tugmani bosing:"
+            msg_text = "🌅 **Good Morning, 5 AM Club!**\n\nRise and grind! Check-in is now OPEN until 06:00 AM. Hit the button below to keep your streak alive! 🔥"
             
             try:
                 await bot.send_message(GROUP_CHAT_ID, msg_text, reply_markup=get_attendance_keyboard(), parse_mode="Markdown")
             except Exception as e:
-                print(f"Guruhga yuborishda xatolik: {e}")
+                print(f"Error sending group notification: {e}")
 
             for uid in users.keys():
                 try:
@@ -189,39 +189,39 @@ async def scheduler():
                 except Exception:
                     pass
 
-            await asyncio.sleep(60) # 1 daqiqa kutish, keyingi siklga o'tish uchun
+            await asyncio.sleep(60)
 
-        # 2. Soat 20:45 - Davomatni yopish
-        elif current_time.hour == 20 and current_time.minute == 45:
+        # 2. 06:00 AM — Close Check-in & Post Attendance Report
+        elif current_time.hour == 6 and current_time.minute == 0:
             if attendance_active:
                 attendance_active = False
                 present_list = [users[uid]["name"] for uid in attendance_today]
                 absent_list = [u["name"] for uid, u in users.items() if uid not in attendance_today]
 
-                report = "📊 **Davomat yakunlandi (20:45):**\n\n"
-                report += f"✅ **Ishtirok etganlar ({len(present_list)}):**\n" + ("\n".join([f"- {n}" for n in present_list]) if present_list else "Yo'q") + "\n\n"
-                report += f"❌ **Qatnashmaganlar ({len(absent_list)}):**\n" + ("\n".join([f"- {n}" for n in absent_list]) if absent_list else "Hamma qatnashdi!")
+                report = "⏰ **Check-in Closed for Today! (06:00 AM)**\n\n"
+                report += f"✅ **Early Birds ({len(present_list)}):**\n" + ("\n".join([f"- {n}" for n in present_list]) if present_list else "None today 💤") + "\n\n"
+                report += f"❌ **Snoozed / Missed ({len(absent_list)}):**\n" + ("\n".join([f"- {n}" for n in absent_list]) if absent_list else "Everyone checked in! Amazing 🎉") + "\n\n*Consistency is everything. See you tomorrow at 04:30 AM!*"
 
                 try:
                     await bot.send_message(GROUP_CHAT_ID, report, parse_mode="Markdown")
-                except Exception:
-                    pass
+                except Exception as e:
+                    print(f"Error sending report: {e}")
             await asyncio.sleep(60)
 
-        # 3. Soat 20:50 - Motivatsiya yuborish
-        elif current_time.hour == 20 and current_time.minute == 50:
+        # 3. 08:00 AM — Send Daily Quote
+        elif current_time.hour == 8 and current_time.minute == 0:
             quote = await get_random_quote_from_internet()
             try:
-                await bot.send_message(GROUP_CHAT_ID, f"💡 **Kunlik Motivatsiya:**\n\n{quote}", parse_mode="Markdown")
-            except Exception:
-                pass
+                await bot.send_message(GROUP_CHAT_ID, f"💡 **Daily Morning Spark:**\n\n{quote}", parse_mode="Markdown")
+            except Exception as e:
+                print(f"Error sending quote: {e}")
             await asyncio.sleep(60)
 
-        await asyncio.sleep(30) # Har 30 soniyada vaqtni tekshirib turadi
+        await asyncio.sleep(30)
 
-# --- SERVER VA BOTNI ISHGA TUSHIRISH ---
+# --- SERVER & BOT LAUNCH ---
 async def handle(request):
-    return web.Response(text="Bot muvaffaqiyatli ishlamoqda!")
+    return web.Response(text="5 AM Club Bot is live and running!")
 
 async def web_server():
     app = web.Application()
@@ -235,10 +235,8 @@ async def main():
     asyncio.create_task(web_server())
     asyncio.create_task(scheduler())
     
-    # Conflict Error (Ulanishlar to'qnashuvi)ni bartaraf etish uchun eski webhooklarni o'chiramiz
+    # Prevent Telegram Conflict Error
     await bot.delete_webhook(drop_pending_updates=True)
-    
-    # Botni ishga tushiramiz
     await dp.start_polling(bot, drop_pending_updates=True)
 
 if __name__ == "__main__":
