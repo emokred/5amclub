@@ -17,7 +17,10 @@ from aiogram.types import (
     InlineKeyboardButton,
     ReplyKeyboardMarkup,
     KeyboardButton,
-    ChatMemberUpdated
+    ChatMemberUpdated,
+    BotCommand,  # <-- Qo'shildi
+    BotCommandScopeAllGroupChats,  # <-- Qo'shildi
+    BotCommandScopeAllPrivateChats   # <-- Qo'shildi
 )
 from aiogram.enums import ParseMode, ChatType, ChatMemberStatus
 from aiogram.types.reaction_type_emoji import ReactionTypeEmoji
@@ -31,7 +34,6 @@ DB_NAME = "5amclub.db"
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 # ==================== DYNAMIC QUIPS & QUOTES GENERATOR ====================
-# We use combinations to create thousands of unique messages instantly
 GREETINGS = [
     "Look who decided to join the living world!", "Bro actually woke up before the sun!",
     "The bed tried to hold you hostage, but discipline won!", "Another day, another victory.",
@@ -51,7 +53,6 @@ PRAISES = [
 EMOJIS = ["🔥", "⚡", "🦅", "🏆", "😎", "💪", "🚀", "👑", "🌟", "✨"]
 
 async def fetch_dynamic_quip(streak: int, name: str) -> str:
-    # 1. Try to fetch a dynamic affirmation from the internet API
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get("https://www.affirmations.dev/", timeout=2) as resp:
@@ -61,9 +62,8 @@ async def fetch_dynamic_quip(streak: int, name: str) -> str:
                     if affirmation:
                         return f"⚡ **{name}**, remember: {affirmation}! Keep grinding."
     except Exception:
-        pass # If internet fails, fallback to our massive dynamic combination generator
+        pass
         
-    # 2. Dynamic Combination Generator (thousands of variations)
     greeting = random.choice(GREETINGS)
     praise = random.choice(PRAISES)
     emoji = random.choice(EMOJIS)
@@ -86,7 +86,6 @@ async def fetch_motivational_quote() -> str:
         "“Discipline is choosing between what you want now and what you want most.” – Abraham Lincoln",
         "“You will never change your life until you change something you do daily.” – John C. Maxwell"
     ]
-    # Fetch from ZenQuotes API
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get("https://zenquotes.io/api/random", timeout=4) as resp:
@@ -337,6 +336,19 @@ def get_checkin_inline_keyboard() -> InlineKeyboardMarkup:
         [InlineKeyboardButton(text="⚡ CHECK-IN NOW (I'M AWAKE)", callback_data="do_checkin")]
     ])
 
+# Setup uchun inline tugmalar yaratish
+def get_setup_keyboard() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="04:30 - 05:30", callback_data="set_time_04:30_05:30"),
+            InlineKeyboardButton(text="04:30 - 06:00", callback_data="set_time_04:30_06:00")
+        ],
+        [
+            InlineKeyboardButton(text="05:00 - 06:00", callback_data="set_time_05:00_06:00"),
+            InlineKeyboardButton(text="05:00 - 07:00", callback_data="set_time_05:00_07:00")
+        ]
+    ])
+
 # ==================== HANDLERS ====================
 router = Router()
 
@@ -358,19 +370,40 @@ async def cmd_start(message: Message):
 @router.message(Command("setup"))
 async def cmd_setup(message: Message):
     if message.chat.type not in [ChatType.GROUP, ChatType.SUPERGROUP]:
-        await message.reply("❌ Group command only.")
+        await message.reply("❌ Bu buyruq faqat guruhlar uchun.")
         return
+    
     member = await message.bot.get_chat_member(message.chat.id, message.from_user.id)
     if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR]:
-        await message.reply("⛔ Admins only.")
+        await message.reply("⛔ Kechirasiz, bu buyruq faqat adminlar uchun.")
         return
-    args = message.text.split()
-    if len(args) != 3:
-        await message.reply("ℹ️ Usage: `/setup 04:30 06:00`", parse_mode=ParseMode.MARKDOWN)
+    
+    await message.reply(
+        "⚙️ **GURUH SOZLAMALARI:**\n\n"
+        "Quyidagi tugmalardan o'zingizga qulay bo'lgan check-in vaqtini tanlang:",
+        reply_markup=get_setup_keyboard(),
+        parse_mode=ParseMode.MARKDOWN
+    )
+
+@router.callback_query(F.data.startswith("set_time_"))
+async def handle_set_time_callback(callback: CallbackQuery):
+    member = await callback.bot.get_chat_member(callback.message.chat.id, callback.from_user.id)
+    if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR]:
+        await callback.answer("⛔ Bu tugmani faqat admin bosishi mumkin!", show_alert=True)
         return
-    db_register_group(message.chat.id, message.chat.title)
-    db_update_group_times(message.chat.id, args[1], args[2])
-    await message.reply(f"✅ Schedule updated: `{args[1]}` to `{args[2]}`", parse_mode=ParseMode.MARKDOWN)
+    
+    _, _, start_t, end_t = callback.data.split("_")
+    
+    group_id = callback.message.chat.id
+    db_register_group(group_id, callback.message.chat.title or "5 AM Club Group")
+    db_update_group_times(group_id, start_t, end_t)
+    
+    await callback.answer("✅ Vaqt muvaffaqiyatli saqlandi!", show_alert=False)
+    await callback.message.edit_text(
+        f"✅ **Guruh vaqti yangilandi!**\n\n"
+        f"⏰ Check-in vaqti: `{start_t}` dan `{end_t}` gacha etib belgilandi.",
+        parse_mode=ParseMode.MARKDOWN
+    )
 
 @router.message(F.text == "⚡ Solo Check-In")
 async def handle_solo_checkin(message: Message):
@@ -407,14 +440,12 @@ async def handle_callback_checkin(callback: CallbackQuery):
     elif res:
         await callback.answer("✅ Morning Check-In Completed!", show_alert=False)
         
-        # 1. BOT REACTION (Add dynamic emoji reaction)
         try:
             chosen_emoji = random.choice(["🔥", "⚡", "🦅", "🏆", "🎉", "💪", "👍"])
             await callback.message.react(reaction=[ReactionTypeEmoji(emoji=chosen_emoji)])
         except Exception as e:
             logging.error(f"Failed to react: {e}")
             
-        # 2. DYNAMIC & ENDLESS SHOUTOUT MESSAGE (Internet/Generator mix)
         quip = await fetch_dynamic_quip(res["streak"], user.first_name)
         announcement = (
             f"⚡ **CHECK-IN CONFIRMED**\n\n"
@@ -547,11 +578,25 @@ async def start_dummy_web_server():
     await site.start()
 
 # ==================== MAIN ENTRY POINT ====================
+async def set_bot_commands(bot: Bot):
+    commands = [
+        BotCommand(command="setup", description="⚙️ Sozlamalar (Adminlar uchun)"),
+        BotCommand(command="info", description="ℹ️ Guruh va vaqt ma'lumotlari"),
+        BotCommand(command="myprofile", description="📊 Profil va statistika"),
+        BotCommand(command="leaderboard", description="🏆 Reyting jadvali"),
+        BotCommand(command="help", description="📖 Qoidalar va yordam"),
+    ]
+    await bot.set_my_commands(commands, scope=BotCommandScopeAllGroupChats())
+    await bot.set_my_commands(commands, scope=BotCommandScopeAllPrivateChats())
+
 async def main():
     init_sqlite_db()
     bot = Bot(token=BOT_TOKEN)
     dp = Dispatcher()
     dp.include_router(router)
+    
+    # --- BOT MENYUSINI RO'YXATDAN O'TKAZISH ---
+    await set_bot_commands(bot)
     
     await start_dummy_web_server()
     asyncio.create_task(scheduler_loop(bot))
