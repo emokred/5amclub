@@ -17,10 +17,9 @@ from aiogram.types import (
     InlineKeyboardButton,
     ReplyKeyboardMarkup,
     KeyboardButton,
-    ChatMemberUpdated,
-    BotCommand,  # <-- Qo'shildi
-    BotCommandScopeAllGroupChats,  # <-- Qo'shildi
-    BotCommandScopeAllPrivateChats   # <-- Qo'shildi
+    BotCommand,
+    BotCommandScopeAllGroupChats,
+    BotCommandScopeAllPrivateChats
 )
 from aiogram.enums import ParseMode, ChatType, ChatMemberStatus
 from aiogram.types.reaction_type_emoji import ReactionTypeEmoji
@@ -336,7 +335,6 @@ def get_checkin_inline_keyboard() -> InlineKeyboardMarkup:
         [InlineKeyboardButton(text="⚡ CHECK-IN NOW (I'M AWAKE)", callback_data="do_checkin")]
     ])
 
-# Setup uchun inline tugmalar yaratish
 def get_setup_keyboard() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
         [
@@ -385,6 +383,77 @@ async def cmd_setup(message: Message):
         parse_mode=ParseMode.MARKDOWN
     )
 
+# --- QO'SHILDI: Guruhda va shaxsiy chatda ishlaydigan komandalar handlerlari ---
+@router.message(Command("myprofile"))
+@router.message(F.text == "📊 My Profile")
+async def handle_my_profile(message: Message):
+    user = db_get_user(message.from_user.id)
+    if not user:
+        db_register_user(message.from_user.id, message.from_user.username, message.from_user.first_name)
+        user = db_get_user(message.from_user.id)
+        
+    streak = user["streak"]
+    coins = user["coins"]
+    rank = get_user_rank(streak)
+    progress_bar = generate_progress_bar(streak)
+    
+    await message.answer(
+        f"👤 **MEMBER PROFILE**\n\n"
+        f"🏷 Name: {user['first_name']}\n"
+        f"🔥 Streak: `{streak} Days`\n"
+        f"🪙 Coins: `{coins}`\n"
+        f"🏅 Rank: {rank}\n\n"
+        f"📈 **RANK PROGRESSION:**\n"
+        f"{progress_bar}",
+        parse_mode=ParseMode.MARKDOWN
+    )
+
+@router.message(Command("leaderboard"))
+@router.message(F.text == "🏆 Leaderboard")
+async def handle_leaderboard(message: Message):
+    lb = db_get_global_leaderboard(10)
+    if not lb:
+        await message.answer("🏆 Leaderboard is currently empty.")
+        return
+    text = "🏆 **THE 5 AM CLUB LEADERBOARD** 🏆\n\n"
+    for idx, row in enumerate(lb, 1):
+        text += f"`#{idx}` **{row['first_name']}** — `{row['streak']}d` | `{row['coins']} coins`\n"
+    await message.answer(text, parse_mode=ParseMode.MARKDOWN)
+
+@router.message(Command("help"))
+@router.message(F.text == "⚙️ Help & Rules")
+async def handle_help(message: Message):
+    help_text = (
+        "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n"
+        "1. **Morning Check-In**: Check-in window is usually `04:30 AM` to `06:00 AM`.\n"
+        "2. **Early Bird Bonus**: Check in early to earn more coins.\n"
+        "3. **Consistency**: Missing a check-in resets your streak to `0`.\n"
+        "4. **Graveyard of Sleepers**: A daily report exposes those who woke up vs those who slept in."
+    )
+    await message.answer(help_text, parse_mode=ParseMode.MARKDOWN)
+
+@router.message(Command("info"))
+async def handle_info(message: Message):
+    if message.chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
+        conn = sqlite3.connect(DB_NAME)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM groups WHERE group_id = ?", (message.chat.id,))
+        g = cursor.fetchone()
+        conn.close()
+        
+        start_t = g["checkin_start"] if g else "04:30"
+        end_t = g["checkin_end"] if g else "06:00"
+        await message.answer(
+            f"ℹ️ **Guruh Ma'lumotlari:**\n\n"
+            f"📌 Guruh nomi: `{message.chat.title}`\n"
+            f"⏰ Check-in vaqti: `{start_t}` dan `{end_t}` gacha\n"
+            f"🌐 Vaqt mintaqasi: `{TIMEZONE_STR}`",
+            parse_mode=ParseMode.MARKDOWN
+        )
+    else:
+        await message.answer("ℹ️ Bu buyruq faqat 5 AM Club guruhlarida ishlaydi.")
+
 @router.callback_query(F.data.startswith("set_time_"))
 async def handle_set_time_callback(callback: CallbackQuery):
     member = await callback.bot.get_chat_member(callback.message.chat.id, callback.from_user.id)
@@ -393,7 +462,6 @@ async def handle_set_time_callback(callback: CallbackQuery):
         return
     
     _, _, start_t, end_t = callback.data.split("_")
-    
     group_id = callback.message.chat.id
     db_register_group(group_id, callback.message.chat.title or "5 AM Club Group")
     db_update_group_times(group_id, start_t, end_t)
@@ -455,55 +523,11 @@ async def handle_callback_checkin(callback: CallbackQuery):
         )
         await callback.message.answer(announcement, parse_mode=ParseMode.MARKDOWN)
 
-@router.message(F.text == "📊 My Profile")
-async def handle_my_profile(message: Message):
-    user = db_get_user(message.from_user.id)
-    if not user:
-        db_register_user(message.from_user.id, message.from_user.username, message.from_user.first_name)
-        user = db_get_user(message.from_user.id)
-        
-    streak = user["streak"]
-    coins = user["coins"]
-    rank = get_user_rank(streak)
-    progress_bar = generate_progress_bar(streak)
-    
-    await message.answer(
-        f"👤 **MEMBER PROFILE**\n\n"
-        f"🏷 Name: {user['first_name']}\n"
-        f"🔥 Streak: `{streak} Days`\n"
-        f"🪙 Coins: `{coins}`\n"
-        f"🏅 Rank: {rank}\n\n"
-        f"📈 **RANK PROGRESSION:**\n"
-        f"{progress_bar}",
-        parse_mode=ParseMode.MARKDOWN
-    )
-
-@router.message(F.text == "🏆 Leaderboard")
-async def handle_leaderboard(message: Message):
-    lb = db_get_global_leaderboard(10)
-    if not lb:
-        await message.answer("🏆 Leaderboard is currently empty.")
-        return
-    text = "🏆 **THE 5 AM CLUB LEADERBOARD** 🏆\n\n"
-    for idx, row in enumerate(lb, 1):
-        text += f"`#{idx}` **{row['first_name']}** — `{row['streak']}d` | `{row['coins']} coins`\n"
-    await message.answer(text, parse_mode=ParseMode.MARKDOWN)
-
 @router.message(F.text == "💡 Daily Quote")
+@router.message(Command("quote"))
 async def handle_quote(message: Message):
     quote = await fetch_motivational_quote()
     await message.answer(f"💡 **DAILY MORNING WISDOM**\n\n{quote}", parse_mode=ParseMode.MARKDOWN)
-
-@router.message(F.text == "⚙️ Help & Rules")
-async def handle_help(message: Message):
-    help_text = (
-        "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n"
-        "1. **Morning Check-In**: Check-in window is usually `04:30 AM` to `06:00 AM`.\n"
-        "2. **Early Bird Bonus**: Check in early to earn more coins.\n"
-        "3. **Consistency**: Missing a check-in resets your streak to `0`.\n"
-        "4. **Graveyard of Sleepers**: A daily report exposes those who woke up vs those who slept in."
-    )
-    await message.answer(help_text, parse_mode=ParseMode.MARKDOWN)
 
 @router.message(F.chat.type.in_([ChatType.GROUP, ChatType.SUPERGROUP]))
 async def handle_group_auto_capture(message: Message):
@@ -585,6 +609,7 @@ async def set_bot_commands(bot: Bot):
         BotCommand(command="myprofile", description="📊 Profil va statistika"),
         BotCommand(command="leaderboard", description="🏆 Reyting jadvali"),
         BotCommand(command="help", description="📖 Qoidalar va yordam"),
+        BotCommand(command="quote", description="💡 Kun iqtibosi")
     ]
     await bot.set_my_commands(commands, scope=BotCommandScopeAllGroupChats())
     await bot.set_my_commands(commands, scope=BotCommandScopeAllPrivateChats())
@@ -595,9 +620,7 @@ async def main():
     dp = Dispatcher()
     dp.include_router(router)
     
-    # --- BOT MENYUSINI RO'YXATDAN O'TKAZISH ---
     await set_bot_commands(bot)
-    
     await start_dummy_web_server()
     asyncio.create_task(scheduler_loop(bot))
     
