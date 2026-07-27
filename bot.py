@@ -426,4 +426,138 @@ async def handle_callback_checkin(callback: CallbackQuery):
 
 @router.message(F.text == "📊 My Profile")
 async def handle_my_profile(message: Message):
-    pass
+    user = db_get_user(message.from_user.id)
+    if not user:
+        db_register_user(message.from_user.id, message.from_user.username, message.from_user.first_name)
+        user = db_get_user(message.from_user.id)
+        
+    streak = user["streak"]
+    coins = user["coins"]
+    rank = get_user_rank(streak)
+    progress_bar = generate_progress_bar(streak)
+    
+    await message.answer(
+        f"👤 **MEMBER PROFILE**\n\n"
+        f"🏷 Name: {user['first_name']}\n"
+        f"🔥 Streak: `{streak} Days`\n"
+        f"🪙 Coins: `{coins}`\n"
+        f"🏅 Rank: {rank}\n\n"
+        f"📈 **RANK PROGRESSION:**\n"
+        f"{progress_bar}",
+        parse_mode=ParseMode.MARKDOWN
+    )
+
+@router.message(F.text == "🏆 Leaderboard")
+async def handle_leaderboard(message: Message):
+    lb = db_get_global_leaderboard(10)
+    if not lb:
+        await message.answer("🏆 Leaderboard is currently empty.")
+        return
+    text = "🏆 **THE 5 AM CLUB LEADERBOARD** 🏆\n\n"
+    for idx, row in enumerate(lb, 1):
+        text += f"`#{idx}` **{row['first_name']}** — `{row['streak']}d` | `{row['coins']} coins`\n"
+    await message.answer(text, parse_mode=ParseMode.MARKDOWN)
+
+@router.message(F.text == "💡 Daily Quote")
+async def handle_quote(message: Message):
+    quote = await fetch_motivational_quote()
+    await message.answer(f"💡 **DAILY MORNING WISDOM**\n\n{quote}", parse_mode=ParseMode.MARKDOWN)
+
+@router.message(F.text == "⚙️ Help & Rules")
+async def handle_help(message: Message):
+    help_text = (
+        "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n"
+        "1. **Morning Check-In**: Check-in window is usually `04:30 AM` to `06:00 AM`.\n"
+        "2. **Early Bird Bonus**: Check in early to earn more coins.\n"
+        "3. **Consistency**: Missing a check-in resets your streak to `0`.\n"
+        "4. **Graveyard of Sleepers**: A daily report exposes those who woke up vs those who slept in."
+    )
+    await message.answer(help_text, parse_mode=ParseMode.MARKDOWN)
+
+@router.message(F.chat.type.in_([ChatType.GROUP, ChatType.SUPERGROUP]))
+async def handle_group_auto_capture(message: Message):
+    if message.from_user and not message.from_user.is_bot:
+        db_register_user(message.from_user.id, message.from_user.username, message.from_user.first_name)
+        db_register_group(message.chat.id, message.chat.title)
+        db_link_group_member(message.chat.id, message.from_user.id)
+
+# ==================== SCHEDULER ====================
+async def scheduler_loop(bot: Bot):
+    sent_start, sent_end = {}, {}
+    while True:
+        try:
+            tz = pytz.timezone(TIMEZONE_STR)
+            now = datetime.now(tz)
+            today_str = now.strftime("%Y-%m-%d")
+            hhmm = now.strftime("%H:%M")
+            groups = db_get_active_groups()
+            
+            if not groups:
+                db_register_group(DEFAULT_GROUP_ID, "5 AM Club Group")
+                groups = db_get_active_groups()
+                
+            for g in groups:
+                gid = g["group_id"]
+                s_t, e_t = g["checkin_start"], g["checkin_end"]
+                
+                if hhmm == s_t and sent_start.get(f"{gid}_{today_str}") != True:
+                    sent_start[f"{gid}_{today_str}"] = True
+                    db_reset_group_snoozed(gid)
+                    await bot.send_message(
+                        gid,
+                        "🌅 **THE 5 AM CLUB: CHECK-IN IS OPEN!**\n\n"
+                        f"⏰ Window: `{s_t}` — `{e_t}`\n"
+                        "⚡ Tap the button below to prove you're awake!",
+                        reply_markup=get_checkin_inline_keyboard(), parse_mode=ParseMode.MARKDOWN
+                    )
+                    
+                if hhmm == e_t and sent_end.get(f"{gid}_{today_str}") != True:
+                    sent_end[f"{gid}_{today_str}"] = True
+                    report = db_get_group_attendance_report(gid)
+                    awake, sleepers = [], []
+                    for m in report:
+                        if m["status"] == "awake":
+                            awake.append(f"• **{m['first_name']}** (`{m['last_checkin_time']}`) — 🔥 `{m['streak']}d`")
+                        else:
+                            sleepers.append(f"• **{m['first_name']}** 😴")
+                    
+                    quote = await fetch_motivational_quote()
+                    rep_msg = (
+                        f"🔒 **CHECK-IN CLOSED ({e_t})**\n\n"
+                        f"🌅 **AWAKE MEMBERS:**\n" + ("\n".join(awake) if awake else "None 😞") + "\n\n"
+                        f"😴 **GRAVEYARD OF SLEEPERS:**\n" + ("\n".join(sleepers) if sleepers else "No sleepers! 🎉") + "\n\n"
+                        f"💡 **QUOTE:**\n{quote}"
+                    )
+                    await bot.send_message(gid, rep_msg, parse_mode=ParseMode.MARKDOWN)
+        except Exception as e:
+            logging.error(f"Scheduler error: {e}")
+        await asyncio.sleep(25)
+
+# ==================== RENDER KEEPALIVE SERVER ====================
+async def web_ping(req):
+    return web.Response(text="Bot is active 24/7!")
+
+async def start_dummy_web_server():
+    app = web.Application()
+    app.router.add_get('/', web_ping)
+    app.router.add_get('/health', web_ping)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", int(os.getenv("PORT", 10000)))
+    await site.start()
+
+# ==================== MAIN ENTRY POINT ====================
+async def main():
+    init_sqlite_db()
+    bot = Bot(token=BOT_TOKEN)
+    dp = Dispatcher()
+    dp.include_router(router)
+    
+    await start_dummy_web_server()
+    asyncio.create_task(scheduler_loop(bot))
+    
+    await bot.delete_webhook(drop_pending_updates=True)
+    await dp.start_polling(bot)
+
+if __name__ == "__main__":
+    asyncio.run(main())
