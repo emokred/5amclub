@@ -426,3 +426,6 @@ async def handle_callback_checkin(callback: CallbackQuery):
 
 @router.message(F.text == "📊 My Profile")
 async def handle_my_profile(message: Message):
+    user_id = message.from_user.id
+    # Foydalanuvchi ma'lumotlarini bazadan olish va chiqarish
+    await message.answer("Sizning profilingiz va statistikangiz...")
