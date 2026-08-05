@@ -280,7 +280,6 @@ def generate_21day_certificate(name: str) -> bytes:
         img = Image.new("RGB", (1000, 600), (15, 23, 42))
         draw = ImageDraw.Draw(img)
 
-        # Golden Border
         draw.rectangle([20, 20, 980, 580], outline=(250, 204, 21), width=6)
         draw.rectangle([30, 30, 970, 570], outline=(255, 255, 255), width=2)
 
@@ -340,7 +339,6 @@ def init_sqlite_db():
         )
     """)
 
-    # Migration checks
     cursor.execute("PRAGMA table_info(users)")
     columns = [col[1] for col in cursor.fetchall()]
     if "lang" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN lang TEXT DEFAULT 'uz'")
@@ -1422,14 +1420,21 @@ async def scheduler_loop(bot: Bot):
             logging.error(f"Scheduler error: {e}")
         await asyncio.sleep(25)
 
-# ==================== RENDER KEEPALIVE SERVER ====================
+# ==================== RENDER WEBAPP SERVER (SERVES HTML, CSS, JS) ====================
+async def serve_index(req):
+    if os.path.exists("index.html"):
+        return web.FileResponse("index.html")
+    return web.Response(text="The 5 AM Club WebApp is loading...")
+
 async def web_ping(req):
     return web.Response(text="Bot is active 24/7!")
 
 async def start_dummy_web_server():
     app = web.Application()
-    app.router.add_get('/', web_ping)
+    app.router.add_get('/', serve_index)
     app.router.add_get('/health', web_ping)
+    # Serve static files (styles.css, app.js, images)
+    app.router.add_static('/', path='.', name='static')
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, "0.0.0.0", int(os.getenv("PORT", 10000)))
