@@ -24,68 +24,133 @@ from aiogram.types.reaction_type_emoji import ReactionTypeEmoji
 # ==================== CONFIGURATION ====================
 BOT_TOKEN = os.getenv("BOT_TOKEN", "8843755987:AAF4gGBSVa1SKr8oxq26kX__C3b8WSkTFz4")
 DEFAULT_GROUP_ID = int(os.getenv("GROUP_CHAT_ID", "-1004349705982"))
-SUPER_ADMIN_ID = int(os.getenv("SUPER_ADMIN_ID", "5174548480")) # Default or environment variable
+SUPER_ADMIN_ID = int(os.getenv("SUPER_ADMIN_ID", "6377617416")) # Owner Telegram ID
 TIMEZONE_STR = "Asia/Tashkent"
 DB_NAME = "5amclub.db"
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-# ==================== DYNAMIC QUIPS & QUOTES GENERATOR ====================
-GREETINGS = [
-    "Look who decided to join the living world!", "Bro actually woke up before the sun!",
-    "The bed tried to hold you hostage, but discipline won!", "Another day, another victory.",
-    "Even your alarm clock is shocked.", "Zzz... Oh wait, you're actually awake?!",
-    "Rise and grind!", "Welcome to the elite club.", "Boom! Champion has arrived.",
-    "Morning beast mode activated."
-]
+# ==================== MULTI-LANGUAGE DICTIONARY ====================
+TEXTS = {
+    "uz": {
+        "welcome": "👋 **"The 5 AM Club" botiga xush kelibsiz, {name}!**\n\n“Ertalabki vaqtingizga egalik qiling. Hayotingizni yuksaltiring.”\n\n⚙️ Sozlamalar va menyulardan foydalanish uchun quyidagi tugmalarni bosing:",
+        "btn_checkin": "⚡ Solo Check-In",
+        "btn_profile": "📊 Profilim",
+        "btn_leaderboard": "🏆 Reyting",
+        "btn_quote": "💡 Kun Iqtibosi",
+        "btn_setup": "⚙️ Vaqtni Sozlash",
+        "btn_lang": "🌐 Til / Language",
+        "btn_help": "📖 Qoidalar",
+        "btn_admin": "👑 Owner Admin Panel",
+        "checkin_btn_inline": "⚡ CHECK-IN QILISH (MEN UYG'ONDIM)",
+        "already_checked_in": "⚠️ Siz bugun allaqachon check-in qildingiz! Ertagacha! 🌅",
+        "checkin_success": "⚡ **CHECK-IN MUVAFFAQIYATLI!**\n\n{quip}\n\n🔥 Streak: `{streak} kun` | 🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🏅 Unvon: {rank}",
+        "profile_title": "👤 **FOYDALANUVCHI PROFILI**\n\n🏷 Ism: {name}\n🔥 Streak: `{streak} Kun`\n🪙 Tangalar: `{coins}`\n🏅 Unvon: {rank}\n🌐 Til: `{lang_str}`\n\n📈 **UNVON DARAJTASI:**\n{progress_bar}",
+        "leaderboard_title": "🏆 **THE 5 AM CLUB REYTING JADVALI** 🏆\n\n",
+        "leaderboard_empty": "🏆 Reyting jadvali hozircha bo'sh.",
+        "quote_title": "💡 **KUN HIKMATI**\n\n{quote}",
+        "help_text": "📖 **THE 5 AM CLUB — QOIDALAR**\n\n1. **Ertalabki Check-In**: Uyg'onish vaqtingizni **⚙️ Vaqtni Sozlash** orqali moslashtiring.\n2. **Erta Uyg'onish Bonusi**: Vaqtliroq check-in qilsangiz ko'proq tanga olasiz.\n3. **Intizom**: Bir kun o'tkazib yuborsangiz `Streak` 0 ga tushadi.",
+        "lang_select": "🌐 **Iltimos, o'zingizga ma'qul tilni tanlang:**",
+        "lang_updated": "✅ **Botingiz tili O'zbek tiliga o'zgartirildi!**",
+        "setup_user": "⚙️ **SHAXSIY VAQT SOZLAMALARI:**\n\nHozirgi vaqt oralig'ingiz: `{start}` — `{end}`\n\nCheck-in vaqtingizni tanlang:",
+        "setup_group": "⚙️ **GURUH VAQT SOZLAMALARI:**\n\nGuruh uchun check-in vaqtini tanlang:",
+        "setup_updated": "✅ **Check-in vaqti yangilandi:** `{start}` — `{end}`"
+    },
+    "ru": {
+        "welcome": "👋 **Добро пожаловать в бот "The 5 AM Club", {name}!**\n\n«Владейте своим утром. Поднимите свою жизнь.»\n\n⚙️ Используйте меню ниже для управления настройками:",
+        "btn_checkin": "⚡ Соло Check-In",
+        "btn_profile": "📊 Мой Профиль",
+        "btn_leaderboard": "🏆 Рейтинг",
+        "btn_quote": "💡 Цитата Дня",
+        "btn_setup": "⚙️ Настройка Времени",
+        "btn_lang": "🌐 Язык / Language",
+        "btn_help": "📖 Правила",
+        "btn_admin": "👑 Панель Владельца",
+        "checkin_btn_inline": "⚡ СДЕЛАТЬ CHECK-IN (Я ПРОСНУЛСЯ)",
+        "already_checked_in": "⚠️ Вы уже отметились сегодня! До завтра! 🌅",
+        "checkin_success": "⚡ **CHECK-IN УСПЕШЕН!**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` | 🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🏅 Ранг: {rank}",
+        "profile_title": "👤 **ПРОФИЛЬ УЧАСТНИКА**\n\n🏷 Имя: {name}\n🔥 Стрик: `{streak} Дней`\n🪙 Монеты: `{coins}`\n🏅 Ранг: {rank}\n🌐 Язык: `{lang_str}`\n\n📈 **ПРОГРЕСС РАНГА:**\n{progress_bar}",
+        "leaderboard_title": "🏆 **ТАБЛИЦА ЛИДЕРОВ THE 5 AM CLUB** 🏆\n\n",
+        "leaderboard_empty": "🏆 Таблица лидеров пока пуста.",
+        "quote_title": "💡 **МУДРОСТЬ ДНЯ**\n\n{quote}",
+        "help_text": "📖 **THE 5 AM CLUB — ПРАВИЛА**\n\n1. **Утренний Check-In**: Настройте время под себя в **⚙️ Настройка Времени**.\n2. **Бонус за ранний подъем**: За раннюю регистрацию дается больше монет.\n3. **Дисциплина**: Пропуск дня сбрасывает Стрик до 0.",
+        "lang_select": "🌐 **Пожалуйста, выберите удобный язык:**",
+        "lang_updated": "✅ **Язык бота изменен на Русский!**",
+        "setup_user": "⚙️ **ЛИЧНЫЕ НАСТРОЙКИ ВРЕМЕНИ:**\n\nТекущее окно: `{start}` — `{end}`\n\nВыберите удобное время check-in:",
+        "setup_group": "⚙️ **НАСТРОЙКИ ВРЕМЕНИ ГРУППЫ:**\n\nВыберите окно check-in для группы:",
+        "setup_updated": "✅ **Время check-in обновлено:** `{start}` — `{end}`"
+    },
+    "en": {
+        "welcome": "👋 **Welcome to The 5 AM Club, {name}!**\n\n“Own your morning. Elevate your life.”\n\n⚙️ Use the menu below to navigate settings and track your progress:",
+        "btn_checkin": "⚡ Solo Check-In",
+        "btn_profile": "📊 My Profile",
+        "btn_leaderboard": "🏆 Leaderboard",
+        "btn_quote": "💡 Daily Quote",
+        "btn_setup": "⚙️ Time Setup",
+        "btn_lang": "🌐 Language / Til",
+        "btn_help": "📖 Help & Rules",
+        "btn_admin": "👑 Owner Admin Panel",
+        "checkin_btn_inline": "⚡ CHECK-IN NOW (I'M AWAKE)",
+        "already_checked_in": "⚠️ You already checked in today! See you tomorrow! 🌅",
+        "checkin_success": "⚡ **CHECK-IN SUCCESSFUL!**\n\n{quip}\n\n🔥 Streak: `{streak} days` | 🪙 Coins: `+{coins_earned}` (Total: `{coins}`)\n🏅 Rank: {rank}",
+        "profile_title": "👤 **MEMBER PROFILE**\n\n🏷 Name: {name}\n🔥 Streak: `{streak} Days`\n🪙 Coins: `{coins}`\n🏅 Rank: {rank}\n🌐 Language: `{lang_str}`\n\n📈 **RANK PROGRESSION:**\n{progress_bar}",
+        "leaderboard_title": "🏆 **THE 5 AM CLUB LEADERBOARD** 🏆\n\n",
+        "leaderboard_empty": "🏆 Leaderboard is currently empty.",
+        "quote_title": "💡 **DAILY MORNING WISDOM**\n\n{quote}",
+        "help_text": "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n1. **Morning Check-In**: Customize your check-in window via **⚙️ Time Setup**.\n2. **Early Bird Bonus**: Check in early to earn more coins.\n3. **Consistency**: Missing a check-in resets your streak to `0`.",
+        "lang_select": "🌐 **Please select your preferred language:**",
+        "lang_updated": "✅ **Bot language updated to English!**",
+        "setup_user": "⚙️ **PERSONAL TIME SETUP:**\n\nCurrent Window: `{start}` — `{end}`\n\nSelect your preferred check-in window:",
+        "setup_group": "⚙️ **GROUP TIME SETUP:**\n\nSelect the check-in window for the group:",
+        "setup_updated": "✅ **Check-in window updated:** `{start}` — `{end}`"
+    }
+}
 
-PRAISES = [
-    "Coffee is already proud of you.", "Absolute beast mode activated.",
-    "Robin Sharma is smiling down right now.", "Don't go back to sleep!",
-    "Early bird gets the whole universe!", "Keep this legendary momentum going.",
-    "Your future self is thanking you.", "Discipline equals freedom.",
-    "Setting the standard for the rest of us.", "Unstoppable force of nature."
-]
+# Dynamic Motivational Messages per language
+DYNAMIC_QUIPS = {
+    "uz": [
+        "Qarang, kim erta uyg'ondi! Kofe siz bilan faxrlanadi! ☕🔥",
+        "Quyoshdan oldin uyg'ondingiz-a! Haqiqiy arslon rejimi! 🦁⚡",
+        "Krovat sizni tutqinlikda ushlab turmoqchi edi, lekin intizom g'olib chiqdi! ⚔️😎",
+        "Ertalabki g'alaba bilan tabriklayman! To'xtab qolmang! 🚀",
+        "Hatto budilnigingiz ham hayratda! Yashang! ⏰🔥"
+    ],
+    "ru": [
+        "Смотрите, кто проснулся раннее всех! Кофе гордится тобой! ☕🔥",
+        "Проснулся раньше солнца! Настоящий режим льва! 🦁⚡",
+        "Кровать пыталась удержать тебя, но дисциплина победила! ⚔️😎",
+        "Поздравляем с утренней победой! Не останавливайся! 🚀",
+        "Даже твой будильник в шоке! Отличная работа! ⏰🔥"
+    ],
+    "en": [
+        "Look who decided to join the living world! Coffee is proud! ☕🔥",
+        "Woke up before the sun! Absolute beast mode activated! 🦁⚡",
+        "The bed tried to hold you hostage, but discipline won! ⚔️😎",
+        "Congrats on the morning victory! Keep moving forward! 🚀",
+        "Even your alarm clock is shocked! Great job! ⏰🔥"
+    ]
+}
 
-EMOJIS = ["🔥", "⚡", "🦅", "🏆", "😎", "💪", "🚀", "👑", "🌟", "✨"]
-
-async def fetch_dynamic_quip(streak: int, name: str) -> str:
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get("https://www.affirmations.dev/", timeout=aiohttp.ClientTimeout(total=2)) as resp:
-                if resp.status == 200:
-                    data = await resp.json()
-                    affirmation = data.get("affirmation", "")
-                    if affirmation:
-                        return f"⚡ **{name}**, remember: {affirmation}! Keep grinding."
-    except Exception:
-        pass
-
-    greeting = random.choice(GREETINGS)
-    praise = random.choice(PRAISES)
-    emoji = random.choice(EMOJIS)
-    base_text = f"{greeting} {praise} {emoji}"
-
+async def fetch_dynamic_quip(streak: int, name: str, lang: str = "uz") -> str:
+    quips_list = DYNAMIC_QUIPS.get(lang, DYNAMIC_QUIPS["uz"])
+    base_joke = random.choice(quips_list)
     if streak >= 30:
-        return f"👑 **LEGEND ALERT! ({streak} Days Straight):** {base_text}"
+        return f"👑 **LEGEND ({streak} Days):** {base_joke}"
     elif streak >= 10:
-        return f"🔥 **STREAK MONSTER ({streak} Days):** {base_text}"
+        return f"🔥 **STREAK MONSTER ({streak} Days):** {base_joke}"
     else:
-        return f"⚡ **AWAKE & ALIVE:** {base_text}"
+        return f"⚡ **{name}:** {base_joke}"
 
 async def fetch_motivational_quote() -> str:
     fallback_quotes = [
         "“Take care of the minutes and the hours will take care of themselves.” – Lord Chesterfield",
         "“The secret of getting ahead is getting started.” – Mark Twain",
         "“Own your morning. Elevate your life.” – Robin Sharma",
-        "“Victories are created before dawn, in the quiet solitude of discipline.” – Robin Sharma",
-        "“Discipline is choosing between what you want now and what you want most.” – Abraham Lincoln",
-        "“You will never change your life until you change something you do daily.” – John C. Maxwell",
-        "“Small daily improvements over time lead to stunning results.” – Robin Sharma"
+        "“Victories are created before dawn, in the quiet solitude of discipline.” – Robin Sharma"
     ]
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get("https://zenquotes.io/api/random", timeout=aiohttp.ClientTimeout(total=4)) as resp:
+            async with session.get("https://zenquotes.io/api/random", timeout=aiohttp.ClientTimeout(total=3)) as resp:
                 if resp.status == 200:
                     data = await resp.json()
                     if isinstance(data, list) and len(data) > 0:
@@ -107,11 +172,19 @@ def init_sqlite_db():
             coins INTEGER DEFAULT 0,
             checkin_start TEXT DEFAULT '04:30',
             checkin_end TEXT DEFAULT '06:00',
+            lang TEXT DEFAULT 'uz',
             last_checkin_date TEXT,
             status TEXT DEFAULT 'snoozed',
             created_at TEXT
         )
     """)
+
+    # Migration check: Ensure lang column exists if database was created earlier
+    cursor.execute("PRAGMA table_info(users)")
+    columns = [col[1] for col in cursor.fetchall()]
+    if "lang" not in columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN lang TEXT DEFAULT 'uz'")
+
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS groups (
             group_id INTEGER PRIMARY KEY,
@@ -207,6 +280,13 @@ def db_get_active_groups():
     rows = cursor.fetchall()
     conn.close()
     return rows
+
+def db_update_user_lang(user_id: int, lang: str):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("UPDATE users SET lang = ? WHERE user_id = ?", (lang, user_id))
+    conn.commit()
+    conn.close()
 
 def db_update_user_times(user_id: int, start_time: str, end_time: str):
     conn = sqlite3.connect(DB_NAME)
@@ -331,40 +411,81 @@ def db_get_global_leaderboard(limit: int = 10):
     return rows
 
 # ==================== GAMIFICATION HELPERS ====================
-def get_user_rank(streak: int) -> str:
-    if streak >= 30: return "👑 5 AM Legend"
-    elif streak >= 15: return "🏆 Morning Master"
-    elif streak >= 8: return "⚔️ Discipline Warrior"
-    elif streak >= 4: return "⚡ Rising Phoenix"
-    else: return "🌅 Dawn Novice"
+def get_user_rank(streak: int, lang: str = "uz") -> str:
+    ranks = {
+        "uz": ("👑 5 AM Afsonasi", "🏆 Ertalabki Usta", "⚔️ Intizom Jangchisi", "⚡ Porlayotgan Qaqnus", "🌅 Tonggi Yangi A'zo"),
+        "ru": ("👑 Легенда 5 AM", "🏆 Мастер Утра", "⚔️ Воин Дисциплины", "⚡ Восходящий Феникс", "🌅 Рассветный Новичок"),
+        "en": ("👑 5 AM Legend", "🏆 Morning Master", "⚔️ Discipline Warrior", "⚡ Rising Phoenix", "🌅 Dawn Novice")
+    }
+    r = ranks.get(lang, ranks["uz"])
+    if streak >= 30: return r[0]
+    elif streak >= 15: return r[1]
+    elif streak >= 8: return r[2]
+    elif streak >= 4: return r[3]
+    else: return r[4]
 
-def generate_progress_bar(streak: int) -> str:
-    if streak < 4: target, prev, next_rank = 4, 0, "Rising Phoenix ⚡"
-    elif streak < 8: target, prev, next_rank = 8, 4, "Discipline Warrior ⚔️"
-    elif streak < 15: target, prev, next_rank = 15, 8, "Morning Master 🏆"
-    elif streak < 30: target, prev, next_rank = 30, 15, "5 AM Legend 👑"
-    else: return "👑 **Max Rank Achieved: 5 AM Legend!**"
+def generate_progress_bar(streak: int, lang: str = "uz") -> str:
+    ranks_next = {
+        "uz": ("Porlayotgan Qaqnus ⚡", "Intizom Jangchisi ⚔️", "Ertalabki Usta 🏆", "5 AM Afsonasi 👑"),
+        "ru": ("Восходящий Феникс ⚡", "Воин Дисциплины ⚔️", "Мастер Утра 🏆", "Легенда 5 AM 👑"),
+        "en": ("Rising Phoenix ⚡", "Discipline Warrior ⚔️", "Morning Master 🏆", "5 AM Legend 👑")
+    }
+    rn = ranks_next.get(lang, ranks_next["uz"])
+
+    if streak < 4: target, prev, next_rank = 4, 0, rn[0]
+    elif streak < 8: target, prev, next_rank = 8, 4, rn[1]
+    elif streak < 15: target, prev, next_rank = 15, 8, rn[2]
+    elif streak < 30: target, prev, next_rank = 30, 15, rn[3]
+    else:
+        max_str = {"uz": "👑 **Maksimal Unvon: 5 AM Afsonasi!**", "ru": "👑 **Макс. Ранг: Легенда 5 AM!**", "en": "👑 **Max Rank: 5 AM Legend!**"}
+        return max_str.get(lang, max_str["uz"])
+
     progress = max(0.0, min(1.0, (streak - prev) / (target - prev)))
     filled_length = int(round(10 * progress))
     bar = '█' * filled_length + '░' * (10 - filled_length)
     pct = int(progress * 100)
     days_left = target - streak
-    return f"Progress: [{bar}] {pct}%\nNext Rank: **{next_rank}** in {days_left} day(s)"
+
+    labels = {
+        "uz": f"Progress: [{bar}] {pct}%\nKeyingi unvonga **{days_left} kun** qoldi ({next_rank})",
+        "ru": f"Прогресс: [{bar}] {pct}%\nДо след. ранга **{days_left} дн.** ({next_rank})",
+        "en": f"Progress: [{bar}] {pct}%\nNext Rank: **{next_rank}** in {days_left} day(s)"
+    }
+    return labels.get(lang, labels["uz"])
+
+def get_user_language(user_id: int) -> str:
+    user = db_get_user(user_id)
+    if user and "lang" in user.keys() and user["lang"]:
+        return user["lang"]
+    return "uz"
 
 # ==================== KEYBOARDS ====================
 def get_main_reply_keyboard(user_id: int) -> ReplyKeyboardMarkup:
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
     buttons = [
-        [KeyboardButton(text="⚡ Solo Check-In"), KeyboardButton(text="📊 My Profile")],
-        [KeyboardButton(text="🏆 Leaderboard"), KeyboardButton(text="💡 Daily Quote")],
-        [KeyboardButton(text="⚙️ Time Setup"), KeyboardButton(text="📖 Help & Rules")]
+        [KeyboardButton(text=t["btn_checkin"]), KeyboardButton(text=t["btn_profile"])],
+        [KeyboardButton(text=t["btn_leaderboard"]), KeyboardButton(text=t["btn_quote"])],
+        [KeyboardButton(text=t["btn_setup"]), KeyboardButton(text=t["btn_lang"]), KeyboardButton(text=t["btn_help"])]
     ]
     if user_id == SUPER_ADMIN_ID:
-        buttons.append([KeyboardButton(text="👑 Owner Admin Panel")])
+        buttons.append([KeyboardButton(text=t["btn_admin"])])
     return ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
 
-def get_checkin_inline_keyboard() -> InlineKeyboardMarkup:
+def get_checkin_inline_keyboard(lang: str = "uz") -> InlineKeyboardMarkup:
+    t = TEXTS.get(lang, TEXTS["uz"])
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="⚡ CHECK-IN NOW (I'M AWAKE)", callback_data="do_checkin")]
+        [InlineKeyboardButton(text=t["checkin_btn_inline"], callback_data="do_checkin")]
+    ])
+
+def get_language_inline_keyboard() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="🇺🇿 O'zbekcha", callback_data="set_lang_uz"),
+            InlineKeyboardButton(text="🇷🇺 Русский", callback_data="set_lang_ru"),
+            InlineKeyboardButton(text="🇬🇧 English", callback_data="set_lang_en")
+        ]
     ])
 
 def get_setup_keyboard(is_group: bool = True) -> InlineKeyboardMarkup:
@@ -387,45 +508,60 @@ router = Router()
 async def cmd_start(message: Message):
     user = message.from_user
     db_register_user(user.id, user.username, user.first_name)
+    lang = get_user_language(user.id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
     if message.chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
         db_register_group(message.chat.id, message.chat.title)
         db_link_group_member(message.chat.id, user.id)
         await message.reply("🌅 **The 5 AM Club Bot is Active!** Group members auto-registered.", parse_mode=ParseMode.MARKDOWN)
     else:
-        welcome_text = (
-            f"👋 **Welcome to The 5 AM Club, {user.first_name}!**\n\n"
-            "“Own your morning. Elevate your life.”\n\n"
-            "⚙️ **Time Management**: Use `/setup` or the **⚙️ Time Setup** button to set your personal check-in window!"
-        )
+        welcome_text = t["welcome"].format(name=user.first_name)
         await message.answer(welcome_text, reply_markup=get_main_reply_keyboard(user.id), parse_mode=ParseMode.MARKDOWN)
+
+# --- LANGUAGE SETUP ---
+@router.message(Command("lang"))
+@router.message(F.text.in_(["🌐 Til / Language", "🌐 Язык / Language", "🌐 Language / Til"]))
+async def cmd_language(message: Message):
+    lang = get_user_language(message.from_user.id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+    await message.answer(t["lang_select"], reply_markup=get_language_inline_keyboard(), parse_mode=ParseMode.MARKDOWN)
+
+@router.callback_query(F.data.startswith("set_lang_"))
+async def handle_set_language_callback(callback: CallbackQuery):
+    selected_lang = callback.data.split("_")[2]
+    user_id = callback.from_user.id
+    db_register_user(user_id, callback.from_user.username, callback.from_user.first_name)
+    db_update_user_lang(user_id, selected_lang)
+
+    t = TEXTS.get(selected_lang, TEXTS["uz"])
+    await callback.answer(t["lang_updated"], show_alert=False)
+    await callback.message.answer(t["lang_updated"], reply_markup=get_main_reply_keyboard(user_id), parse_mode=ParseMode.MARKDOWN)
 
 # --- TIME SETUP (GROUP & PRIVATE CHAT) ---
 @router.message(Command("setup"))
-@router.message(F.text == "⚙️ Time Setup")
+@router.message(F.text.in_(["⚙️ Vaqtni Sozlash", "⚙️ Настройка Времени", "⚙️ Time Setup"]))
 async def cmd_setup(message: Message):
     user_id = message.from_user.id
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
     if message.chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
         member = await message.bot.get_chat_member(message.chat.id, user_id)
         if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] and user_id != SUPER_ADMIN_ID:
             await message.reply("⛔ Kechirasiz, bu buyruq faqat guruh adminlari uchun.")
             return
         await message.reply(
-            "⚙️ **GURUH VAQT SOZLAMALARI:**\n\n"
-            "Quyidagi tugmalardan guruh uchun check-in vaqtini tanlang yoki buyruq yuboring:\n"
-            "` /setup 04:30 06:00 `",
+            t["setup_group"],
             reply_markup=get_setup_keyboard(is_group=True),
             parse_mode=ParseMode.MARKDOWN
         )
     else:
-        # Private chat setup
         u = db_get_user(user_id)
         start_t = u["checkin_start"] if u and "checkin_start" in u.keys() else "04:30"
         end_t = u["checkin_end"] if u and "checkin_end" in u.keys() else "06:00"
         await message.answer(
-            f"⚙️ **SHAXSIY VAQT SOZLAMALARI:**\n\n"
-            f"Hozirgi vaqt oralig'ingiz: `{start_t}` — `{end_t}`\n\n"
-            "Quyidagi tugmalardan o'zingizga qulay bo'lgan vaqtni tanlang yoki custom yozing:\n"
-            "*(Misol uchun text qilib yozing: `05:00 07:00`)*",
+            t["setup_user"].format(start=start_t, end=end_t),
             reply_markup=get_setup_keyboard(is_group=False),
             parse_mode=ParseMode.MARKDOWN
         )
@@ -433,6 +569,9 @@ async def cmd_setup(message: Message):
 @router.callback_query(F.data.startswith("set_time_grp_"))
 async def handle_group_time_callback(callback: CallbackQuery):
     user_id = callback.from_user.id
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
     member = await callback.bot.get_chat_member(callback.message.chat.id, user_id)
     if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] and user_id != SUPER_ADMIN_ID:
         await callback.answer("⛔ Bu tugmani faqat guruh admini bosishi mumkin!", show_alert=True)
@@ -444,28 +583,25 @@ async def handle_group_time_callback(callback: CallbackQuery):
     db_register_group(group_id, callback.message.chat.title or "5 AM Club Group")
     db_update_group_times(group_id, start_t, end_t)
 
-    await callback.answer("✅ Guruh vaqti saqlandi!", show_alert=False)
-    await callback.message.edit_text(
-        f"✅ **Guruh vaqti yangilandi!**\n\n⏰ Check-in vaqti: `{start_t}` dan `{end_t}` gacha.",
-        parse_mode=ParseMode.MARKDOWN
-    )
+    await callback.answer("✅", show_alert=False)
+    await callback.message.edit_text(t["setup_updated"].format(start=start_t, end=end_t), parse_mode=ParseMode.MARKDOWN)
 
 @router.callback_query(F.data.startswith("set_time_usr_"))
 async def handle_user_time_callback(callback: CallbackQuery):
     user_id = callback.from_user.id
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
     parts = callback.data.split("_")
     start_t, end_t = parts[3], parts[4]
     db_register_user(user_id, callback.from_user.username, callback.from_user.first_name)
     db_update_user_times(user_id, start_t, end_t)
 
-    await callback.answer("✅ Shaxsiy vaqtingiz saqlandi!", show_alert=False)
-    await callback.message.edit_text(
-        f"✅ **Shaxsiy vaqtingiz yangilandi!**\n\n⏰ Sizning check-in vaqtingiz: `{start_t}` dan `{end_t}` gacha.",
-        parse_mode=ParseMode.MARKDOWN
-    )
+    await callback.answer("✅", show_alert=False)
+    await callback.message.edit_text(t["setup_updated"].format(start=start_t, end=end_t), parse_mode=ParseMode.MARKDOWN)
 
 # --- SUPER ADMIN (OWNER PANEL) ---
-@router.message(F.text == "👑 Owner Admin Panel")
+@router.message(F.text.in_(["👑 Owner Admin Panel", "👑 Панель Владельца"]))
 @router.message(Command("admin"))
 async def cmd_admin_panel(message: Message):
     if message.from_user.id != SUPER_ADMIN_ID:
@@ -477,6 +613,7 @@ async def cmd_admin_panel(message: Message):
 
     admin_text = (
         f"👑 **KATTA ADMIN (OWNER) PANELI**\n\n"
+        f"👤 ID: `{SUPER_ADMIN_ID}`\n"
         f"📊 **Boshqaruv va Statistika:**\n"
         f"👤 Jami foydalanuvchilar: `{len(users)} ta`\n"
         f"👥 Faol guruhlar: `{len(groups)} ta`\n\n"
@@ -532,33 +669,38 @@ async def cmd_set_streak(message: Message):
     db_update_user_streak(target_id, streak_days)
     await message.reply(f"✅ User `{target_id}` ning streak kuni `{streak_days}` ga o'zgartirildi!", parse_mode=ParseMode.MARKDOWN)
 
-# --- STANDARD HANDLERS ---
-@router.message(F.text == "⚡ Solo Check-In")
+# --- CHECK-IN HANDLER ---
+@router.message(F.text.in_(["⚡ Solo Check-In", "⚡ Соло Check-In"]))
 async def handle_solo_checkin(message: Message):
     user_id = message.from_user.id
     db_register_user(user_id, message.from_user.username, message.from_user.first_name)
-    user = db_get_user(user_id)
-    start_t = user["checkin_start"] if user and "checkin_start" in user.keys() else "04:30"
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
 
     tz = pytz.timezone(TIMEZONE_STR)
     res = db_process_checkin(user_id, group_id=0, is_early=(datetime.now(tz).strftime("%H:%M") <= "05:00"))
 
     if res == "already":
-        await message.reply("⚠️ You already checked in today! See you tomorrow! 🌅")
+        await message.reply(t["already_checked_in"])
     elif res:
-        quip = await fetch_dynamic_quip(res["streak"], message.from_user.first_name)
-        await message.reply(
-            f"⚡ **SOLO CHECK-IN SUCCESSFUL!**\n\n"
-            f"{quip}\n\n"
-            f"🔥 Streak: `{res['streak']} days` | 🪙 Coins: `+{res['coins_earned']}` (Total: `{res['coins']}`)\n"
-            f"🏅 Rank: {get_user_rank(res['streak'])}",
-            parse_mode=ParseMode.MARKDOWN
+        quip = await fetch_dynamic_quip(res["streak"], message.from_user.first_name, lang=lang)
+        rank = get_user_rank(res["streak"], lang=lang)
+        msg_text = t["checkin_success"].format(
+            quip=quip,
+            streak=res["streak"],
+            coins_earned=res["coins_earned"],
+            coins=res["coins"],
+            rank=rank
         )
+        await message.reply(msg_text, parse_mode=ParseMode.MARKDOWN)
 
 @router.callback_query(F.data == "do_checkin")
 async def handle_callback_checkin(callback: CallbackQuery):
     user = callback.from_user
     db_register_user(user.id, user.username, user.first_name)
+    lang = get_user_language(user.id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
     group_id = callback.message.chat.id if callback.message.chat else 0
     if group_id != 0:
         db_link_group_member(group_id, user.id)
@@ -567,73 +709,85 @@ async def handle_callback_checkin(callback: CallbackQuery):
     res = db_process_checkin(user.id, group_id=group_id, is_early=(datetime.now(tz).strftime("%H:%M") <= "05:00"))
 
     if res == "already":
-        await callback.answer("⚠️ You already checked in today!", show_alert=True)
+        await callback.answer(t["already_checked_in"], show_alert=True)
     elif res:
-        await callback.answer("✅ Morning Check-In Completed!", show_alert=False)
+        await callback.answer("✅", show_alert=False)
         try:
             chosen_emoji = random.choice(["🔥", "⚡", "🦅", "🏆", "🎉", "💪", "👍"])
             await callback.message.react(reaction=[ReactionTypeEmoji(emoji=chosen_emoji)])
         except Exception as e:
             logging.error(f"Failed to react: {e}")
 
-        quip = await fetch_dynamic_quip(res["streak"], user.first_name)
-        announcement = (
-            f"⚡ **CHECK-IN CONFIRMED**\n\n"
-            f"{quip}\n\n"
-            f"⏰ Time: `{res['checkin_time']}` | 🔥 Streak: `{res['streak']} days`\n"
-            f"🪙 Coins: `+{res['coins_earned']}` | 🏅 Rank: {get_user_rank(res['streak'])}"
+        quip = await fetch_dynamic_quip(res["streak"], user.first_name, lang=lang)
+        rank = get_user_rank(res["streak"], lang=lang)
+        msg_text = t["checkin_success"].format(
+            quip=quip,
+            streak=res["streak"],
+            coins_earned=res["coins_earned"],
+            coins=res["coins"],
+            rank=rank
         )
-        await callback.message.answer(announcement, parse_mode=ParseMode.MARKDOWN)
+        await callback.message.answer(msg_text, parse_mode=ParseMode.MARKDOWN)
 
-@router.message(F.text == "📊 My Profile")
+# --- PROFILE HANDLER ---
+@router.message(F.text.in_(["📊 Profilim", "📊 Мой Профиль", "📊 My Profile"]))
 async def handle_my_profile(message: Message):
-    user = db_get_user(message.from_user.id)
+    user_id = message.from_user.id
+    user = db_get_user(user_id)
     if not user:
-        db_register_user(message.from_user.id, message.from_user.username, message.from_user.first_name)
-        user = db_get_user(message.from_user.id)
+        db_register_user(user_id, message.from_user.username, message.from_user.first_name)
+        user = db_get_user(user_id)
+
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
 
     streak = user["streak"]
     coins = user["coins"]
-    rank = get_user_rank(streak)
-    progress_bar = generate_progress_bar(streak)
+    rank = get_user_rank(streak, lang=lang)
+    progress_bar = generate_progress_bar(streak, lang=lang)
+    lang_names = {"uz": "🇺🇿 O'zbekcha", "ru": "🇷🇺 Русский", "en": "🇬🇧 English"}
 
-    await message.answer(
-        f"👤 **MEMBER PROFILE**\n\n"
-        f"🏷 Name: {user['first_name']}\n"
-        f"🔥 Streak: `{streak} Days`\n"
-        f"🪙 Coins: `{coins}`\n"
-        f"🏅 Rank: {rank}\n\n"
-        f"📈 **RANK PROGRESSION:**\n"
-        f"{progress_bar}",
-        parse_mode=ParseMode.MARKDOWN
+    profile_text = t["profile_title"].format(
+        name=user['first_name'],
+        streak=streak,
+        coins=coins,
+        rank=rank,
+        lang_str=lang_names.get(lang, "🇺🇿 O'zbekcha"),
+        progress_bar=progress_bar
     )
+    await message.answer(profile_text, parse_mode=ParseMode.MARKDOWN)
 
-@router.message(F.text == "🏆 Leaderboard")
+# --- LEADERBOARD HANDLER ---
+@router.message(F.text.in_(["🏆 Reyting", "🏆 Рейтинг", "🏆 Leaderboard"]))
 async def handle_leaderboard(message: Message):
+    lang = get_user_language(message.from_user.id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
     lb = db_get_global_leaderboard(10)
     if not lb:
-        await message.answer("🏆 Leaderboard is currently empty.")
+        await message.answer(t["leaderboard_empty"])
         return
-    text = "🏆 **THE 5 AM CLUB LEADERBOARD** 🏆\n\n"
+
+    text = t["leaderboard_title"]
     for idx, row in enumerate(lb, 1):
-        text += f"`#{idx}` **{row['first_name']}** — `{row['streak']}d` | `{row['coins']} coins`\n"
+        r_title = get_user_rank(row['streak'], lang=lang)
+        text += f"`#{idx}` **{row['first_name']}** — `{row['streak']}d` | `{row['coins']} coins` | {r_title}\n"
     await message.answer(text, parse_mode=ParseMode.MARKDOWN)
 
-@router.message(F.text == "💡 Daily Quote")
+# --- DAILY QUOTE HANDLER ---
+@router.message(F.text.in_(["💡 Kun Iqtibosi", "💡 Цитата Дня", "💡 Daily Quote"]))
 async def handle_quote(message: Message):
+    lang = get_user_language(message.from_user.id)
+    t = TEXTS.get(lang, TEXTS["uz"])
     quote = await fetch_motivational_quote()
-    await message.answer(f"💡 **DAILY MORNING WISDOM**\n\n{quote}", parse_mode=ParseMode.MARKDOWN)
+    await message.answer(t["quote_title"].format(quote=quote), parse_mode=ParseMode.MARKDOWN)
 
-@router.message(F.text == "⚙️ Help & Rules")
+# --- HELP HANDLER ---
+@router.message(F.text.in_(["📖 Qoidalar", "📖 Правила", "📖 Help & Rules"]))
 async def handle_help(message: Message):
-    help_text = (
-        "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n"
-        "1. **Morning Check-In**: Customize your check-in window via **⚙️ Time Setup**.\n"
-        "2. **Early Bird Bonus**: Check in early to earn more coins.\n"
-        "3. **Consistency**: Missing a check-in resets your streak to `0`.\n"
-        "4. **Graveyard of Sleepers**: Daily report exposes awake vs sleepers."
-    )
-    await message.answer(help_text, parse_mode=ParseMode.MARKDOWN)
+    lang = get_user_language(message.from_user.id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+    await message.answer(t["help_text"], parse_mode=ParseMode.MARKDOWN)
 
 @router.message(F.chat.type.in_([ChatType.GROUP, ChatType.SUPERGROUP]))
 async def handle_group_auto_capture(message: Message):
@@ -669,7 +823,7 @@ async def scheduler_loop(bot: Bot):
                         "🌅 **THE 5 AM CLUB: CHECK-IN IS OPEN!**\n\n"
                         f"⏰ Window: `{s_t}` — `{e_t}`\n"
                         "⚡ Tap the button below to prove you're awake!",
-                        reply_markup=get_checkin_inline_keyboard(), parse_mode=ParseMode.MARKDOWN
+                        reply_markup=get_checkin_inline_keyboard("uz"), parse_mode=ParseMode.MARKDOWN
                     )
 
                 if hhmm == e_t and sent_end.get(f"{gid}_{today_str}") != True:
@@ -710,11 +864,12 @@ async def start_dummy_web_server():
 # ==================== MAIN ENTRY POINT ====================
 async def set_bot_commands(bot: Bot):
     commands = [
-        BotCommand(command="setup", description="⚙️ Vaqt sozlamalari (Guruh va Lichka uchun)"),
-        BotCommand(command="myprofile", description="📊 Profil va statistika"),
-        BotCommand(command="leaderboard", description="🏆 Reyting jadvali"),
-        BotCommand(command="admin", description="👑 Owner Admin Paneli"),
-        BotCommand(command="help", description="📖 Qoidalar va yordam"),
+        BotCommand(command="setup", description="⚙️ Vaqt sozlamalari / Time Setup"),
+        BotCommand(command="lang", description="🌐 Tilni o'zgartirish / Change language"),
+        BotCommand(command="myprofile", description="📊 Profil / Profile"),
+        BotCommand(command="leaderboard", description="🏆 Reyting / Leaderboard"),
+        BotCommand(command="admin", description="👑 Owner Admin Panel"),
+        BotCommand(command="help", description="📖 Qoidalar / Rules"),
     ]
     try:
         await bot.set_my_commands(commands)
