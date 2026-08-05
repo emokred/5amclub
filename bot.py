@@ -46,7 +46,7 @@ PHOTO_MISSIONS = {
         "⏰ **Topshiriq:** Budilnik ko'rsatayotgan soat yoki xonangiz soatini rasmga oling!",
         "🍎 **Topshiriq:** Tonggi foydali nonushtangiz yoki meva rasmini yuboring!",
         "📝 **Topshiriq:** Bugungi rejalaringiz yozilgan qog'oz rasmini oling!",
-        "🌳 **Topshiriq:** Ko'chaga chiqib, toza havodagi darax yoki tabiat rasmini yuboring!"
+        "🌳 **Topshiriq:** Ko'chaga chiqib, toza havodagi daraxt yoki tabiat rasmini yuboring!"
     ],
     "ru": [
         "☕ **Задание:** Сделайте фото вашего утреннего кофе или чая!",
@@ -94,13 +94,13 @@ TEXTS = {
         "checkin_btn_inline": "⚡ CHECK-IN QILISH (MEN UYG'ONDIM)",
         "already_checked_in": "⚠️ Siz bugun allaqachon check-in qildingiz! Ertagacha! 🌅",
         "checkin_success": "⚡ **CHECK-IN MUVAFFAQIYATLI!**\n\n{quip}\n\n🔥 Streak: `{streak} kun` | 🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🏅 Unvon: {rank}",
-        "photo_mission_prompt": "📸 **KUNLIK FOTO TOPSHIRIQ:**\n\n{mission}\n\n📌 **Shart:** Soat 04:30 — 06:00 oralig'ida rasm yuboring! Bot rasmingizga rasmiy **VERIFIED STAMP** muhrini bosib, sizga **+25 tanga** beradi! 🚀",
-        "photo_success": "📸 **FOTO CHECK-IN VERIFIED! (+25 COIN)**\n\n{quip}\n\n🔥 Streak: `{streak} kun` | 🪙 Tangalar: `+25` (Jami: `{coins}`)\n🏅 Unvon: {rank}\n\n✨ *Yuqoridagi muhrlangan rasmni Instagram yoki Telegram Story'ingizga joylashingiz mumkin!*",
+        "photo_mission_prompt": "📸 **KUNLIK FOTO TOPSHIRIQ:**\n\n{mission}\n\n📌 **Shart:** Soat 04:30 — 06:00 oralig'ida rasm yuboring! Bot rasmingizga rasmiy **VERIFIED STAMP** muhrini bosib, sizga **+{photo_coins} tanga** beradi! 🚀",
+        "photo_success": "📸 **FOTO CHECK-IN VERIFIED! (+{coins_earned} COIN)**\n\n{quip}\n\n🔥 Streak: `{streak} kun` | 🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🏅 Unvon: {rank}\n\n✨ *Yuqoridagi muhrlangan rasmni Instagram yoki Telegram Story'ingizga joylashingiz mumkin!*",
         "profile_title": "👤 **FOYDALANUVCHI PROFILI**\n\n🏷 Ism: {name}\n🔥 Streak: `{streak} Kun`\n🪙 Tangalar: `{coins}`\n📸 Foto Check-Inlar: `{photo_count} ta`\n🏅 Unvon: {rank}\n🌐 Til: `{lang_str}`\n\n📈 **UNVON DARAJTASI:**\n{progress_bar}",
         "leaderboard_title": "🏆 **THE 5 AM CLUB REYTING JADVALI** 🏆\n\n",
         "leaderboard_empty": "🏆 Reyting jadvali hozircha bo'sh.",
         "quote_title": "💡 **KUN HIKMATI**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — QOIDALAR**\n\n1. **Ertalabki Check-In**: Uyg'onish vaqtingizni **⚙️ Vaqtni Sozlash** orqali moslashtiring.\n2. **📸 Foto Check-In**: Rasm yuborsangiz +25 tanga va rasmiy VERIFIED muhr beriladi.\n3. **Intizom**: Bir kun o'tkazib yuborsangiz `Streak` 0 ga tushadi.",
+        "help_text": "📖 **THE 5 AM CLUB — QOIDALAR**\n\n1. **Ertalabki Check-In**: Uyg'onish vaqtingizni **⚙️ Vaqtni Sozlash** orqali moslashtiring.\n2. **📸 Foto Check-In**: Rasm yuborsangiz tangalar va rasmiy VERIFIED muhr beriladi.\n3. **Intizom**: Bir kun o'tkazib yuborsangiz `Streak` 0 ga tushadi.",
         "lang_select": "🌐 **Iltimos, o'zingizga ma'qul tilni tanlang:**",
         "lang_updated": "✅ **Botingiz tili O'zbek tiliga o'zgartirildi!**",
         "setup_user": "⚙️ **SHAXSIY VAQT SOZLAMALARI:**\n\nHozirgi vaqt oralig'ingiz: `{start}` — `{end}`\n\nCheck-in vaqtingizni tanlang:",
@@ -121,13 +121,13 @@ TEXTS = {
         "checkin_btn_inline": "⚡ СДЕЛАТЬ CHECK-IN (Я ПРОСНУЛСЯ)",
         "already_checked_in": "⚠️ Вы уже отметились сегодня! До завтра! 🌅",
         "checkin_success": "⚡ **CHECK-IN УСПЕШЕН!**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` | 🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🏅 Ранг: {rank}",
-        "photo_mission_prompt": "📸 **ЕЖЕДНЕВНОЕ ФОТО-ЗАДАНИЕ:**\n\n{mission}\n\n📌 **Условие:** Отправьте фото во время вашего окна check-in! Бот поставит официальную печать **VERIFIED STAMP** и начислит **+25 монет**! 🚀",
-        "photo_success": "📸 **ФОТО CHECK-IN ПОДТВЕРЖДЕН! (+25 МОНЕТ)**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` | 🪙 Монеты: `+25` (Всего: `{coins}`)\n🏅 Ранг: {rank}\n\n✨ *Вы можете выложить фото с печатью в свои Instagram или Telegram Сторис!*",
+        "photo_mission_prompt": "📸 **ЕЖЕДНЕВНОЕ ФОТО-ЗАДАНИЕ:**\n\n{mission}\n\n📌 **Условие:** Отправьте фото во время вашего окна check-in! Бот поставит официальную печать **VERIFIED STAMP** и начислит **+{photo_coins} монет**! 🚀",
+        "photo_success": "📸 **ФОТО CHECK-IN ПОДТВЕРЖДЕН! (+{coins_earned} МОНЕТ)**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` | 🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🏅 Ранг: {rank}\n\n✨ *Вы можете выложить фото с печатью в свои Instagram или Telegram Сторис!*",
         "profile_title": "👤 **ПРОФИЛЬ УЧАСТНИКА**\n\n🏷 Имя: {name}\n🔥 Стрик: `{streak} Дней`\n🪙 Монеты: `{coins}`\n📸 Фото Check-In: `{photo_count} раз`\n🏅 Ранг: {rank}\n🌐 Язык: `{lang_str}`\n\n📈 **ПРОГРЕСС РАНГА:**\n{progress_bar}",
         "leaderboard_title": "🏆 **ТАБЛИЦА ЛИДЕРОВ THE 5 AM CLUB** 🏆\n\n",
         "leaderboard_empty": "🏆 Таблица лидеров пока пуста.",
         "quote_title": "💡 **МУДРОСТЬ ДНЯ**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — ПРАВИЛА**\n\n1. **Утренний Check-In**: Настройте время под себя в **⚙️ Настройка Времени**.\n2. **📸 Фото Check-In**: Отправка фото дает +25 монет и официальную печать VERIFIED.\n3. **Дисциплина**: Пропуск дня сбрасывает Стрик до 0.",
+        "help_text": "📖 **THE 5 AM CLUB — ПРАВИЛА**\n\n1. **Утренний Check-In**: Настройте время под себя в **⚙️ Настройка Времени**.\n2. **📸 Фото Check-In**: Отправка фото дает больше монет и официальную печать VERIFIED.\n3. **Дисциплина**: Пропуск дня сбрасывает Стрик до 0.",
         "lang_select": "🌐 **Пожалуйста, выберите удобный язык:**",
         "lang_updated": "✅ **Язык бота изменен на Русский!**",
         "setup_user": "⚙️ **ЛИЧНЫЕ НАСТРОЙКИ ВРЕМЕНИ:**\n\nТекущее окно: `{start}` — `{end}`\n\nВыберите удобное время check-in:",
@@ -148,13 +148,13 @@ TEXTS = {
         "checkin_btn_inline": "⚡ CHECK-IN NOW (I'M AWAKE)",
         "already_checked_in": "⚠️ You already checked in today! See you tomorrow! 🌅",
         "checkin_success": "⚡ **CHECK-IN SUCCESSFUL!**\n\n{quip}\n\n🔥 Streak: `{streak} days` | 🪙 Coins: `+{coins_earned}` (Total: `{coins}`)\n🏅 Rank: {rank}",
-        "photo_mission_prompt": "📸 **DAILY PHOTO MISSION:**\n\n{mission}\n\n📌 **Condition:** Send a photo during your check-in window! The bot will apply an official **VERIFIED STAMP** and award **+25 coins**! 🚀",
-        "photo_success": "📸 **PHOTO CHECK-IN VERIFIED! (+25 COINS)**\n\n{quip}\n\n🔥 Streak: `{streak} days` | 🪙 Coins: `+25` (Total: `{coins}`)\n🏅 Rank: {rank}\n\n✨ *Feel free to share your stamped photo on Instagram or Telegram Stories!*",
+        "photo_mission_prompt": "📸 **DAILY PHOTO MISSION:**\n\n{mission}\n\n📌 **Condition:** Send a photo during your check-in window! The bot will apply an official **VERIFIED STAMP** and award **+{photo_coins} coins**! 🚀",
+        "photo_success": "📸 **PHOTO CHECK-IN VERIFIED! (+{coins_earned} COINS)**\n\n{quip}\n\n🔥 Streak: `{streak} days` | 🪙 Coins: `+{coins_earned}` (Total: `{coins}`)\n🏅 Rank: {rank}\n\n✨ *Feel free to share your stamped photo on Instagram or Telegram Stories!*",
         "profile_title": "👤 **MEMBER PROFILE**\n\n🏷 Name: {name}\n🔥 Streak: `{streak} Days`\n🪙 Coins: `{coins}`\n📸 Photo Check-Ins: `{photo_count}`\n🏅 Rank: {rank}\n🌐 Language: `{lang_str}`\n\n📈 **RANK PROGRESSION:**\n{progress_bar}",
         "leaderboard_title": "🏆 **THE 5 AM CLUB LEADERBOARD** 🏆\n\n",
         "leaderboard_empty": "🏆 Leaderboard is currently empty.",
         "quote_title": "💡 **DAILY MORNING WISDOM**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n1. **Morning Check-In**: Customize your check-in window via **⚙️ Time Setup**.\n2. **📸 Photo Check-In**: Submitting a photo awards +25 coins and an official VERIFIED stamp.\n3. **Consistency**: Missing a check-in resets your streak to `0`.",
+        "help_text": "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n1. **Morning Check-In**: Customize your check-in window via **⚙️ Time Setup**.\n2. **📸 Photo Check-In**: Submitting a photo awards extra coins and an official VERIFIED stamp.\n3. **Consistency**: Missing a check-in resets your streak to `0`.",
         "lang_select": "🌐 **Please select your preferred language:**",
         "lang_updated": "✅ **Bot language updated to English!**",
         "setup_user": "⚙️ **PERSONAL TIME SETUP:**\n\nCurrent Window: `{start}` — `{end}`\n\nSelect your preferred check-in window:",
@@ -221,17 +221,14 @@ def stamp_photo_with_watermark(image_bytes: bytes, name: str, streak: int, rank:
         img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
         width, height = img.size
 
-        draw = ImageDraw.Draw(img)
         banner_height = int(height * 0.12)
         if banner_height < 60:
             banner_height = 60
 
-        # Draw semi-transparent dark banner at bottom
         banner = Image.new("RGBA", (width, banner_height), (15, 23, 42, 220))
         img.paste(banner, (0, height - banner_height), banner)
 
         draw = ImageDraw.Draw(img)
-
         tz = pytz.timezone(TIMEZONE_STR)
         time_str = datetime.now(tz).strftime("%Y-%m-%d %I:%M:%S %p")
 
@@ -274,7 +271,7 @@ def init_sqlite_db():
         )
     """)
 
-    # Migration checks
+    # Migration checks for users
     cursor.execute("PRAGMA table_info(users)")
     columns = [col[1] for col in cursor.fetchall()]
     if "lang" not in columns:
@@ -288,10 +285,21 @@ def init_sqlite_db():
             title TEXT,
             checkin_start TEXT DEFAULT '04:30',
             checkin_end TEXT DEFAULT '06:00',
+            normal_coins INTEGER DEFAULT 10,
+            photo_coins INTEGER DEFAULT 25,
             timezone TEXT DEFAULT 'Asia/Tashkent',
             is_active INTEGER DEFAULT 1
         )
     """)
+
+    # Migration checks for groups
+    cursor.execute("PRAGMA table_info(groups)")
+    g_columns = [col[1] for col in cursor.fetchall()]
+    if "normal_coins" not in g_columns:
+        cursor.execute("ALTER TABLE groups ADD COLUMN normal_coins INTEGER DEFAULT 10")
+    if "photo_coins" not in g_columns:
+        cursor.execute("ALTER TABLE groups ADD COLUMN photo_coins INTEGER DEFAULT 25")
+
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS group_members (
             group_id INTEGER,
@@ -360,6 +368,15 @@ def db_get_user(user_id: int):
     conn.close()
     return row
 
+def db_get_group(group_id: int):
+    conn = sqlite3.connect(DB_NAME)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM groups WHERE group_id = ?", (group_id,))
+    row = cursor.fetchone()
+    conn.close()
+    return row
+
 def db_get_all_users():
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
@@ -396,6 +413,13 @@ def db_update_group_times(group_id: int, start_time: str, end_time: str):
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
     cursor.execute("UPDATE groups SET checkin_start = ?, checkin_end = ? WHERE group_id = ?", (start_time, end_time, group_id))
+    conn.commit()
+    conn.close()
+
+def db_update_group_coins(group_id: int, normal_coins: int, photo_coins: int):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("UPDATE groups SET normal_coins = ?, photo_coins = ? WHERE group_id = ?", (normal_coins, photo_coins, group_id))
     conn.commit()
     conn.close()
 
@@ -443,7 +467,16 @@ def db_process_checkin(user_id: int, group_id: int = 0, is_photo: bool = False):
     else:
         new_streak = 1
 
-    coins_earned = 25 if is_photo else 10
+    # Determine coin reward (Group custom vs Default)
+    normal_reward, photo_reward = 10, 25
+    if group_id != 0:
+        cursor.execute("SELECT normal_coins, photo_coins FROM groups WHERE group_id = ?", (group_id,))
+        g_row = cursor.fetchone()
+        if g_row:
+            normal_reward = g_row["normal_coins"] if g_row["normal_coins"] else 10
+            photo_reward = g_row["photo_coins"] if g_row["photo_coins"] else 25
+
+    coins_earned = photo_reward if is_photo else normal_reward
     new_coins = user["coins"] + coins_earned
     new_photo_count = user["photo_count"] + (1 if is_photo else 0)
 
@@ -619,6 +652,88 @@ async def cmd_start(message: Message):
         welcome_text = t["welcome"].format(name=user.first_name)
         await message.answer(welcome_text, reply_markup=get_main_reply_keyboard(user.id), parse_mode=ParseMode.MARKDOWN)
 
+# --- GROUP ADMIN CONFIGURATION COMMANDS ---
+@router.message(Command("setcoins"))
+async def cmd_group_set_coins(message: Message):
+    if message.chat.type not in [ChatType.GROUP, ChatType.SUPERGROUP]:
+        await message.reply("❌ Bu buyruq faqat guruhlar uchun.")
+        return
+
+    member = await message.bot.get_chat_member(message.chat.id, message.from_user.id)
+    if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] and message.from_user.id != SUPER_ADMIN_ID:
+        await message.reply("⛔ Bu buyruq faqat guruh adminlari uchun!")
+        return
+
+    args = message.text.split()
+    if len(args) != 3:
+        await message.reply("ℹ️ **Foydalanish:** `/setcoins <oddiy_tanga> <foto_tanga>`\n*Misol:* `/setcoins 15 30`", parse_mode=ParseMode.MARKDOWN)
+        return
+
+    normal_c, photo_c = int(args[1]), int(args[2])
+    db_register_group(message.chat.id, message.chat.title)
+    db_update_group_coins(message.chat.id, normal_c, photo_c)
+
+    await message.reply(
+        f"✅ **Guruh Tangalari Sozlandi!**\n\n"
+        f"⚡ Oddiy check-in: `+{normal_c} tanga`\n"
+        f"📸 Foto check-in: `+{photo_c} tanga`",
+        parse_mode=ParseMode.MARKDOWN
+    )
+
+@router.message(Command("settime"))
+async def cmd_group_set_time(message: Message):
+    if message.chat.type not in [ChatType.GROUP, ChatType.SUPERGROUP]:
+        await message.reply("❌ Bu buyruq faqat guruhlar uchun.")
+        return
+
+    member = await message.bot.get_chat_member(message.chat.id, message.from_user.id)
+    if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] and message.from_user.id != SUPER_ADMIN_ID:
+        await message.reply("⛔ Bu buyruq faqat guruh adminlari uchun!")
+        return
+
+    args = message.text.split()
+    if len(args) != 3:
+        await message.reply("ℹ️ **Foydalanish:** `/settime <boshlanish> <tugash>`\n*Misol:* `/settime 04:30 06:30`", parse_mode=ParseMode.MARKDOWN)
+        return
+
+    start_t, end_t = args[1], args[2]
+    db_register_group(message.chat.id, message.chat.title)
+    db_update_group_times(message.chat.id, start_t, end_t)
+
+    await message.reply(
+        f"✅ **Guruh Check-In Vaqti Sozlandi!**\n\n"
+        f"⏰ Vaqt oralig'i: `{start_t}` — `{end_t}`",
+        parse_mode=ParseMode.MARKDOWN
+    )
+
+@router.message(Command("gconfig"))
+async def cmd_group_config(message: Message):
+    if message.chat.type not in [ChatType.GROUP, ChatType.SUPERGROUP]:
+        await message.reply("❌ Bu buyruq faqat guruhlar uchun.")
+        return
+
+    g = db_get_group(message.chat.id)
+    if not g:
+        db_register_group(message.chat.id, message.chat.title)
+        g = db_get_group(message.chat.id)
+
+    s_t = g["checkin_start"] if "checkin_start" in g.keys() else "04:30"
+    e_t = g["checkin_end"] if "checkin_end" in g.keys() else "06:00"
+    n_c = g["normal_coins"] if "normal_coins" in g.keys() else 10
+    p_c = g["photo_coins"] if "photo_coins" in g.keys() else 25
+
+    msg = (
+        f"⚙️ **GURUH SOZLAMALARI:**\n\n"
+        f"👥 Guruh: **{g['title']}**\n"
+        f"⏰ Check-In Vaqti: `{s_t}` — `{e_t}`\n"
+        f"⚡ Oddiy Check-In: `+{n_c} tanga`\n"
+        f"📸 Foto Check-In: `+{p_c} tanga`\n\n"
+        f"🛠 **Admin Buyruqlari:**\n"
+        f"• `/settime 04:30 06:30` — Vaqtni ozgartirish\n"
+        f"• `/setcoins 15 30` — Tangalarni ozgartirish"
+    )
+    await message.reply(msg, parse_mode=ParseMode.MARKDOWN)
+
 # --- PHOTO CHECK-IN PROMPT ---
 @router.message(F.text.in_(["📸 Foto Check-In (+25 Coin)", "📸 Фото Check-In (+25 Монет)", "📸 Photo Check-In (+25 Coins)"]))
 async def handle_photo_checkin_btn(message: Message):
@@ -627,7 +742,7 @@ async def handle_photo_checkin_btn(message: Message):
     t = TEXTS.get(lang, TEXTS["uz"])
     mission = get_random_photo_mission(lang)
 
-    prompt = t["photo_mission_prompt"].format(mission=mission)
+    prompt = t["photo_mission_prompt"].format(mission=mission, photo_coins=25)
     await message.answer(prompt, parse_mode=ParseMode.MARKDOWN)
 
 # --- PHOTO SUBMISSION HANDLER ---
@@ -648,7 +763,7 @@ async def handle_user_photo(message: Message):
         await message.reply(t["already_checked_in"])
         return
 
-    # Download largest photo resolution
+    # Download photo
     photo_file = message.photo[-1]
     file_info = await message.bot.get_file(photo_file.file_id)
     photo_bytes_io = await message.bot.download_file(file_info.file_path)
@@ -664,6 +779,7 @@ async def handle_user_photo(message: Message):
     caption_text = t["photo_success"].format(
         quip=quip,
         streak=res["streak"],
+        coins_earned=res["coins_earned"],
         coins=res["coins"],
         rank=rank
     )
@@ -1022,7 +1138,10 @@ async def start_dummy_web_server():
 async def set_bot_commands(bot: Bot):
     commands = [
         BotCommand(command="setup", description="⚙️ Vaqt sozlamalari / Time Setup"),
-        BotCommand(command="lang", description="🌐 Tilni o'zgartirish / Change language"),
+        BotCommand(command="settime", description="⏰ Guruh vaqtini ozgartirish (Admin)"),
+        BotCommand(command="setcoins", description="🪙 Guruh tangalarini ozgartirish (Admin)"),
+        BotCommand(command="gconfig", description="📋 Guruh sozlamalarini korish"),
+        BotCommand(command="lang", description="🌐 Tilni ozgartirish / Change language"),
         BotCommand(command="myprofile", description="📊 Profil / Profile"),
         BotCommand(command="leaderboard", description="🏆 Reyting / Leaderboard"),
         BotCommand(command="admin", description="👑 Owner Admin Panel"),
