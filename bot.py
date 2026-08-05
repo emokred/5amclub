@@ -7,6 +7,9 @@ from datetime import datetime, timedelta
 import pytz
 import aiohttp
 from aiohttp import web
+from PIL import Image, ImageDraw, ImageFont
+import io
+
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.filters import Command, CommandStart
 from aiogram.types import (
@@ -16,7 +19,8 @@ from aiogram.types import (
     InlineKeyboardButton,
     ReplyKeyboardMarkup,
     KeyboardButton,
-    BotCommand
+    BotCommand,
+    BufferedInputFile
 )
 from aiogram.enums import ParseMode, ChatType, ChatMemberStatus
 from aiogram.types.reaction_type_emoji import ReactionTypeEmoji
@@ -24,17 +28,62 @@ from aiogram.types.reaction_type_emoji import ReactionTypeEmoji
 # ==================== CONFIGURATION ====================
 BOT_TOKEN = os.getenv("BOT_TOKEN", "8843755987:AAF4gGBSVa1SKr8oxq26kX__C3b8WSkTFz4")
 DEFAULT_GROUP_ID = int(os.getenv("GROUP_CHAT_ID", "-1004349705982"))
-SUPER_ADMIN_ID = int(os.getenv("SUPER_ADMIN_ID", "6377617416")) # Owner Telegram ID
+SUPER_ADMIN_ID = int(os.getenv("SUPER_ADMIN_ID", "6377617416"))
 TIMEZONE_STR = "Asia/Tashkent"
 DB_NAME = "5amclub.db"
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
+# ==================== INFINITE RANDOM PHOTO MISSIONS ====================
+PHOTO_MISSIONS = {
+    "uz": [
+        "☕ **Topshiriq:** Bugungi tonggi kofe yoki choyingiz rasmini yuboring!",
+        "🌅 **Topshiriq:** Derazangizdan tonggi osmon yoki quyosh nuri rasmini oling!",
+        "💧 **Topshiriq:** Yuzingizni yuvib, bir stakan toza suv rasmini yuboring!",
+        "📖 **Topshiriq:** Bugun o'qiydigan kitobingiz yoki daftaringiz rasmini oling!",
+        "👟 **Topshiriq:** Tonggi badantarbiya yoki krossovkalaringiz rasmini yuboring!",
+        "💻 **Topshiriq:** Bugungi ish stolingiz yoki noutbukingiz rasmini oling!",
+        "⏰ **Topshiriq:** Budilnik ko'rsatayotgan soat yoki xonangiz soatini rasmga oling!",
+        "🍎 **Topshiriq:** Tonggi foydali nonushtangiz yoki meva rasmini yuboring!",
+        "📝 **Topshiriq:** Bugungi rejalaringiz yozilgan qog'oz rasmini oling!",
+        "🌳 **Topshiriq:** Ko'chaga chiqib, toza havodagi darax yoki tabiat rasmini yuboring!"
+    ],
+    "ru": [
+        "☕ **Задание:** Сделайте фото вашего утреннего кофе или чая!",
+        "🌅 **Задание:** Сфотографируйте утреннее небо или рассвет из окна!",
+        "💧 **Задание:** Умойтесь и сфотографируйте стакан свежей воды!",
+        "📖 **Задание:** Сделайте фото книги или блокнота на сегодня!",
+        "👟 **Задание:** Сфотографируйте кроссовки или место для утренней зарядки!",
+        "💻 **Задание:** Сделайте фото вашего рабочего стола или ноутбука!",
+        "⏰ **Задание:** Сфотографируйте часы с временем вашего подъема!",
+        "🍎 **Задание:** Отправьте фото вашего полезного утреннего завтрака!",
+        "📝 **Задание:** Сфотографируйте список ваших задач на сегодня!",
+        "🌳 **Задание:** Выйдите на свежий воздух и сфотографируйте природу!"
+    ],
+    "en": [
+        "☕ **Mission:** Send a photo of your morning coffee or tea!",
+        "🌅 **Mission:** Snap a photo of the morning sky or sunrise from your window!",
+        "💧 **Mission:** Wash your face and send a photo of a glass of fresh water!",
+        "📖 **Mission:** Take a photo of the book or notebook you are reading today!",
+        "👟 **Mission:** Send a photo of your sneakers or morning workout spot!",
+        "💻 **Mission:** Take a photo of your organized morning workspace!",
+        "⏰ **Mission:** Snap a photo of the alarm clock showing your wake-up time!",
+        "🍎 **Mission:** Send a photo of your healthy morning breakfast!",
+        "📝 **Mission:** Take a photo of your handwritten to-do list for today!",
+        "🌳 **Mission:** Step outside and send a photo of fresh morning nature!"
+    ]
+}
+
+def get_random_photo_mission(lang: str = "uz") -> str:
+    missions = PHOTO_MISSIONS.get(lang, PHOTO_MISSIONS["uz"])
+    return random.choice(missions)
+
 # ==================== MULTI-LANGUAGE DICTIONARY ====================
 TEXTS = {
     "uz": {
-        "welcome": "👋 **"The 5 AM Club" botiga xush kelibsiz, {name}!**\n\n“Ertalabki vaqtingizga egalik qiling. Hayotingizni yuksaltiring.”\n\n⚙️ Sozlamalar va menyulardan foydalanish uchun quyidagi tugmalarni bosing:",
+        "welcome": '👋 **"The 5 AM Club" botiga xush kelibsiz, {name}!**\n\n“Ertalabki vaqtingizga egalik qiling. Hayotingizni yuksaltiring.”\n\n⚙️ Sozlamalar va menyulardan foydalanish uchun quyidagi tugmalarni bosing:',
         "btn_checkin": "⚡ Solo Check-In",
+        "btn_photo_checkin": "📸 Foto Check-In (+25 Coin)",
         "btn_profile": "📊 Profilim",
         "btn_leaderboard": "🏆 Reyting",
         "btn_quote": "💡 Kun Iqtibosi",
@@ -45,11 +94,13 @@ TEXTS = {
         "checkin_btn_inline": "⚡ CHECK-IN QILISH (MEN UYG'ONDIM)",
         "already_checked_in": "⚠️ Siz bugun allaqachon check-in qildingiz! Ertagacha! 🌅",
         "checkin_success": "⚡ **CHECK-IN MUVAFFAQIYATLI!**\n\n{quip}\n\n🔥 Streak: `{streak} kun` | 🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🏅 Unvon: {rank}",
-        "profile_title": "👤 **FOYDALANUVCHI PROFILI**\n\n🏷 Ism: {name}\n🔥 Streak: `{streak} Kun`\n🪙 Tangalar: `{coins}`\n🏅 Unvon: {rank}\n🌐 Til: `{lang_str}`\n\n📈 **UNVON DARAJTASI:**\n{progress_bar}",
+        "photo_mission_prompt": "📸 **KUNLIK FOTO TOPSHIRIQ:**\n\n{mission}\n\n📌 **Shart:** Soat 04:30 — 06:00 oralig'ida rasm yuboring! Bot rasmingizga rasmiy **VERIFIED STAMP** muhrini bosib, sizga **+25 tanga** beradi! 🚀",
+        "photo_success": "📸 **FOTO CHECK-IN VERIFIED! (+25 COIN)**\n\n{quip}\n\n🔥 Streak: `{streak} kun` | 🪙 Tangalar: `+25` (Jami: `{coins}`)\n🏅 Unvon: {rank}\n\n✨ *Yuqoridagi muhrlangan rasmni Instagram yoki Telegram Story'ingizga joylashingiz mumkin!*",
+        "profile_title": "👤 **FOYDALANUVCHI PROFILI**\n\n🏷 Ism: {name}\n🔥 Streak: `{streak} Kun`\n🪙 Tangalar: `{coins}`\n📸 Foto Check-Inlar: `{photo_count} ta`\n🏅 Unvon: {rank}\n🌐 Til: `{lang_str}`\n\n📈 **UNVON DARAJTASI:**\n{progress_bar}",
         "leaderboard_title": "🏆 **THE 5 AM CLUB REYTING JADVALI** 🏆\n\n",
         "leaderboard_empty": "🏆 Reyting jadvali hozircha bo'sh.",
         "quote_title": "💡 **KUN HIKMATI**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — QOIDALAR**\n\n1. **Ertalabki Check-In**: Uyg'onish vaqtingizni **⚙️ Vaqtni Sozlash** orqali moslashtiring.\n2. **Erta Uyg'onish Bonusi**: Vaqtliroq check-in qilsangiz ko'proq tanga olasiz.\n3. **Intizom**: Bir kun o'tkazib yuborsangiz `Streak` 0 ga tushadi.",
+        "help_text": "📖 **THE 5 AM CLUB — QOIDALAR**\n\n1. **Ertalabki Check-In**: Uyg'onish vaqtingizni **⚙️ Vaqtni Sozlash** orqali moslashtiring.\n2. **📸 Foto Check-In**: Rasm yuborsangiz +25 tanga va rasmiy VERIFIED muhr beriladi.\n3. **Intizom**: Bir kun o'tkazib yuborsangiz `Streak` 0 ga tushadi.",
         "lang_select": "🌐 **Iltimos, o'zingizga ma'qul tilni tanlang:**",
         "lang_updated": "✅ **Botingiz tili O'zbek tiliga o'zgartirildi!**",
         "setup_user": "⚙️ **SHAXSIY VAQT SOZLAMALARI:**\n\nHozirgi vaqt oralig'ingiz: `{start}` — `{end}`\n\nCheck-in vaqtingizni tanlang:",
@@ -57,8 +108,9 @@ TEXTS = {
         "setup_updated": "✅ **Check-in vaqti yangilandi:** `{start}` — `{end}`"
     },
     "ru": {
-        "welcome": "👋 **Добро пожаловать в бот "The 5 AM Club", {name}!**\n\n«Владейте своим утром. Поднимите свою жизнь.»\n\n⚙️ Используйте меню ниже для управления настройками:",
+        "welcome": '👋 **Добро пожаловать в бот "The 5 AM Club", {name}!**\n\n«Владейте своим утром. Поднимите свою жизнь.»\n\n⚙️ Используйте меню ниже для управления настройками:',
         "btn_checkin": "⚡ Соло Check-In",
+        "btn_photo_checkin": "📸 Фото Check-In (+25 Монет)",
         "btn_profile": "📊 Мой Профиль",
         "btn_leaderboard": "🏆 Рейтинг",
         "btn_quote": "💡 Цитата Дня",
@@ -69,11 +121,13 @@ TEXTS = {
         "checkin_btn_inline": "⚡ СДЕЛАТЬ CHECK-IN (Я ПРОСНУЛСЯ)",
         "already_checked_in": "⚠️ Вы уже отметились сегодня! До завтра! 🌅",
         "checkin_success": "⚡ **CHECK-IN УСПЕШЕН!**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` | 🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🏅 Ранг: {rank}",
-        "profile_title": "👤 **ПРОФИЛЬ УЧАСТНИКА**\n\n🏷 Имя: {name}\n🔥 Стрик: `{streak} Дней`\n🪙 Монеты: `{coins}`\n🏅 Ранг: {rank}\n🌐 Язык: `{lang_str}`\n\n📈 **ПРОГРЕСС РАНГА:**\n{progress_bar}",
+        "photo_mission_prompt": "📸 **ЕЖЕДНЕВНОЕ ФОТО-ЗАДАНИЕ:**\n\n{mission}\n\n📌 **Условие:** Отправьте фото во время вашего окна check-in! Бот поставит официальную печать **VERIFIED STAMP** и начислит **+25 монет**! 🚀",
+        "photo_success": "📸 **ФОТО CHECK-IN ПОДТВЕРЖДЕН! (+25 МОНЕТ)**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` | 🪙 Монеты: `+25` (Всего: `{coins}`)\n🏅 Ранг: {rank}\n\n✨ *Вы можете выложить фото с печатью в свои Instagram или Telegram Сторис!*",
+        "profile_title": "👤 **ПРОФИЛЬ УЧАСТНИКА**\n\n🏷 Имя: {name}\n🔥 Стрик: `{streak} Дней`\n🪙 Монеты: `{coins}`\n📸 Фото Check-In: `{photo_count} раз`\n🏅 Ранг: {rank}\n🌐 Язык: `{lang_str}`\n\n📈 **ПРОГРЕСС РАНГА:**\n{progress_bar}",
         "leaderboard_title": "🏆 **ТАБЛИЦА ЛИДЕРОВ THE 5 AM CLUB** 🏆\n\n",
         "leaderboard_empty": "🏆 Таблица лидеров пока пуста.",
         "quote_title": "💡 **МУДРОСТЬ ДНЯ**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — ПРАВИЛА**\n\n1. **Утренний Check-In**: Настройте время под себя в **⚙️ Настройка Времени**.\n2. **Бонус за ранний подъем**: За раннюю регистрацию дается больше монет.\n3. **Дисциплина**: Пропуск дня сбрасывает Стрик до 0.",
+        "help_text": "📖 **THE 5 AM CLUB — ПРАВИЛА**\n\n1. **Утренний Check-In**: Настройте время под себя в **⚙️ Настройка Времени**.\n2. **📸 Фото Check-In**: Отправка фото дает +25 монет и официальную печать VERIFIED.\n3. **Дисциплина**: Пропуск дня сбрасывает Стрик до 0.",
         "lang_select": "🌐 **Пожалуйста, выберите удобный язык:**",
         "lang_updated": "✅ **Язык бота изменен на Русский!**",
         "setup_user": "⚙️ **ЛИЧНЫЕ НАСТРОЙКИ ВРЕМЕНИ:**\n\nТекущее окно: `{start}` — `{end}`\n\nВыберите удобное время check-in:",
@@ -81,8 +135,9 @@ TEXTS = {
         "setup_updated": "✅ **Время check-in обновлено:** `{start}` — `{end}`"
     },
     "en": {
-        "welcome": "👋 **Welcome to The 5 AM Club, {name}!**\n\n“Own your morning. Elevate your life.”\n\n⚙️ Use the menu below to navigate settings and track your progress:",
+        "welcome": '👋 **Welcome to The 5 AM Club, {name}!**\n\n“Own your morning. Elevate your life.”\n\n⚙️ Use the menu below to navigate settings and track your progress:',
         "btn_checkin": "⚡ Solo Check-In",
+        "btn_photo_checkin": "📸 Photo Check-In (+25 Coins)",
         "btn_profile": "📊 My Profile",
         "btn_leaderboard": "🏆 Leaderboard",
         "btn_quote": "💡 Daily Quote",
@@ -93,11 +148,13 @@ TEXTS = {
         "checkin_btn_inline": "⚡ CHECK-IN NOW (I'M AWAKE)",
         "already_checked_in": "⚠️ You already checked in today! See you tomorrow! 🌅",
         "checkin_success": "⚡ **CHECK-IN SUCCESSFUL!**\n\n{quip}\n\n🔥 Streak: `{streak} days` | 🪙 Coins: `+{coins_earned}` (Total: `{coins}`)\n🏅 Rank: {rank}",
-        "profile_title": "👤 **MEMBER PROFILE**\n\n🏷 Name: {name}\n🔥 Streak: `{streak} Days`\n🪙 Coins: `{coins}`\n🏅 Rank: {rank}\n🌐 Language: `{lang_str}`\n\n📈 **RANK PROGRESSION:**\n{progress_bar}",
+        "photo_mission_prompt": "📸 **DAILY PHOTO MISSION:**\n\n{mission}\n\n📌 **Condition:** Send a photo during your check-in window! The bot will apply an official **VERIFIED STAMP** and award **+25 coins**! 🚀",
+        "photo_success": "📸 **PHOTO CHECK-IN VERIFIED! (+25 COINS)**\n\n{quip}\n\n🔥 Streak: `{streak} days` | 🪙 Coins: `+25` (Total: `{coins}`)\n🏅 Rank: {rank}\n\n✨ *Feel free to share your stamped photo on Instagram or Telegram Stories!*",
+        "profile_title": "👤 **MEMBER PROFILE**\n\n🏷 Name: {name}\n🔥 Streak: `{streak} Days`\n🪙 Coins: `{coins}`\n📸 Photo Check-Ins: `{photo_count}`\n🏅 Rank: {rank}\n🌐 Language: `{lang_str}`\n\n📈 **RANK PROGRESSION:**\n{progress_bar}",
         "leaderboard_title": "🏆 **THE 5 AM CLUB LEADERBOARD** 🏆\n\n",
         "leaderboard_empty": "🏆 Leaderboard is currently empty.",
         "quote_title": "💡 **DAILY MORNING WISDOM**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n1. **Morning Check-In**: Customize your check-in window via **⚙️ Time Setup**.\n2. **Early Bird Bonus**: Check in early to earn more coins.\n3. **Consistency**: Missing a check-in resets your streak to `0`.",
+        "help_text": "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n1. **Morning Check-In**: Customize your check-in window via **⚙️ Time Setup**.\n2. **📸 Photo Check-In**: Submitting a photo awards +25 coins and an official VERIFIED stamp.\n3. **Consistency**: Missing a check-in resets your streak to `0`.",
         "lang_select": "🌐 **Please select your preferred language:**",
         "lang_updated": "✅ **Bot language updated to English!**",
         "setup_user": "⚙️ **PERSONAL TIME SETUP:**\n\nCurrent Window: `{start}` — `{end}`\n\nSelect your preferred check-in window:",
@@ -106,7 +163,6 @@ TEXTS = {
     }
 }
 
-# Dynamic Motivational Messages per language
 DYNAMIC_QUIPS = {
     "uz": [
         "Qarang, kim erta uyg'ondi! Kofe siz bilan faxrlanadi! ☕🔥",
@@ -159,6 +215,44 @@ async def fetch_motivational_quote() -> str:
         pass
     return random.choice(fallback_quotes)
 
+# ==================== PHOTO STAMPING ENGINE ====================
+def stamp_photo_with_watermark(image_bytes: bytes, name: str, streak: int, rank: str) -> bytes:
+    try:
+        img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        width, height = img.size
+
+        draw = ImageDraw.Draw(img)
+        banner_height = int(height * 0.12)
+        if banner_height < 60:
+            banner_height = 60
+
+        # Draw semi-transparent dark banner at bottom
+        banner = Image.new("RGBA", (width, banner_height), (15, 23, 42, 220))
+        img.paste(banner, (0, height - banner_height), banner)
+
+        draw = ImageDraw.Draw(img)
+
+        tz = pytz.timezone(TIMEZONE_STR)
+        time_str = datetime.now(tz).strftime("%Y-%m-%d %I:%M:%S %p")
+
+        text1 = f"✅ VERIFIED 5 AM CLUB | {time_str}"
+        text2 = f"👤 {name} | 🔥 Streak: {streak} Days | 🏅 {rank}"
+
+        try:
+            font = ImageFont.load_default()
+        except Exception:
+            font = None
+
+        draw.text((20, height - banner_height + 10), text1, fill=(250, 204, 21), font=font)
+        draw.text((20, height - banner_height + 32), text2, fill=(255, 255, 255), font=font)
+
+        out_io = io.BytesIO()
+        img.save(out_io, format="JPEG", quality=90)
+        return out_io.getvalue()
+    except Exception as e:
+        logging.error(f"Error stamping photo: {e}")
+        return image_bytes
+
 # ==================== DATABASE ENGINE ====================
 def init_sqlite_db():
     conn = sqlite3.connect(DB_NAME)
@@ -170,6 +264,7 @@ def init_sqlite_db():
             first_name TEXT,
             streak INTEGER DEFAULT 0,
             coins INTEGER DEFAULT 0,
+            photo_count INTEGER DEFAULT 0,
             checkin_start TEXT DEFAULT '04:30',
             checkin_end TEXT DEFAULT '06:00',
             lang TEXT DEFAULT 'uz',
@@ -179,11 +274,13 @@ def init_sqlite_db():
         )
     """)
 
-    # Migration check: Ensure lang column exists if database was created earlier
+    # Migration checks
     cursor.execute("PRAGMA table_info(users)")
     columns = [col[1] for col in cursor.fetchall()]
     if "lang" not in columns:
         cursor.execute("ALTER TABLE users ADD COLUMN lang TEXT DEFAULT 'uz'")
+    if "photo_count" not in columns:
+        cursor.execute("ALTER TABLE users ADD COLUMN photo_count INTEGER DEFAULT 0")
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS groups (
@@ -316,7 +413,7 @@ def db_update_user_streak(user_id: int, new_streak: int):
     conn.commit()
     conn.close()
 
-def db_process_checkin(user_id: int, group_id: int = 0, is_early: bool = False):
+def db_process_checkin(user_id: int, group_id: int = 0, is_photo: bool = False):
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
@@ -346,14 +443,15 @@ def db_process_checkin(user_id: int, group_id: int = 0, is_early: bool = False):
     else:
         new_streak = 1
 
-    coins_earned = 15 if is_early else 10
+    coins_earned = 25 if is_photo else 10
     new_coins = user["coins"] + coins_earned
+    new_photo_count = user["photo_count"] + (1 if is_photo else 0)
 
     cursor.execute("""
         UPDATE users 
-        SET streak = ?, coins = ?, last_checkin_date = ?, status = 'awake'
+        SET streak = ?, coins = ?, photo_count = ?, last_checkin_date = ?, status = 'awake'
         WHERE user_id = ?
-    """, (new_streak, new_coins, today_str, user_id))
+    """, (new_streak, new_coins, new_photo_count, today_str, user_id))
 
     if group_id != 0:
         cursor.execute("""
@@ -376,6 +474,7 @@ def db_process_checkin(user_id: int, group_id: int = 0, is_early: bool = False):
     return {
         "streak": new_streak,
         "coins": new_coins,
+        "photo_count": new_photo_count,
         "coins_earned": coins_earned,
         "checkin_time": time_str
     }
@@ -465,9 +564,10 @@ def get_main_reply_keyboard(user_id: int) -> ReplyKeyboardMarkup:
     t = TEXTS.get(lang, TEXTS["uz"])
 
     buttons = [
-        [KeyboardButton(text=t["btn_checkin"]), KeyboardButton(text=t["btn_profile"])],
-        [KeyboardButton(text=t["btn_leaderboard"]), KeyboardButton(text=t["btn_quote"])],
-        [KeyboardButton(text=t["btn_setup"]), KeyboardButton(text=t["btn_lang"]), KeyboardButton(text=t["btn_help"])]
+        [KeyboardButton(text=t["btn_checkin"]), KeyboardButton(text=t["btn_photo_checkin"])],
+        [KeyboardButton(text=t["btn_profile"]), KeyboardButton(text=t["btn_leaderboard"])],
+        [KeyboardButton(text=t["btn_quote"]), KeyboardButton(text=t["btn_setup"]), KeyboardButton(text=t["btn_lang"])],
+        [KeyboardButton(text=t["btn_help"])]
     ]
     if user_id == SUPER_ADMIN_ID:
         buttons.append([KeyboardButton(text=t["btn_admin"])])
@@ -519,6 +619,63 @@ async def cmd_start(message: Message):
         welcome_text = t["welcome"].format(name=user.first_name)
         await message.answer(welcome_text, reply_markup=get_main_reply_keyboard(user.id), parse_mode=ParseMode.MARKDOWN)
 
+# --- PHOTO CHECK-IN PROMPT ---
+@router.message(F.text.in_(["📸 Foto Check-In (+25 Coin)", "📸 Фото Check-In (+25 Монет)", "📸 Photo Check-In (+25 Coins)"]))
+async def handle_photo_checkin_btn(message: Message):
+    user_id = message.from_user.id
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+    mission = get_random_photo_mission(lang)
+
+    prompt = t["photo_mission_prompt"].format(mission=mission)
+    await message.answer(prompt, parse_mode=ParseMode.MARKDOWN)
+
+# --- PHOTO SUBMISSION HANDLER ---
+@router.message(F.photo)
+async def handle_user_photo(message: Message):
+    user = message.from_user
+    db_register_user(user.id, user.username, user.first_name)
+    lang = get_user_language(user.id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
+    group_id = message.chat.id if message.chat.type in [ChatType.GROUP, ChatType.SUPERGROUP] else 0
+    if group_id != 0:
+        db_link_group_member(group_id, user.id)
+
+    res = db_process_checkin(user.id, group_id=group_id, is_photo=True)
+
+    if res == "already":
+        await message.reply(t["already_checked_in"])
+        return
+
+    # Download largest photo resolution
+    photo_file = message.photo[-1]
+    file_info = await message.bot.get_file(photo_file.file_id)
+    photo_bytes_io = await message.bot.download_file(file_info.file_path)
+    photo_bytes = photo_bytes_io.read()
+
+    rank = get_user_rank(res["streak"], lang=lang)
+
+    # Stamp photo with VERIFIED watermark
+    stamped_bytes = stamp_photo_with_watermark(photo_bytes, user.first_name, res["streak"], rank)
+    input_file = BufferedInputFile(stamped_bytes, filename="verified_stamp.jpg")
+
+    quip = await fetch_dynamic_quip(res["streak"], user.first_name, lang=lang)
+    caption_text = t["photo_success"].format(
+        quip=quip,
+        streak=res["streak"],
+        coins=res["coins"],
+        rank=rank
+    )
+
+    try:
+        chosen_emoji = random.choice(["🔥", "⚡", "🦅", "🏆", "🎉", "💪", "👍"])
+        await message.react(reaction=[ReactionTypeEmoji(emoji=chosen_emoji)])
+    except Exception:
+        pass
+
+    await message.answer_photo(photo=input_file, caption=caption_text, parse_mode=ParseMode.MARKDOWN)
+
 # --- LANGUAGE SETUP ---
 @router.message(Command("lang"))
 @router.message(F.text.in_(["🌐 Til / Language", "🌐 Язык / Language", "🌐 Language / Til"]))
@@ -538,7 +695,7 @@ async def handle_set_language_callback(callback: CallbackQuery):
     await callback.answer(t["lang_updated"], show_alert=False)
     await callback.message.answer(t["lang_updated"], reply_markup=get_main_reply_keyboard(user_id), parse_mode=ParseMode.MARKDOWN)
 
-# --- TIME SETUP (GROUP & PRIVATE CHAT) ---
+# --- TIME SETUP ---
 @router.message(Command("setup"))
 @router.message(F.text.in_(["⚙️ Vaqtni Sozlash", "⚙️ Настройка Времени", "⚙️ Time Setup"]))
 async def cmd_setup(message: Message):
@@ -600,7 +757,7 @@ async def handle_user_time_callback(callback: CallbackQuery):
     await callback.answer("✅", show_alert=False)
     await callback.message.edit_text(t["setup_updated"].format(start=start_t, end=end_t), parse_mode=ParseMode.MARKDOWN)
 
-# --- SUPER ADMIN (OWNER PANEL) ---
+# --- SUPER ADMIN PANEL ---
 @router.message(F.text.in_(["👑 Owner Admin Panel", "👑 Панель Владельца"]))
 @router.message(Command("admin"))
 async def cmd_admin_panel(message: Message):
@@ -669,7 +826,7 @@ async def cmd_set_streak(message: Message):
     db_update_user_streak(target_id, streak_days)
     await message.reply(f"✅ User `{target_id}` ning streak kuni `{streak_days}` ga o'zgartirildi!", parse_mode=ParseMode.MARKDOWN)
 
-# --- CHECK-IN HANDLER ---
+# --- SOLO CHECK-IN HANDLER ---
 @router.message(F.text.in_(["⚡ Solo Check-In", "⚡ Соло Check-In"]))
 async def handle_solo_checkin(message: Message):
     user_id = message.from_user.id
@@ -677,8 +834,7 @@ async def handle_solo_checkin(message: Message):
     lang = get_user_language(user_id)
     t = TEXTS.get(lang, TEXTS["uz"])
 
-    tz = pytz.timezone(TIMEZONE_STR)
-    res = db_process_checkin(user_id, group_id=0, is_early=(datetime.now(tz).strftime("%H:%M") <= "05:00"))
+    res = db_process_checkin(user_id, group_id=0, is_photo=False)
 
     if res == "already":
         await message.reply(t["already_checked_in"])
@@ -705,8 +861,7 @@ async def handle_callback_checkin(callback: CallbackQuery):
     if group_id != 0:
         db_link_group_member(group_id, user.id)
 
-    tz = pytz.timezone(TIMEZONE_STR)
-    res = db_process_checkin(user.id, group_id=group_id, is_early=(datetime.now(tz).strftime("%H:%M") <= "05:00"))
+    res = db_process_checkin(user.id, group_id=group_id, is_photo=False)
 
     if res == "already":
         await callback.answer(t["already_checked_in"], show_alert=True)
@@ -715,8 +870,8 @@ async def handle_callback_checkin(callback: CallbackQuery):
         try:
             chosen_emoji = random.choice(["🔥", "⚡", "🦅", "🏆", "🎉", "💪", "👍"])
             await callback.message.react(reaction=[ReactionTypeEmoji(emoji=chosen_emoji)])
-        except Exception as e:
-            logging.error(f"Failed to react: {e}")
+        except Exception:
+            pass
 
         quip = await fetch_dynamic_quip(res["streak"], user.first_name, lang=lang)
         rank = get_user_rank(res["streak"], lang=lang)
@@ -743,6 +898,7 @@ async def handle_my_profile(message: Message):
 
     streak = user["streak"]
     coins = user["coins"]
+    photo_count = user["photo_count"] if "photo_count" in user.keys() else 0
     rank = get_user_rank(streak, lang=lang)
     progress_bar = generate_progress_bar(streak, lang=lang)
     lang_names = {"uz": "🇺🇿 O'zbekcha", "ru": "🇷🇺 Русский", "en": "🇬🇧 English"}
@@ -751,6 +907,7 @@ async def handle_my_profile(message: Message):
         name=user['first_name'],
         streak=streak,
         coins=coins,
+        photo_count=photo_count,
         rank=rank,
         lang_str=lang_names.get(lang, "🇺🇿 O'zbekcha"),
         progress_bar=progress_bar
@@ -822,7 +979,7 @@ async def scheduler_loop(bot: Bot):
                         gid,
                         "🌅 **THE 5 AM CLUB: CHECK-IN IS OPEN!**\n\n"
                         f"⏰ Window: `{s_t}` — `{e_t}`\n"
-                        "⚡ Tap the button below to prove you're awake!",
+                        "⚡ Tap the button below or send a photo to prove you're awake!",
                         reply_markup=get_checkin_inline_keyboard("uz"), parse_mode=ParseMode.MARKDOWN
                     )
 
