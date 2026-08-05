@@ -86,6 +86,7 @@ TEXTS = {
         "btn_photo_checkin": "📸 Foto Check-In",
         "btn_games": "🎮 O'yinlar va Duyellar",
         "btn_shop": "🛒 Do'kon & Bozor",
+        "btn_ref": "👥 Taklif Qilish (+100 Coin)",
         "btn_profile": "📊 Profilim",
         "btn_leaderboard": "🏆 Reyting",
         "btn_quote": "💡 Kun Iqtibosi",
@@ -98,15 +99,16 @@ TEXTS = {
         "checkin_success": "⚡ **CHECK-IN MUVAFFAQIYATLI!**\n\n{quip}\n\n🔥 Streak: `{streak} kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🏅 Unvon: {rank}",
         "photo_mission_prompt": "📸 **KUNLIK FOTO TOPSHIRIQ:**\n\n{mission}\n\n📌 **Shart:** Rasm yuboring! Bot rasmingizga rasmiy **VERIFIED STAMP** muhrini bosib, tangalaringizni beradi! 🚀",
         "photo_success": "📸 **FOTO CHECK-IN VERIFIED! (+{coins_earned} COIN)**\n\n{quip}\n\n🔥 Streak: `{streak} kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🏅 Unvon: {rank}\n\n✨ *Yuqoridagi muhrlangan rasmni Story'ingizga joylashingiz mumkin!*",
-        "profile_title": "👤 **FOYDALANUVCHI PROFILI**\n\n🏷 Ism: {name}\n🔥 Streak: `{streak} Kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `{coins}`\n🛡 Streak Freeze: `{freeze_count} ta`\n📸 Foto Check-Inlar: `{photo_count} ta`\n🏅 Unvon: {rank}\n🌐 Til: `{lang_str}`\n\n🏆 **TROPHY CABINET (NISHONLAR):**\n{badges}\n\n📈 **UNVON DARAJTASI:**\n{progress_bar}",
+        "profile_title": "👤 **FOYDALANUVCHI PROFILI**\n\n🏷 Ism: {name}\n🔥 Streak: `{streak} Kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `{coins}`\n👥 Taklif qilinganlar: `{ref_count} kishi`\n🛡 Streak Freeze: `{freeze_count} ta`\n📸 Foto Check-Inlar: `{photo_count} ta`\n🏅 Unvon: {rank}\n🌐 Til: `{lang_str}`\n\n🏆 **TROPHY CABINET (NISHONLAR):**\n{badges}\n\n📈 **UNVON DARAJTASI:**\n{progress_bar}",
+        "ref_text": "👥 **DO'STLARNI TAKLIF QILISH VA TANGA ISHLASH**\n\nSizning shaxsiy taklif havolangiz:\n`{ref_link}`\n\n📌 **Qoida:** Har bir taklif qilgan do'stingiz uchun sizga ham, do'stingizga ham **+100 tanga** beriladi!\n\nJami taklif qilingan do'stlar: `{ref_count} kishi`",
         "leaderboard_title": "🏆 **THE 5 AM CLUB REYTING JADVALI** 🏆\n\n",
         "leaderboard_empty": "🏆 Reyting jadvali hozircha bo'sh.",
         "quote_title": "💡 **KUN HIKMATI**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — QOIDALAR**\n\n1. **Ertalabki Check-In**: Uyg'onish vaqtingizni sozlang.\n2. **⚡ Streak Multiplier**: Streak oshgani sari tangalar 2.0X gacha ko'payadi!\n3. **⚔️ 1v1 Duyel & 🤝 Duo Combo**: Do'stlaringiz yoki random o'yinchilar bilan bellashing!\n4. **🛒 Do'kon**: Tangalaringizga Streak Freeze va sovg'alar sotib oling.",
+        "help_text": "📖 **THE 5 AM CLUB — QOIDALAR**\n\n1. **Ertalabki Check-In**: Uyg'onish vaqtingizni sozlang.\n2. **⚡ Streak Multiplier**: Streak oshgani sari tangalar 2.0X gacha ko'payadi!\n3. **🏆 21 Kunlik Maraton**: 21 kun uzluksiz uyg'onsangiz rasmiy Oltin Sertifikat va 👑 Elite 21 nishonini olasiz!\n4. **👥 Taklif Tizimi**: Do'stlarni taklif qiling va +100 tangadan ishlang!",
         "lang_select": "🌐 **Iltimos, o'zingizga ma'qul tilni tanlang:**",
         "lang_updated": "✅ **Botingiz tili O'zbek tiliga o'zgartirildi!**",
         "shop_main": "🛒 **THE 5 AM CLUB DO'KONI VA BOZORI**\n\nSizning tangalaringiz: 🪙 `{coins} tanga`\n\nQaysi bo'limga kirmoqchisiz?",
-        "shop_global": "🌐 **GLOBAL DO'KON (TIZIM MAHSULOTLARI)**\n\nSizning tangalaringiz: 🪙 `{coins}`\n\n1. 🛡 **Streak Freeze (Qalqon)** — `100 tanga`\n*(Uxlab qolganda Streakni 0 ga tushishdan 1 marta saqlaydi)*\n2. 🦁 **Lion Riser Nishoni** — `150 tanga`",
+        "shop_global": "🌐 **GLOBAL DO'KON (TIZIM MAHSULOTLARI)**\n\nSizning tangalaringiz: 🪙 `{coins}`\n\n1. 🛡 **Streak Freeze (Qalqon)** — `100 tanga`\n*(Uxlab qolganda Streakni 0 ga tushishdan 1 marta saqlaydi)*",
         "shop_buy_freeze_ok": "🎉 **Muvaffaqiyatli sotib olindi!** Sizda 1 ta 🛡 **Streak Freeze** qalqoni bor!",
         "shop_no_coins": "❌ **Tangalaringiz yetarli emas!** Sizda `{coins}` tanga bor.",
         "games_main": "🎮 **THE 5 AM CLUB O'YINLAR VA ARENA KATALOGI**\n\nO'zingizga ma'qul rejimni tanlang:\n\n⚔️ **1v1 Uyg'onish Dueli** — 50 coin tikib bellashish\n🤝 **Duo Combo** — Sherik bilan birga uyg'onib bonus olish\n🎲 **Random Matchmaking** — Tizimdan avtomatik begona sherik topish",
@@ -119,6 +121,7 @@ TEXTS = {
         "btn_photo_checkin": "📸 Фото Check-In",
         "btn_games": "🎮 Игры и Дуэли",
         "btn_shop": "🛒 Магазин и Рынок",
+        "btn_ref": "👥 Пригласить (+100 Монет)",
         "btn_profile": "📊 Мой Профиль",
         "btn_leaderboard": "🏆 Рейтинг",
         "btn_quote": "💡 Цитата Дня",
@@ -131,15 +134,16 @@ TEXTS = {
         "checkin_success": "⚡ **CHECK-IN УСПЕШЕН!**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` (Множитель: `{multiplier}X`)\n🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🏅 Ранг: {rank}",
         "photo_mission_prompt": "📸 **ЕЖЕДНЕВНОЕ ФОТО-ЗАДАНИЕ:**\n\n{mission}\n\n📌 **Условие:** Отправьте фото! Бот поставит официальную печать **VERIFIED STAMP**! 🚀",
         "photo_success": "📸 **ФОТО CHECK-IN ПОДТВЕРЖДЕН! (+{coins_earned} МОНЕТ)**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` (Множитель: `{multiplier}X`)\n🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🏅 Ранг: {rank}\n\n✨ *Вы можете выложить фото с печатью в Сторис!*",
-        "profile_title": "👤 **ПРОФИЛЬ УЧАСТНИКА**\n\n🏷 Имя: {name}\n🔥 Стрик: `{streak} Дней` (Множитель: `{multiplier}X`)\n🪙 Монеты: `{coins}`\n🛡 Защита Стрика: `{freeze_count} шт`\n📸 Фото Check-In: `{photo_count} раз`\n🏅 Ранг: {rank}\n🌐 Язык: `{lang_str}`\n\n🏆 **ВИТРИНА НАГРАД (TROPHY CABINET):**\n{badges}\n\n📈 **ПРОГРЕСС РАНГА:**\n{progress_bar}",
+        "profile_title": "👤 **ПРОФИЛЬ УЧАСТНИКА**\n\n🏷 Имя: {name}\n🔥 Стрик: `{streak} Дней` (Множитель: `{multiplier}X`)\n🪙 Монеты: `{coins}`\n👥 Приглашено: `{ref_count} чел`\n🛡 Защита Стрика: `{freeze_count} шт`\n📸 Фото Check-In: `{photo_count} раз`\n🏅 Ранг: {rank}\n🌐 Язык: `{lang_str}`\n\n🏆 **ВИТРИНА НАГРАД (TROPHY CABINET):**\n{badges}\n\n📈 **ПРОГРЕСС РАНГА:**\n{progress_bar}",
+        "ref_text": "👥 **ПРИГЛАШАЙТЕ ДРУЗЕЙ И ЗАРАБАТЫВАЙТЕ МОНЕТЫ**\n\nВаша уникальная ссылка:\n`{ref_link}`\n\n📌 **Правило:** За каждого приглашенного друга вам и другу начисляется **+100 монет**!\n\nВсего приглашено: `{ref_count} чел`",
         "leaderboard_title": "🏆 **ТАБЛИЦА ЛИДЕРОВ THE 5 AM CLUB** 🏆\n\n",
         "leaderboard_empty": "🏆 Таблица лидеров пока пуста.",
         "quote_title": "💡 **МУДРОСТЬ ДНЯ**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — ПРАВИЛА**\n\n1. **Утренний Check-In**: Настройте время под себя.\n2. **⚡ Множитель Стрика**: Растет со временем до 2.0X!\n3. **⚔️ Дуэли 1v1 и Парный режим**: Играйте с друзьями или случайными игроками.\n4. **🛒 Магазин**: Покупайте защиту Стрика и награды.",
+        "help_text": "📖 **THE 5 AM CLUB — ПРАВИЛА**\n\n1. **Утренний Check-In**: Настройте время под себя.\n2. **⚡ Множитель Стрика**: Растет со временем до 2.0X!\n3. **🏆 21 Дневный Марафон**: Продержитесь 21 день и получите официальный Золотой Сертификат!\n4. **👥 Рефералы**: Приглашайте друзей и получайте +100 монет!",
         "lang_select": "🌐 **Пожалуйста, выберите удобный язык:**",
         "lang_updated": "✅ **Язык бота изменен на Русский!**",
         "shop_main": "🛒 **МАГАЗИН И РЫНОК THE 5 AM CLUB**\n\nВаши монеты: 🪙 `{coins} монет`\n\nВыберите раздел:",
-        "shop_global": "🌐 **ГЛОБАЛЬНЫЙ МАГАЗИН**\n\nВаши монеты: 🪙 `{coins}`\n\n1. 🛡 **Streak Freeze** — `100 монет`\n*(Сохраняет Стрик при пропуске 1 дня)*\n2. 🦁 **Значок Lion Riser** — `150 монет`",
+        "shop_global": "🌐 **ГЛОБАЛЬНЫЙ МАГАЗИН**\n\nВаши монеты: 🪙 `{coins}`\n\n1. 🛡 **Streak Freeze** — `100 монет`\n*(Сохраняет Стрик при пропуске 1 дня)*",
         "shop_buy_freeze_ok": "🎉 **Успешно куплено!** У вас есть 1 🛡 **Streak Freeze**!",
         "shop_no_coins": "❌ **Недостаточно монет!** У вас `{coins}` монет.",
         "games_main": "🎮 **КАТАЛОГ ИГР И АРЕНА THE 5 AM CLUB**\n\nВыберите режим:\n\n⚔️ **Дуэль 1v1** — Ставка 50 монет на ранний подъем\n🤝 **Парный Комбо** — Совместный подъем для бонуса\n🎲 **Случайный подбор** — Автоматический поиск партнера",
@@ -152,6 +156,7 @@ TEXTS = {
         "btn_photo_checkin": "📸 Photo Check-In",
         "btn_games": "🎮 Games & Duels",
         "btn_shop": "🛒 Shop & Market",
+        "btn_ref": "👥 Invite Friends (+100 Coins)",
         "btn_profile": "📊 My Profile",
         "btn_leaderboard": "🏆 Leaderboard",
         "btn_quote": "💡 Daily Quote",
@@ -164,15 +169,16 @@ TEXTS = {
         "checkin_success": "⚡ **CHECK-IN SUCCESSFUL!**\n\n{quip}\n\n🔥 Streak: `{streak} days` (Multiplier: `{multiplier}X`)\n🪙 Coins: `+{coins_earned}` (Total: `{coins}`)\n🏅 Rank: {rank}",
         "photo_mission_prompt": "📸 **DAILY PHOTO MISSION:**\n\n{mission}\n\n📌 **Condition:** Send a photo! The bot will apply an official **VERIFIED STAMP**! 🚀",
         "photo_success": "📸 **PHOTO CHECK-IN VERIFIED! (+{coins_earned} COINS)**\n\n{quip}\n\n🔥 Streak: `{streak} days` (Multiplier: `{multiplier}X`)\n🪙 Coins: `+{coins_earned}` (Total: `{coins}`)\n🏅 Rank: {rank}\n\n✨ *Feel free to share your stamped photo on Stories!*",
-        "profile_title": "👤 **MEMBER PROFILE**\n\n🏷 Name: {name}\n🔥 Streak: `{streak} Days` (Multiplier: `{multiplier}X`)\n🪙 Coins: `{coins}`\n🛡 Streak Freezes: `{freeze_count}`\n📸 Photo Check-Ins: `{photo_count}`\n🏅 Rank: {rank}\n🌐 Language: `{lang_str}`\n\n🏆 **TROPHY CABINET:**\n{badges}\n\n📈 **RANK PROGRESSION:**\n{progress_bar}",
+        "profile_title": "👤 **MEMBER PROFILE**\n\n🏷 Name: {name}\n🔥 Streak: `{streak} Days` (Multiplier: `{multiplier}X`)\n🪙 Coins: `{coins}`\n👥 Invited Friends: `{ref_count}`\n🛡 Streak Freezes: `{freeze_count}`\n📸 Photo Check-Ins: `{photo_count}`\n🏅 Rank: {rank}\n🌐 Language: `{lang_str}`\n\n🏆 **TROPHY CABINET:**\n{badges}\n\n📈 **RANK PROGRESSION:**\n{progress_bar}",
+        "ref_text": "👥 **INVITE FRIENDS & EARN COINS**\n\nYour personal referral link:\n`{ref_link}`\n\n📌 **Rule:** Earn **+100 coins** for both you and your friend for every successful invite!\n\nTotal Invited: `{ref_count}` friends",
         "leaderboard_title": "🏆 **THE 5 AM CLUB LEADERBOARD** 🏆\n\n",
         "leaderboard_empty": "🏆 Leaderboard is currently empty.",
         "quote_title": "💡 **DAILY MORNING WISDOM**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n1. **Morning Check-In**: Customize your check-in window.\n2. **⚡ Streak Multiplier**: Earn up to 2.0X coins as your streak grows!\n3. **⚔️ 1v1 Duels & Duo Combo**: Play with friends or random players.\n4. **🛒 Shop**: Buy Streak Freezes and custom rewards.",
+        "help_text": "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n1. **Morning Check-In**: Customize your check-in window.\n2. **⚡ Streak Multiplier**: Earn up to 2.0X coins as your streak grows!\n3. **🏆 21-Day Challenge**: Complete 21 days for an official Golden Certificate!\n4. **👥 Referral System**: Invite friends to earn +100 coins!",
         "lang_select": "🌐 **Please select your preferred language:**",
         "lang_updated": "✅ **Bot language updated to English!**",
         "shop_main": "🛒 **THE 5 AM CLUB MARKETPLACE**\n\nYour Balance: 🪙 `{coins} coins`\n\nSelect a section below:",
-        "shop_global": "🌐 **GLOBAL SHOP**\n\nYour Balance: 🪙 `{coins}`\n\n1. 🛡 **Streak Freeze Shield** — `100 coins`\n*(Protects your streak if you miss 1 day)*\n2. 🦁 **Lion Riser Badge** — `150 coins`",
+        "shop_global": "🌐 **GLOBAL SHOP**\n\nYour Balance: 🪙 `{coins}`\n\n1. 🛡 **Streak Freeze Shield** — `100 coins`\n*(Protects your streak if you miss 1 day)*",
         "shop_buy_freeze_ok": "🎉 **Purchase Successful!** You have 1 🛡 **Streak Freeze** shield!",
         "shop_no_coins": "❌ **Insufficient coins!** You have `{coins}` coins.",
         "games_main": "🎮 **THE 5 AM CLUB GAMES & ARENA**\n\nSelect a game mode below:\n\n⚔️ **1v1 Wake-Up Duel** — Bet 50 coins on waking up early\n🤝 **Duo Combo** — Team up for daily bonus coins\n🎲 **Random Matchmaking** — Find a random player instantly",
@@ -268,6 +274,38 @@ def stamp_photo_with_watermark(image_bytes: bytes, name: str, streak: int, rank:
         logging.error(f"Error stamping photo: {e}")
         return image_bytes
 
+# ==================== 21-DAY CERTIFICATE GENERATOR ====================
+def generate_21day_certificate(name: str) -> bytes:
+    try:
+        img = Image.new("RGB", (1000, 600), (15, 23, 42))
+        draw = ImageDraw.Draw(img)
+
+        # Golden Border
+        draw.rectangle([20, 20, 980, 580], outline=(250, 204, 21), width=6)
+        draw.rectangle([30, 30, 970, 570], outline=(255, 255, 255), width=2)
+
+        try:
+            font = ImageFont.load_default()
+        except Exception:
+            font = None
+
+        tz = pytz.timezone(TIMEZONE_STR)
+        today_str = datetime.now(tz).strftime("%Y-%m-%d")
+
+        draw.text((220, 80), "🏆 THE 5 AM CLUB DISCIPLINE CERTIFICATE 🏆", fill=(250, 204, 21), font=font)
+        draw.text((380, 160), "PROUDLY PRESENTED TO", fill=(255, 255, 255), font=font)
+        draw.text((350, 220), f"★ {name.upper()} ★", fill=(250, 204, 21), font=font)
+        draw.text((180, 310), "For completing 21 Consecutive Days of 5 AM Morning Discipline!", fill=(255, 255, 255), font=font)
+        draw.text((320, 370), "“Own Your Morning. Elevate Your Life.”", fill=(148, 163, 184), font=font)
+        draw.text((350, 480), f"Issued on: {today_str} | Verified Official", fill=(250, 204, 21), font=font)
+
+        out_io = io.BytesIO()
+        img.save(out_io, format="JPEG", quality=95)
+        return out_io.getvalue()
+    except Exception as e:
+        logging.error(f"Error generating certificate: {e}")
+        return b""
+
 # ==================== STREAK MULTIPLIER ENGINE ====================
 def get_streak_multiplier(streak: int) -> float:
     if streak >= 30: return 2.0
@@ -290,6 +328,9 @@ def init_sqlite_db():
             photo_count INTEGER DEFAULT 0,
             duo_partner_id INTEGER DEFAULT 0,
             in_matchmaking INTEGER DEFAULT 0,
+            referred_by INTEGER DEFAULT 0,
+            referral_count INTEGER DEFAULT 0,
+            cert_issued INTEGER DEFAULT 0,
             checkin_start TEXT DEFAULT '04:30',
             checkin_end TEXT DEFAULT '06:00',
             lang TEXT DEFAULT 'uz',
@@ -302,16 +343,14 @@ def init_sqlite_db():
     # Migration checks
     cursor.execute("PRAGMA table_info(users)")
     columns = [col[1] for col in cursor.fetchall()]
-    if "lang" not in columns:
-        cursor.execute("ALTER TABLE users ADD COLUMN lang TEXT DEFAULT 'uz'")
-    if "photo_count" not in columns:
-        cursor.execute("ALTER TABLE users ADD COLUMN photo_count INTEGER DEFAULT 0")
-    if "freeze_count" not in columns:
-        cursor.execute("ALTER TABLE users ADD COLUMN freeze_count INTEGER DEFAULT 0")
-    if "duo_partner_id" not in columns:
-        cursor.execute("ALTER TABLE users ADD COLUMN duo_partner_id INTEGER DEFAULT 0")
-    if "in_matchmaking" not in columns:
-        cursor.execute("ALTER TABLE users ADD COLUMN in_matchmaking INTEGER DEFAULT 0")
+    if "lang" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN lang TEXT DEFAULT 'uz'")
+    if "photo_count" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN photo_count INTEGER DEFAULT 0")
+    if "freeze_count" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN freeze_count INTEGER DEFAULT 0")
+    if "duo_partner_id" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN duo_partner_id INTEGER DEFAULT 0")
+    if "in_matchmaking" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN in_matchmaking INTEGER DEFAULT 0")
+    if "referred_by" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN referred_by INTEGER DEFAULT 0")
+    if "referral_count" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN referral_count INTEGER DEFAULT 0")
+    if "cert_issued" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN cert_issued INTEGER DEFAULT 0")
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS groups (
@@ -323,18 +362,6 @@ def init_sqlite_db():
             photo_coins INTEGER DEFAULT 25,
             timezone TEXT DEFAULT 'Asia/Tashkent',
             is_active INTEGER DEFAULT 1
-        )
-    """)
-
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS duels (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            challenger_id INTEGER,
-            opponent_id INTEGER,
-            bet_amount INTEGER DEFAULT 50,
-            status TEXT DEFAULT 'pending',
-            winner_id INTEGER DEFAULT 0,
-            created_at TEXT
         )
     """)
 
@@ -361,17 +388,29 @@ def init_sqlite_db():
     conn.commit()
     conn.close()
 
-def db_register_user(user_id: int, username: str, first_name: str):
+def db_register_user(user_id: int, username: str, first_name: str, ref_by: int = 0):
     conn = sqlite3.connect(DB_NAME)
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    cursor.execute("""
-        INSERT INTO users (user_id, username, first_name, created_at)
-        VALUES (?, ?, ?, ?)
-        ON CONFLICT(user_id) DO UPDATE SET
-            username = excluded.username,
-            first_name = excluded.first_name
-    """, (user_id, username or "", first_name or "Member", now_str))
+
+    cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
+    existing = cursor.fetchone()
+
+    if not existing:
+        initial_coins = 100 if ref_by and ref_by != user_id else 0
+        cursor.execute("""
+            INSERT INTO users (user_id, username, first_name, coins, referred_by, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (user_id, username or "", first_name or "Member", initial_coins, ref_by, now_str))
+
+        if ref_by and ref_by != user_id:
+            cursor.execute("UPDATE users SET coins = coins + 100, referral_count = referral_count + 1 WHERE user_id = ?", (ref_by,))
+    else:
+        cursor.execute("""
+            UPDATE users SET username = ?, first_name = ? WHERE user_id = ?
+        """, (username or "", first_name or "Member", user_id))
+
     conn.commit()
     conn.close()
 
@@ -502,7 +541,6 @@ def db_matchmaking_find_or_enqueue(user_id: int):
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
-    # Search for anyone else in matchmaking queue
     cursor.execute("SELECT user_id, first_name FROM users WHERE in_matchmaking = 1 AND user_id != ?", (user_id,))
     waiting_user = cursor.fetchone()
 
@@ -565,11 +603,9 @@ def db_process_checkin(user_id: int, group_id: int = 0, is_photo: bool = False):
 
     base_coins = photo_reward if is_photo else normal_reward
 
-    # Streak Multiplier Application!
     multiplier = get_streak_multiplier(new_streak)
     coins_earned = int(round(base_coins * multiplier))
 
-    # Duo Combo Check: If partner checked in today too, award +50 duo bonus!
     partner_id = user["duo_partner_id"]
     if partner_id and partner_id != 0:
         cursor.execute("SELECT last_checkin_date FROM users WHERE user_id = ?", (partner_id,))
@@ -700,9 +736,9 @@ def get_main_reply_keyboard(user_id: int) -> ReplyKeyboardMarkup:
     buttons = [
         [KeyboardButton(text=t["btn_checkin"]), KeyboardButton(text=t["btn_photo_checkin"])],
         [KeyboardButton(text=t["btn_games"]), KeyboardButton(text=t["btn_shop"])],
-        [KeyboardButton(text=t["btn_profile"]), KeyboardButton(text=t["btn_leaderboard"])],
-        [KeyboardButton(text=t["btn_quote"]), KeyboardButton(text=t["btn_setup"]), KeyboardButton(text=t["btn_lang"])],
-        [KeyboardButton(text=t["btn_help"])]
+        [KeyboardButton(text=t["btn_ref"]), KeyboardButton(text=t["btn_profile"])],
+        [KeyboardButton(text=t["btn_leaderboard"]), KeyboardButton(text=t["btn_quote"])],
+        [KeyboardButton(text=t["btn_setup"]), KeyboardButton(text=t["btn_lang"]), KeyboardButton(text=t["btn_help"])]
     ]
     if user_id == SUPER_ADMIN_ID:
         buttons.append([KeyboardButton(text=t["btn_admin"])])
@@ -767,7 +803,16 @@ router = Router()
 @router.message(CommandStart())
 async def cmd_start(message: Message):
     user = message.from_user
-    db_register_user(user.id, user.username, user.first_name)
+    args = message.text.split()
+
+    ref_by = 0
+    if len(args) > 1 and args[1].startswith("ref_"):
+        try:
+            ref_by = int(args[1].replace("ref_", ""))
+        except Exception:
+            pass
+
+    db_register_user(user.id, user.username, user.first_name, ref_by=ref_by)
     lang = get_user_language(user.id)
     t = TEXTS.get(lang, TEXTS["uz"])
 
@@ -778,6 +823,22 @@ async def cmd_start(message: Message):
     else:
         welcome_text = t["welcome"].format(name=user.first_name)
         await message.answer(welcome_text, reply_markup=get_main_reply_keyboard(user.id), parse_mode=ParseMode.MARKDOWN)
+
+# --- REFERRAL HANDLER ---
+@router.message(F.text.in_(["👥 Taklif Qilish (+100 Coin)", "👥 Пригласить (+100 Монет)", "👥 Invite Friends (+100 Coins)"]))
+@router.message(Command("ref"))
+async def handle_referral_btn(message: Message):
+    user_id = message.from_user.id
+    user = db_get_user(user_id)
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
+    bot_info = await message.bot.get_me()
+    ref_link = f"https://t.me/{bot_info.username}?start=ref_{user_id}"
+    ref_count = user["referral_count"] if user and "referral_count" in user.keys() else 0
+
+    msg = t["ref_text"].format(ref_link=ref_link, ref_count=ref_count)
+    await message.answer(msg, parse_mode=ParseMode.MARKDOWN)
 
 # --- GAMES & ARENA CATALOG HANDLERS ---
 @router.message(F.text.in_(["🎮 O'yinlar va Duyellar", "🎮 Игры и Дуэли", "🎮 Games & Duels"]))
@@ -980,7 +1041,40 @@ async def handle_user_photo(message: Message):
     except Exception:
         pass
 
-    await message.answer_photo(photo=input_file, caption=caption_text, parse_mode=ParseMode.MARKDOWN)
+    share_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="📲 Story'ga Joylash (Instagram/Telegram)", callback_data="story_share_tip")]
+    ])
+
+    await message.answer_photo(photo=input_file, caption=caption_text, reply_markup=share_keyboard, parse_mode=ParseMode.MARKDOWN)
+
+    # 21-Day Challenge Certificate Check!
+    if res["streak"] >= 21:
+        u_info = db_get_user(user.id)
+        if u_info and ("cert_issued" not in u_info.keys() or u_info["cert_issued"] == 0):
+            cert_bytes = generate_21day_certificate(user.first_name)
+            if cert_bytes:
+                cert_file = BufferedInputFile(cert_bytes, filename="21day_certificate.jpg")
+                cert_caption = (
+                    "🏆 **TABRIKLAYMIZ! 21 KUNLIK MARATON YUKSAK ZAFARI!**\n\n"
+                    f"Siz 21 kun uzluksiz soat 05:00 da uyg'onib, intizom maratonini muvaffaqiyatli yakunladingiz!\n\n"
+                    f"Sizga rasmiy **21-Day Discipline Certificate** hamda **👑 Elite 21** nishoni topshirildi!"
+                )
+                await message.answer_photo(photo=cert_file, caption=cert_caption, parse_mode=ParseMode.MARKDOWN)
+                conn = sqlite3.connect(DB_NAME)
+                conn.execute("UPDATE users SET cert_issued = 1 WHERE user_id = ?", (user.id,))
+                conn.commit()
+                conn.close()
+
+@router.callback_query(F.data == "story_share_tip")
+async def handle_story_share_tip(callback: CallbackQuery):
+    msg = (
+        "📲 **STORY'GA JOYLASH VA BOZORDA DO'STLARNI HAYRATDA QOLDIRISH:**\n\n"
+        "1. Yuqoridagi **VERIFIED STAMP** urilgan rasmni saqlab oling (Save to Gallery).\n"
+        "2. Telegram yoki Instagram Story'ingizga joylang!\n"
+        "3. Do'stlaringizga intizomingizni ko'rsatib, bot havolangizni qoldiring! 🚀"
+    )
+    await callback.answer()
+    await callback.message.answer(msg, parse_mode=ParseMode.MARKDOWN)
 
 # --- LANGUAGE SETUP ---
 @router.message(Command("lang"))
@@ -1208,15 +1302,18 @@ async def handle_my_profile(message: Message):
     coins = user["coins"]
     photo_count = user["photo_count"] if "photo_count" in user.keys() else 0
     freeze_count = user["freeze_count"] if "freeze_count" in user.keys() else 0
+    ref_count = user["referral_count"] if "referral_count" in user.keys() else 0
     rank = get_user_rank(streak, lang=lang)
     progress_bar = generate_progress_bar(streak, lang=lang)
     lang_names = {"uz": "🇺🇿 O'zbekcha", "ru": "🇷🇺 Русский", "en": "🇬🇧 English"}
 
     badges = []
     if streak >= 7: badges.append("⚡ Early Bird")
+    if streak >= 21: badges.append("👑 Elite 21")
     if streak >= 30: badges.append("👑 5 AM Legend")
     if photo_count >= 5: badges.append("📸 Photo Master")
     if freeze_count > 0: badges.append("🛡 Shielded")
+    if ref_count >= 5: badges.append("👥 Master Ambassador")
     badges_str = " | ".join(badges) if badges else "Boshlang'ich nishonlar"
 
     profile_text = t["profile_title"].format(
@@ -1224,6 +1321,7 @@ async def handle_my_profile(message: Message):
         streak=streak,
         multiplier=get_streak_multiplier(streak),
         coins=coins,
+        ref_count=ref_count,
         freeze_count=freeze_count,
         photo_count=photo_count,
         rank=rank,
@@ -1341,6 +1439,7 @@ async def start_dummy_web_server():
 async def set_bot_commands(bot: Bot):
     commands = [
         BotCommand(command="setup", description="⚙️ Vaqt sozlamalari / Time Setup"),
+        BotCommand(command="ref", description="👥 Taklif havolasi / Invite link"),
         BotCommand(command="gconfig", description="📋 Guruh sozlamalari (Admin)"),
         BotCommand(command="duo", description="🤝 Juftlik biriktirish / Duo Partner"),
         BotCommand(command="lang", description="🌐 Tilni ozgartirish / Change language"),
