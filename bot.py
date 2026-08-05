@@ -16,10 +16,7 @@ from aiogram.types import (
     InlineKeyboardButton,
     ReplyKeyboardMarkup,
     KeyboardButton,
-    ChatMemberUpdated,
-    BotCommand,
-    BotCommandScopeAllGroupChats,
-    BotCommandScopeAllPrivateChats
+    BotCommand
 )
 from aiogram.enums import ParseMode, ChatType, ChatMemberStatus
 from aiogram.types.reaction_type_emoji import ReactionTypeEmoji
@@ -27,6 +24,7 @@ from aiogram.types.reaction_type_emoji import ReactionTypeEmoji
 # ==================== CONFIGURATION ====================
 BOT_TOKEN = os.getenv("BOT_TOKEN", "8843755987:AAF4gGBSVa1SKr8oxq26kX__C3b8WSkTFz4")
 DEFAULT_GROUP_ID = int(os.getenv("GROUP_CHAT_ID", "-1004349705982"))
+SUPER_ADMIN_ID = int(os.getenv("SUPER_ADMIN_ID", "5174548480")) # Default or environment variable
 TIMEZONE_STR = "Asia/Tashkent"
 DB_NAME = "5amclub.db"
 
@@ -52,7 +50,6 @@ PRAISES = [
 EMOJIS = ["🔥", "⚡", "🦅", "🏆", "😎", "💪", "🚀", "👑", "🌟", "✨"]
 
 async def fetch_dynamic_quip(streak: int, name: str) -> str:
-    # 1. Try to fetch a dynamic affirmation from the internet API
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get("https://www.affirmations.dev/", timeout=aiohttp.ClientTimeout(total=2)) as resp:
@@ -64,11 +61,9 @@ async def fetch_dynamic_quip(streak: int, name: str) -> str:
     except Exception:
         pass
 
-    # 2. Fallback: Dynamic Combination Generator (thousands of variations)
     greeting = random.choice(GREETINGS)
     praise = random.choice(PRAISES)
     emoji = random.choice(EMOJIS)
-
     base_text = f"{greeting} {praise} {emoji}"
 
     if streak >= 30:
@@ -110,6 +105,8 @@ def init_sqlite_db():
             first_name TEXT,
             streak INTEGER DEFAULT 0,
             coins INTEGER DEFAULT 0,
+            checkin_start TEXT DEFAULT '04:30',
+            checkin_end TEXT DEFAULT '06:00',
             last_checkin_date TEXT,
             status TEXT DEFAULT 'snoozed',
             created_at TEXT
@@ -193,6 +190,15 @@ def db_get_user(user_id: int):
     conn.close()
     return row
 
+def db_get_all_users():
+    conn = sqlite3.connect(DB_NAME)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users")
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
+
 def db_get_active_groups():
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
@@ -202,10 +208,31 @@ def db_get_active_groups():
     conn.close()
     return rows
 
+def db_update_user_times(user_id: int, start_time: str, end_time: str):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("UPDATE users SET checkin_start = ?, checkin_end = ? WHERE user_id = ?", (start_time, end_time, user_id))
+    conn.commit()
+    conn.close()
+
 def db_update_group_times(group_id: int, start_time: str, end_time: str):
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
     cursor.execute("UPDATE groups SET checkin_start = ?, checkin_end = ? WHERE group_id = ?", (start_time, end_time, group_id))
+    conn.commit()
+    conn.close()
+
+def db_update_user_coins(user_id: int, coins_to_add: int):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("UPDATE users SET coins = coins + ? WHERE user_id = ?", (coins_to_add, user_id))
+    conn.commit()
+    conn.close()
+
+def db_update_user_streak(user_id: int, new_streak: int):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("UPDATE users SET streak = ? WHERE user_id = ?", (new_streak, user_id))
     conn.commit()
     conn.close()
 
@@ -325,27 +352,31 @@ def generate_progress_bar(streak: int) -> str:
     return f"Progress: [{bar}] {pct}%\nNext Rank: **{next_rank}** in {days_left} day(s)"
 
 # ==================== KEYBOARDS ====================
-def get_main_reply_keyboard() -> ReplyKeyboardMarkup:
-    return ReplyKeyboardMarkup(keyboard=[
+def get_main_reply_keyboard(user_id: int) -> ReplyKeyboardMarkup:
+    buttons = [
         [KeyboardButton(text="⚡ Solo Check-In"), KeyboardButton(text="📊 My Profile")],
         [KeyboardButton(text="🏆 Leaderboard"), KeyboardButton(text="💡 Daily Quote")],
-        [KeyboardButton(text="⚙️ Help & Rules")]
-    ], resize_keyboard=True)
+        [KeyboardButton(text="⚙️ Time Setup"), KeyboardButton(text="📖 Help & Rules")]
+    ]
+    if user_id == SUPER_ADMIN_ID:
+        buttons.append([KeyboardButton(text="👑 Owner Admin Panel")])
+    return ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
 
 def get_checkin_inline_keyboard() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="⚡ CHECK-IN NOW (I'M AWAKE)", callback_data="do_checkin")]
     ])
 
-def get_setup_keyboard() -> InlineKeyboardMarkup:
+def get_setup_keyboard(is_group: bool = True) -> InlineKeyboardMarkup:
+    prefix = "set_time_grp_" if is_group else "set_time_usr_"
     return InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text="04:30 - 05:30", callback_data="set_time_04:30_05:30"),
-            InlineKeyboardButton(text="04:30 - 06:00", callback_data="set_time_04:30_06:00")
+            InlineKeyboardButton(text="04:30 - 05:30", callback_data=f"{prefix}04:30_05:30"),
+            InlineKeyboardButton(text="04:30 - 06:00", callback_data=f"{prefix}04:30_06:00")
         ],
         [
-            InlineKeyboardButton(text="05:00 - 06:00", callback_data="set_time_05:00_06:00"),
-            InlineKeyboardButton(text="05:00 - 07:00", callback_data="set_time_05:00_07:00")
+            InlineKeyboardButton(text="05:00 - 06:00", callback_data=f"{prefix}05:00_06:00"),
+            InlineKeyboardButton(text="05:00 - 07:00", callback_data=f"{prefix}05:00_07:00")
         ]
     ])
 
@@ -363,51 +394,152 @@ async def cmd_start(message: Message):
     else:
         welcome_text = (
             f"👋 **Welcome to The 5 AM Club, {user.first_name}!**\n\n"
-            "“Own your morning. Elevate your life.” Use the menu below to track your check-ins."
+            "“Own your morning. Elevate your life.”\n\n"
+            "⚙️ **Time Management**: Use `/setup` or the **⚙️ Time Setup** button to set your personal check-in window!"
         )
-        await message.answer(welcome_text, reply_markup=get_main_reply_keyboard(), parse_mode=ParseMode.MARKDOWN)
+        await message.answer(welcome_text, reply_markup=get_main_reply_keyboard(user.id), parse_mode=ParseMode.MARKDOWN)
 
+# --- TIME SETUP (GROUP & PRIVATE CHAT) ---
 @router.message(Command("setup"))
+@router.message(F.text == "⚙️ Time Setup")
 async def cmd_setup(message: Message):
-    if message.chat.type not in [ChatType.GROUP, ChatType.SUPERGROUP]:
-        await message.reply("❌ Bu buyruq faqat guruhlar uchun.")
+    user_id = message.from_user.id
+    if message.chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
+        member = await message.bot.get_chat_member(message.chat.id, user_id)
+        if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] and user_id != SUPER_ADMIN_ID:
+            await message.reply("⛔ Kechirasiz, bu buyruq faqat guruh adminlari uchun.")
+            return
+        await message.reply(
+            "⚙️ **GURUH VAQT SOZLAMALARI:**\n\n"
+            "Quyidagi tugmalardan guruh uchun check-in vaqtini tanlang yoki buyruq yuboring:\n"
+            "` /setup 04:30 06:00 `",
+            reply_markup=get_setup_keyboard(is_group=True),
+            parse_mode=ParseMode.MARKDOWN
+        )
+    else:
+        # Private chat setup
+        u = db_get_user(user_id)
+        start_t = u["checkin_start"] if u and "checkin_start" in u.keys() else "04:30"
+        end_t = u["checkin_end"] if u and "checkin_end" in u.keys() else "06:00"
+        await message.answer(
+            f"⚙️ **SHAXSIY VAQT SOZLAMALARI:**\n\n"
+            f"Hozirgi vaqt oralig'ingiz: `{start_t}` — `{end_t}`\n\n"
+            "Quyidagi tugmalardan o'zingizga qulay bo'lgan vaqtni tanlang yoki custom yozing:\n"
+            "*(Misol uchun text qilib yozing: `05:00 07:00`)*",
+            reply_markup=get_setup_keyboard(is_group=False),
+            parse_mode=ParseMode.MARKDOWN
+        )
+
+@router.callback_query(F.data.startswith("set_time_grp_"))
+async def handle_group_time_callback(callback: CallbackQuery):
+    user_id = callback.from_user.id
+    member = await callback.bot.get_chat_member(callback.message.chat.id, user_id)
+    if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] and user_id != SUPER_ADMIN_ID:
+        await callback.answer("⛔ Bu tugmani faqat guruh admini bosishi mumkin!", show_alert=True)
         return
 
-    member = await message.bot.get_chat_member(message.chat.id, message.from_user.id)
-    if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR]:
-        await message.reply("⛔ Kechirasiz, bu buyruq faqat adminlar uchun.")
-        return
-
-    await message.reply(
-        "⚙️ **GURUH SOZLAMALARI:**\n\n"
-        "Quyidagi tugmalardan o'zingizga qulay bo'lgan check-in vaqtini tanlang:",
-        reply_markup=get_setup_keyboard(),
-        parse_mode=ParseMode.MARKDOWN
-    )
-
-@router.callback_query(F.data.startswith("set_time_"))
-async def handle_set_time_callback(callback: CallbackQuery):
-    member = await callback.bot.get_chat_member(callback.message.chat.id, callback.from_user.id)
-    if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR]:
-        await callback.answer("⛔ Bu tugmani faqat admin bosishi mumkin!", show_alert=True)
-        return
-
-    _, _, start_t, end_t = callback.data.split("_")
+    parts = callback.data.split("_")
+    start_t, end_t = parts[3], parts[4]
     group_id = callback.message.chat.id
     db_register_group(group_id, callback.message.chat.title or "5 AM Club Group")
     db_update_group_times(group_id, start_t, end_t)
 
-    await callback.answer("✅ Vaqt muvaffaqiyatli saqlandi!", show_alert=False)
+    await callback.answer("✅ Guruh vaqti saqlandi!", show_alert=False)
     await callback.message.edit_text(
-        f"✅ **Guruh vaqti yangilandi!**\n\n"
-        f"⏰ Check-in vaqti: `{start_t}` dan `{end_t}` gacha etib belgilandi.",
+        f"✅ **Guruh vaqti yangilandi!**\n\n⏰ Check-in vaqti: `{start_t}` dan `{end_t}` gacha.",
         parse_mode=ParseMode.MARKDOWN
     )
 
+@router.callback_query(F.data.startswith("set_time_usr_"))
+async def handle_user_time_callback(callback: CallbackQuery):
+    user_id = callback.from_user.id
+    parts = callback.data.split("_")
+    start_t, end_t = parts[3], parts[4]
+    db_register_user(user_id, callback.from_user.username, callback.from_user.first_name)
+    db_update_user_times(user_id, start_t, end_t)
+
+    await callback.answer("✅ Shaxsiy vaqtingiz saqlandi!", show_alert=False)
+    await callback.message.edit_text(
+        f"✅ **Shaxsiy vaqtingiz yangilandi!**\n\n⏰ Sizning check-in vaqtingiz: `{start_t}` dan `{end_t}` gacha.",
+        parse_mode=ParseMode.MARKDOWN
+    )
+
+# --- SUPER ADMIN (OWNER PANEL) ---
+@router.message(F.text == "👑 Owner Admin Panel")
+@router.message(Command("admin"))
+async def cmd_admin_panel(message: Message):
+    if message.from_user.id != SUPER_ADMIN_ID:
+        await message.reply("⛔ Bu bo'lim faqat Katta Admin (Owner) uchun!")
+        return
+
+    users = db_get_all_users()
+    groups = db_get_active_groups()
+
+    admin_text = (
+        f"👑 **KATTA ADMIN (OWNER) PANELI**\n\n"
+        f"📊 **Boshqaruv va Statistika:**\n"
+        f"👤 Jami foydalanuvchilar: `{len(users)} ta`\n"
+        f"👥 Faol guruhlar: `{len(groups)} ta`\n\n"
+        f"🛠 **Admin Buyruqlari:**\n"
+        f"• `/broadcast <matn>` — Barcha foydalanuvchilarga xabar yuborish\n"
+        f"• `/addcoins <user_id> <tanga>` — Tangalar qo'shish\n"
+        f"• `/setstreak <user_id> <kun>` — Streak o'zgartirish\n"
+    )
+    await message.answer(admin_text, parse_mode=ParseMode.MARKDOWN)
+
+@router.message(Command("broadcast"))
+async def cmd_broadcast(message: Message):
+    if message.from_user.id != SUPER_ADMIN_ID:
+        return
+    text = message.text.replace("/broadcast", "").strip()
+    if not text:
+        await message.reply("⚠️ **Foydalanish:** `/broadcast Sizning xabaringiz`", parse_mode=ParseMode.MARKDOWN)
+        return
+
+    users = db_get_all_users()
+    success, fail = 0, 0
+    for u in users:
+        try:
+            await message.bot.send_message(u["user_id"], f"📢 **ADMIN XABARI:**\n\n{text}", parse_mode=ParseMode.MARKDOWN)
+            success += 1
+            await asyncio.sleep(0.05)
+        except Exception:
+            fail += 1
+
+    await message.reply(f"✅ Xabar yuborildi!\nMuvaffaqiyatli: `{success}` | Muvaffaqiyatsiz: `{fail}`", parse_mode=ParseMode.MARKDOWN)
+
+@router.message(Command("addcoins"))
+async def cmd_add_coins(message: Message):
+    if message.from_user.id != SUPER_ADMIN_ID:
+        return
+    args = message.text.split()
+    if len(args) != 3:
+        await message.reply("⚠️ **Foydalanish:** `/addcoins <user_id> <tanga_soni>`", parse_mode=ParseMode.MARKDOWN)
+        return
+    target_id, amount = int(args[1]), int(args[2])
+    db_update_user_coins(target_id, amount)
+    await message.reply(f"✅ User `{target_id}` ga `+{amount}` tanga berildi!", parse_mode=ParseMode.MARKDOWN)
+
+@router.message(Command("setstreak"))
+async def cmd_set_streak(message: Message):
+    if message.from_user.id != SUPER_ADMIN_ID:
+        return
+    args = message.text.split()
+    if len(args) != 3:
+        await message.reply("⚠️ **Foydalanish:** `/setstreak <user_id> <streak_kuni>`", parse_mode=ParseMode.MARKDOWN)
+        return
+    target_id, streak_days = int(args[1]), int(args[2])
+    db_update_user_streak(target_id, streak_days)
+    await message.reply(f"✅ User `{target_id}` ning streak kuni `{streak_days}` ga o'zgartirildi!", parse_mode=ParseMode.MARKDOWN)
+
+# --- STANDARD HANDLERS ---
 @router.message(F.text == "⚡ Solo Check-In")
 async def handle_solo_checkin(message: Message):
     user_id = message.from_user.id
     db_register_user(user_id, message.from_user.username, message.from_user.first_name)
+    user = db_get_user(user_id)
+    start_t = user["checkin_start"] if user and "checkin_start" in user.keys() else "04:30"
+
     tz = pytz.timezone(TIMEZONE_STR)
     res = db_process_checkin(user_id, group_id=0, is_early=(datetime.now(tz).strftime("%H:%M") <= "05:00"))
 
@@ -438,7 +570,6 @@ async def handle_callback_checkin(callback: CallbackQuery):
         await callback.answer("⚠️ You already checked in today!", show_alert=True)
     elif res:
         await callback.answer("✅ Morning Check-In Completed!", show_alert=False)
-
         try:
             chosen_emoji = random.choice(["🔥", "⚡", "🦅", "🏆", "🎉", "💪", "👍"])
             await callback.message.react(reaction=[ReactionTypeEmoji(emoji=chosen_emoji)])
@@ -497,10 +628,10 @@ async def handle_quote(message: Message):
 async def handle_help(message: Message):
     help_text = (
         "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n"
-        "1. **Morning Check-In**: Check-in window is usually `04:30 AM` to `06:00 AM`.\n"
+        "1. **Morning Check-In**: Customize your check-in window via **⚙️ Time Setup**.\n"
         "2. **Early Bird Bonus**: Check in early to earn more coins.\n"
         "3. **Consistency**: Missing a check-in resets your streak to `0`.\n"
-        "4. **Graveyard of Sleepers**: A daily report exposes those who woke up vs those who slept in."
+        "4. **Graveyard of Sleepers**: Daily report exposes awake vs sleepers."
     )
     await message.answer(help_text, parse_mode=ParseMode.MARKDOWN)
 
@@ -579,9 +710,10 @@ async def start_dummy_web_server():
 # ==================== MAIN ENTRY POINT ====================
 async def set_bot_commands(bot: Bot):
     commands = [
-        BotCommand(command="setup", description="⚙️ Sozlamalar (Adminlar uchun)"),
+        BotCommand(command="setup", description="⚙️ Vaqt sozlamalari (Guruh va Lichka uchun)"),
         BotCommand(command="myprofile", description="📊 Profil va statistika"),
         BotCommand(command="leaderboard", description="🏆 Reyting jadvali"),
+        BotCommand(command="admin", description="👑 Owner Admin Paneli"),
         BotCommand(command="help", description="📖 Qoidalar va yordam"),
     ]
     try:
