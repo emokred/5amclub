@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The 5 AM Club — Telegram Mini App</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web_app.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app" class="app-container">
+        
+        <!-- HEADER PROFILE CARD -->
+        <header class="profile-card">
+            <div class="profile-main">
+                <div class="avatar-container">
+                    <img id="user-avatar" src="https://ui-avatars.com/api/?name=5+AM&background=f59e0b&color=fff&bold=true" alt="Avatar">
+                    <span class="online-indicator"></span>
+                </div>
+                <div class="user-details">
+                    <h2 id="user-name">Loading...</h2>
+                    <span id="user-rank" class="rank-badge">🌅 Dawn Novice</span>
+                </div>
+            </div>
+            <div class="stats-pills">
+                <div class="pill streak-pill">
+                    <span class="pill-icon">🔥</span>
+                    <span id="stat-streak" class="pill-value">12</span>
+                    <span class="pill-label">Days</span>
+                </div>
+                <div class="pill coin-pill">
+                    <span class="pill-icon">🪙</span>
+                    <span id="stat-coins" class="pill-value">450</span>
+                    <span class="pill-label">Coins</span>
+                </div>
+                <div class="pill multiplier-pill">
+                    <span class="pill-icon">⚡</span>
+                    <span id="stat-multiplier" class="pill-value">1.2X</span>
+                    <span class="pill-label">Mult</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- NAVIGATION TABS -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" data-tab="tab-dashboard">
+                <span class="tab-icon">🌅</span>
+                <span class="tab-text">Dashboard</span>
+            </button>
+            <button class="tab-btn" data-tab="tab-calendar">
+                <span class="tab-icon">📅</span>
+                <span class="tab-text">Calendar</span>
+            </button>
+            <button class="tab-btn" data-tab="tab-shop">
+                <span class="tab-icon">🛒</span>
+                <span class="tab-text">Market</span>
+            </button>
+            <button class="tab-btn" data-tab="tab-arena">
+                <span class="tab-icon">🎮</span>
+                <span class="tab-text">Arena</span>
+            </button>
+
+            <button class="tab-btn" data-tab="tab-leaderboard">
+                <span class="tab-icon">🏆</span>
+                <span class="tab-text">Ranks</span>
+            </button>
+        </nav>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="content-area">
+
+            <!-- TAB 1: DASHBOARD -->
+            <section id="tab-dashboard" class="tab-content active">
+                <!-- COUNTDOWN CLOCK CARD -->
+                <div class="card countdown-card">
+                    <div class="card-header">
+                        <span class="badge live-badge">● LIVE WINDOW</span>
+                        <h3>Morning Check-In Window</h3>
+                    </div>
+                    <div class="timer-display">
+                        <div class="timer-unit">
+                            <span id="time-hours">01</span>
+                            <small>Hours</small>
+                        </div>
+                        <span class="timer-sep">:</span>
+                        <div class="timer-unit">
+                            <span id="time-mins">24</span>
+                            <small>Mins</small>
+                        </div>
+                        <span class="timer-sep">:</span>
+                        <div class="timer-unit">
+                            <span id="time-secs">48</span>
+                            <small>Secs</small>
+                        </div>
+                    </div>
+                    
+                    <button id="btn-main-checkin" class="primary-btn glow-btn">
+                        <span class="btn-icon">⚡</span>
+                        <span>SOLO CHECK-IN (+10 COINS)</span>
+                    </button>
+                </div>
+
+                <!-- PHOTO MISSION CARD -->
+                <div class="card photo-mission-card">
+                    <div class="card-header">
+                        <span class="badge gold-badge">📸 PHOTO PROOF</span>
+                        <h3>Daily Photo Mission</h3>
+                    </div>
+                    <p id="mission-text" class="mission-desc">☕ <b>Mission:</b> Take a picture of your morning coffee or fresh glass of water to verify your wake-up!</p>
+                    <div class="action-row">
+                        <input type="file" id="photo-file-input" accept="image/*" style="display:none;">
+                        <button id="btn-upload-photo" class="secondary-btn">
+                            <span>📷 Upload Photo Proof (+25 Coins)</span>
+                        </button>
+                    </div>
+                    <div id="stamped-preview-container" class="preview-box" style="display:none;">
+                        <img id="stamped-preview-img" src="" alt="Stamped Preview">
+                        <span class="stamp-verified-tag">✅ VERIFIED 5 AM CLUB</span>
+                    </div>
+                </div>
+
+                <!-- DAILY WISDOM CARD -->
+                <div class="card quote-card">
+                    <span class="quote-symbol">“</span>
+                    <p id="daily-quote-text">Own your morning. Elevate your life. Victories are created before dawn.</p>
+                    <span id="daily-quote-author">— Robin Sharma</span>
+                </div>
+            </section>
+
+            <!-- TAB 2: CALENDAR -->
+            <section id="tab-calendar" class="tab-content">
+                <div class="card">
+                    <h3>📅 30-Day Wake-Up Matrix</h3>
+                    <p class="sub-text">Green tiles represent verified 5 AM wake-ups!</p>
+                    
+                    <div id="calendar-grid" class="calendar-grid">
+                        <!-- Generated via JS -->
+                    </div>
+                    
+                    <div class="calendar-legend">
+                        <span>Less</span>
+                        <span class="tile level-0"></span>
+                        <span class="tile level-1"></span>
+                        <span class="tile level-2"></span>
+                        <span class="tile level-3"></span>
+                        <span>More</span>
+                    </div>
+                </div>
+
+                <div class="card cert-card">
+                    <h3>🏆 21-Day Habit Challenge</h3>
+                    <p class="sub-text">Reach a 21-day streak to unlock your Official Golden Certificate!</p>
+                    <div class="progress-bar-container">
+                        <div id="cert-progress-fill" class="progress-fill" style="width: 57%;"></div>
+                    </div>
+                    <span id="cert-progress-text" class="progress-label">12 / 21 Days (57% Complete)</span>
+                </div>
+            </section>
+
+            <!-- TAB 3: SHOP / MARKET -->
+            <section id="tab-shop" class="tab-content">
+                <div class="card shop-card">
+                    <div class="shop-header">
+                        <h3>🛒 5 AM Marketplace</h3>
+                        <div class="balance-display">
+                            <span>Balance:</span>
+                            <strong id="shop-balance-coins">🪙 450</strong>
+                        </div>
+                    </div>
+
+                    <div class="shop-items-grid">
+                        <div class="shop-item-card">
+                            <div class="item-icon">🛡</div>
+                            <h4>Streak Freeze</h4>
+                            <p>Protects your streak if you miss 1 morning check-in.</p>
+                            <button class="buy-btn" onclick="buyItem('Streak Freeze', 100)">Buy — 100 🪙</button>
+                        </div>
+
+                        <div class="shop-item-card">
+                            <div class="item-icon">🦁</div>
+                            <h4>Lion Riser Badge</h4>
+                            <p>Exclusive gold badge displayed on your profile.</p>
+                            <button class="buy-btn" onclick="buyItem('Lion Badge', 150)">Buy — 150 🪙</button>
+                        </div>
+
+                        <div class="shop-item-card">
+                            <div class="item-icon">⚡</div>
+                            <h4>Speed Demon Title</h4>
+                            <p>Title awarded to the fastest riser in the group.</p>
+                            <button class="buy-btn" onclick="buyItem('Speed Title', 200)">Buy — 200 🪙</button>
+                        </div>
+
+                        <div class="shop-item-card">
+                            <div class="item-icon">🎁</div>
+                            <h4>VIP Group Access</h4>
+                            <p>Unlock access to the Mastermind 5 AM Group.</p>
+                            <button class="buy-btn" onclick="buyItem('VIP Access', 500)">Buy — 500 🪙</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: ARENA & DUELS -->
+            <section id="tab-arena" class="tab-content">
+                <div class="card arena-card">
+                    <h3>⚔️ 1v1 Wake-Up Duels</h3>
+                    <p class="sub-text">Challenge a friend or random player for a 50 coin pool!</p>
+
+                    <div class="arena-match-box">
+                        <div class="fighter">
+                            <span class="fighter-name">You (User)</span>
+                            <span class="fighter-status ready">READY ⚡</span>
+                        </div>
+                        <div class="vs-circle">VS</div>
+                        <div class="fighter">
+                            <span id="opponent-name" class="fighter-name">Searching...</span>
+                            <span id="opponent-status" class="fighter-status searching">WAITING...</span>
+                        </div>
+                    </div>
+
+                    <button id="btn-start-matchmaking" class="primary-btn pulse-btn">
+                        <span>🎲 Find Random Matchmaking</span>
+                    </button>
+                </div>
+
+                <div class="card duo-card">
+                    <h3>🤝 Duo Combo Partner</h3>
+                    <p class="sub-text">Team up with a partner. Wake up together for +50 daily bonus coins!</p>
+                    <div class="duo-partner-info">
+                        <span>Current Partner:</span>
+                        <strong id="duo-partner-name">@Alex_Riser</strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: LEADERBOARD -->
+            <section id="tab-leaderboard" class="tab-content">
+                <div class="card leaderboard-card">
+                    <h3>🏆 Global Hall of Fame</h3>
+                    
+                    <div class="podium-container">
+                        <div class="podium-spot spot-2">
+                            <span class="crown">🥈</span>
+                            <div class="avatar">U2</div>
+                            <span class="name">Jasur_K</span>
+                            <span class="score">28 Days</span>
+                        </div>
+                        <div class="podium-spot spot-1">
+                            <span class="crown">👑 🥇</span>
+                            <div class="avatar">U1</div>
+                            <span class="name">Shahzod</span>
+                            <span class="score">45 Days</span>
+                        </div>
+                        <div class="podium-spot spot-3">
+                            <span class="crown">🥉</span>
+                            <div class="avatar">U3</div>
+                            <span class="name">Malika_S</span>
+                            <span class="score">22 Days</span>
+                        </div>
+                    </div>
+
+                    <ul id="leaderboard-list" class="leaderboard-list">
+                        <!-- Dynamic items -->
+                        <li class="leader-item">
+                            <span class="rank">#4</span>
+                            <span class="leader-name">Anvar_Dev</span>
+                            <span class="leader-streak">🔥 19 Days</span>
+                            <span class="leader-coins">🪙 820</span>
+                        </li>
+                        <li class="leader-item">
+                            <span class="rank">#5</span>
+                            <span class="leader-name">Dilshod_5AM</span>
+                            <span class="leader-streak">🔥 16 Days</span>
+                            <span class="leader-coins">🪙 640</span>
+                        </li>
+                        <li class="leader-item">
+                            <span class="rank">#6</span>
+                            <span class="leader-name">Nodira_P</span>
+                            <span class="leader-streak">🔥 14 Days</span>
+                            <span class="leader-coins">🪙 510</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER / NOTIFICATION TOAST -->
+        <div id="toast" class="toast-notification">
+            <span id="toast-message">Notification message here</span>
+        </div>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
