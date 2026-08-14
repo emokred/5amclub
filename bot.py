@@ -1502,10 +1502,14 @@ def get_solo_wizard_step4_kb(user_id: int) -> InlineKeyboardMarkup:
     arena_on = u["interactive_enabled"] if u and "interactive_enabled" in u.keys() else 1
     pm_on = u["pm_reminder_enabled"] if u and "pm_reminder_enabled" in u.keys() else 1
 
+    rp_status = "✅ ON" if rp_on else "❌ OFF"
+    arena_status = "✅ ON" if arena_on else "❌ OFF"
+    pm_status = "✅ ON" if pm_on else "❌ OFF"
+
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=f"🎭 Multiverse Roleplay: [{'✅ ON' if rp_on else '❌ OFF'}]", callback_data="sw_toggle_rp")],
-        [InlineKeyboardButton(text=f"🎮 Interaktiv Arena: [{'✅ ON' if arena_on else '❌ OFF'}]", callback_data="sw_toggle_arena")],
-        [InlineKeyboardButton(text=f"🔔 PM Eslatmalari: [{'✅ ON' if pm_on else '❌ OFF'}]", callback_data="sw_toggle_pm")],
+        [InlineKeyboardButton(text=f"🎭 Multiverse Roleplay: [{rp_status}]", callback_data="sw_toggle_rp")],
+        [InlineKeyboardButton(text=f"🎮 Interaktiv Arena: [{arena_status}]", callback_data="sw_toggle_arena")],
+        [InlineKeyboardButton(text=f"🔔 PM Eslatmalari: [{pm_status}]", callback_data="sw_toggle_pm")],
         [InlineKeyboardButton(text="🚀 SOZLASHNI YAKUNLASH & BOSHLASH", callback_data="sw_finish")]
     ])
 
@@ -1564,7 +1568,7 @@ async def cmd_start(message: Message):
         await message.reply(msg, reply_markup=get_group_wizard_step1_kb(), parse_mode=ParseMode.MARKDOWN)
     else:
         wiz_msg = (
-            f"👋 **"The 5 AM Club" ga xush kelibsiz, {html.escape(user.first_name)}!**\n\n"
+            f"👋 **\"The 5 AM Club\" ga xush kelibsiz, {html.escape(user.first_name)}!**\n\n"
             "“Ertalabki vaqtingizga egalik qiling. Hayotingizni yuksaltiring.” – Robin Sharma\n\n"
             "📌 **4 Bosqichli Solo Onboarding Wizard:**\n"
             "Keling, ertalabki uyg'onish vaqtingiz, kunlik intizomiy maqsad hamda Multiverse rejimlarini sozlaymiz!"
