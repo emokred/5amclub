@@ -44,6 +44,7 @@ body {
     min-height: 100vh;
     padding: 0;
     overflow-x: hidden;
+    user-select: none;
 }
 
 .app-container {
@@ -63,6 +64,7 @@ body {
 .profile-card {
     background: var(--bg-card);
     backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--border-gold);
     border-radius: var(--radius-lg);
     padding: 18px;
@@ -73,16 +75,24 @@ body {
     animation: fadeInDown 0.6s ease-out;
 }
 
+.profile-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
 .profile-main {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
 }
 
 .avatar-container {
     position: relative;
-    width: 58px;
-    height: 58px;
+    width: 54px;
+    height: 54px;
+    flex-shrink: 0;
 }
 
 .avatar-container img {
@@ -106,21 +116,50 @@ body {
 
 .user-details h2 {
     font-family: var(--font-heading);
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: var(--text-main);
+    line-height: 1.2;
 }
 
 .rank-badge {
     display: inline-block;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 600;
     color: var(--text-gold);
     background: rgba(245, 158, 11, 0.15);
-    padding: 3px 10px;
+    padding: 2px 8px;
     border-radius: 12px;
     border: 1px solid rgba(245, 158, 11, 0.3);
     margin-top: 4px;
+}
+
+/* LANGUAGE SWITCHER */
+.lang-switcher {
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 3px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    gap: 2px;
+}
+
+.lang-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.lang-btn.active {
+    background: var(--accent-gold);
+    color: #000;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
 }
 
 .stats-pills {
@@ -164,32 +203,41 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* ==================== NAVIGATION TABS ==================== */
+/* ==================== NAVIGATION TABS (6-TAB RESPONSIVE BAR) ==================== */
 .nav-tabs {
     display: flex;
-    justify-content: space-between;
-    background: rgba(15, 23, 42, 0.9);
+    justify-content: flex-start;
+    background: rgba(15, 23, 42, 0.92);
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     padding: 6px;
     overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    gap: 4px;
+}
+
+.nav-tabs::-webkit-scrollbar {
+    display: none;
 }
 
 .tab-btn {
     flex: 1;
+    min-width: 62px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
     background: transparent;
     border: none;
     color: var(--text-muted);
-    padding: 8px 6px;
+    padding: 8px 4px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     font-family: var(--font-body);
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 600;
     transition: all 0.25s ease;
     white-space: nowrap;
@@ -211,7 +259,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: 16px;
-
 }
 
 .tab-content {
@@ -229,6 +276,7 @@ body {
 .card {
     background: var(--bg-card);
     backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     padding: 20px;
@@ -466,7 +514,7 @@ body {
     height: 100%;
     background: var(--accent-gold-gradient);
     border-radius: 10px;
-    transition: width 0.4s ease;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .progress-label {
@@ -476,7 +524,184 @@ body {
     align-self: flex-end;
 }
 
-/* MARKETPLACE GRID */
+/* ==================== INVENTORY TAB STYLES ==================== */
+.inventory-summary-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.95));
+}
+
+.inv-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.inv-stat-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.inv-stat-icon {
+    font-size: 1.5rem;
+}
+
+.inv-stat-data {
+    display: flex;
+    flex-direction: column;
+}
+
+.inv-stat-val {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--accent-gold);
+}
+
+.inv-stat-data small {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+.inventory-items-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.inventory-card {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+}
+
+.item-badge-top {
+    font-size: 0.6rem;
+    font-weight: 800;
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--accent-emerald);
+    padding: 2px 6px;
+    border-radius: 6px;
+    align-self: flex-start;
+}
+
+.item-badge-top.gold {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--accent-gold);
+}
+
+.item-icon-lg {
+    font-size: 2rem;
+    text-align: center;
+    margin: 4px 0;
+}
+
+.inventory-card h4 {
+    font-size: 0.85rem;
+    color: var(--text-main);
+}
+
+.inventory-card p {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    flex-grow: 1;
+    line-height: 1.3;
+}
+
+.inv-item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+    gap: 6px;
+}
+
+.item-count-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--accent-gold);
+    background: rgba(245, 158, 11, 0.15);
+    padding: 3px 6px;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+.item-count-badge.unlocked {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--accent-emerald);
+}
+
+.action-sm-btn {
+    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-main);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-sm-btn.gold-btn {
+    background: var(--accent-gold);
+    color: #000;
+    border: none;
+}
+
+/* BADGES CABINET */
+.badges-cabinet-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.badge-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 10px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+    transition: transform 0.2s ease;
+}
+
+.badge-card.unlocked {
+    border-color: var(--accent-gold);
+    background: rgba(245, 158, 11, 0.08);
+}
+
+.badge-card.locked {
+    opacity: 0.5;
+    filter: grayscale(0.8);
+}
+
+.badge-card .b-icon {
+    font-size: 1.4rem;
+}
+
+.badge-card .b-name {
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.badge-card .b-status {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+}
+
+/* ==================== MARKETPLACE GRID ==================== */
 .shop-header {
     display: flex;
     justify-content: space-between;
@@ -535,9 +760,14 @@ body {
     font-weight: 700;
     font-size: 0.75rem;
     cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
 }
 
-/* ARENA & DUELS */
+.buy-btn:active {
+    transform: scale(0.96);
+}
+
+/* ==================== ARENA & DUELS ==================== */
 .arena-match-box {
     display: flex;
     align-items: center;
@@ -583,7 +813,7 @@ body {
     box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
 }
 
-/* LEADERBOARD PODIUM */
+/* ==================== LEADERBOARD PODIUM ==================== */
 .podium-container {
     display: flex;
     justify-content: center;
@@ -623,6 +853,7 @@ body {
 .podium-spot .name {
     font-size: 0.7rem;
     font-weight: 700;
+    text-align: center;
 }
 
 .podium-spot .score {
@@ -664,7 +895,139 @@ body {
     margin-right: 12px;
 }
 
-/* TOAST NOTIFICATION */
+/* ==================== CERTIFICATE MODAL ==================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 16px;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-card {
+    background: #0f172a;
+    border: 2px solid var(--accent-gold);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    box-shadow: 0 0 35px rgba(245, 158, 11, 0.3);
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.certificate-preview {
+    background: #090d16;
+    border-radius: var(--radius-md);
+    padding: 16px;
+    text-align: center;
+}
+
+.cert-border {
+    border: 2px solid var(--accent-gold);
+    padding: 16px 12px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.cert-crown {
+    font-size: 2rem;
+}
+
+.cert-border h2 {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--accent-gold);
+    letter-spacing: 1px;
+}
+
+.cert-border h3 {
+    font-size: 0.75rem;
+    color: var(--text-main);
+    letter-spacing: 2px;
+}
+
+.cert-presented {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.cert-border h1 {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    color: var(--accent-gold);
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+}
+
+.cert-text {
+    font-size: 0.7rem;
+    color: #e2e8f0;
+}
+
+.cert-motto {
+    font-size: 0.65rem;
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+.cert-stamp {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--accent-gold);
+    border: 1px solid var(--accent-gold);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-top: 6px;
+}
+
+/* ==================== CONFETTI PARTICLES ==================== */
+.confetti-piece {
+    position: fixed;
+    top: -20px;
+    width: 10px;
+    height: 14px;
+    opacity: 0.9;
+    z-index: 1000;
+    pointer-events: none;
+    border-radius: 2px;
+    animation: confettiFall linear forwards;
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(105vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* ==================== TOAST NOTIFICATION ==================== */
 .toast-notification {
     position: fixed;
     bottom: 20px;
@@ -686,7 +1049,7 @@ body {
     transform: translateX(-50%) translateY(0);
 }
 
-/* ANIMATIONS */
+/* ==================== ANIMATIONS ==================== */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
