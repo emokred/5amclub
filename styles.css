@@ -1362,3 +1362,450 @@ body {
     0%, 100% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.3); }
     50% { box-shadow: 0 0 14px rgba(16, 185, 129, 0.7); }
 }
+
+/* ==================== MULTIVERSE REALM THEMES ==================== */
+/* 1. MARVEL REALM (Quantum Avengers) */
+body.theme-marvel {
+    --bg-dark: #080a14;
+    --bg-card: rgba(18, 22, 42, 0.85);
+    --border-gold: rgba(245, 158, 11, 0.5);
+    --accent-gold: #f59e0b;
+    --accent-gold-bright: #fbbf24;
+    --accent-gold-gradient: linear-gradient(135deg, #ef4444 0%, #f59e0b 50%, #3b82f6 100%);
+    --shadow-glow: 0 0 25px rgba(245, 158, 11, 0.35);
+}
+body.theme-marvel .app-container {
+    background: radial-gradient(circle at 85% 5%, rgba(239, 68, 68, 0.15), transparent 45%),
+                radial-gradient(circle at 10% 90%, rgba(59, 130, 246, 0.15), transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.08), transparent 60%);
+}
+
+/* 2. SAMURAI REALM (Bushido Sunrise) */
+body.theme-samurai {
+    --bg-dark: #0b090a;
+    --bg-card: rgba(24, 18, 20, 0.88);
+    --border-gold: rgba(225, 29, 72, 0.5);
+    --accent-gold: #e11d48;
+    --accent-gold-bright: #fb7185;
+    --accent-gold-gradient: linear-gradient(135deg, #f43f5e 0%, #be123c 100%);
+    --text-gold: #fb7185;
+    --shadow-glow: 0 0 25px rgba(225, 29, 72, 0.35);
+}
+body.theme-samurai .app-container {
+    background: radial-gradient(circle at 85% 5%, rgba(225, 29, 72, 0.18), transparent 45%),
+                radial-gradient(circle at 10% 90%, rgba(147, 51, 234, 0.1), transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.8), transparent 60%);
+}
+
+/* 3. FEUDAL REALM (Shogun Era) */
+body.theme-feudal {
+    --bg-dark: #05120e;
+    --bg-card: rgba(12, 30, 22, 0.88);
+    --border-gold: rgba(16, 185, 129, 0.5);
+    --accent-gold: #10b981;
+    --accent-gold-bright: #34d399;
+    --accent-gold-gradient: linear-gradient(135deg, #34d399 0%, #047857 100%);
+    --text-gold: #6ee7b7;
+    --shadow-glow: 0 0 25px rgba(16, 185, 129, 0.35);
+}
+body.theme-feudal .app-container {
+    background: radial-gradient(circle at 85% 5%, rgba(16, 185, 129, 0.18), transparent 45%),
+                radial-gradient(circle at 10% 90%, rgba(245, 158, 11, 0.12), transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(6, 78, 59, 0.3), transparent 60%);
+}
+
+/* 4. MAFIA REALM (Don's Syndicate) */
+body.theme-mafia {
+    --bg-dark: #08080a;
+    --bg-card: rgba(18, 18, 24, 0.92);
+    --border-gold: rgba(217, 119, 6, 0.5);
+    --accent-gold: #d97706;
+    --accent-gold-bright: #fbbf24;
+    --accent-gold-gradient: linear-gradient(135deg, #f59e0b 0%, #78350f 100%);
+    --text-gold: #fbbf24;
+    --shadow-glow: 0 0 25px rgba(217, 119, 6, 0.35);
+}
+body.theme-mafia .app-container {
+    background: radial-gradient(circle at 85% 5%, rgba(217, 119, 6, 0.18), transparent 45%),
+                radial-gradient(circle at 10% 90%, rgba(220, 38, 38, 0.15), transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.8), transparent 60%);
+}
+
+/* 5. CYBERPUNK REALM (Neon 2077) */
+body.theme-cyberpunk {
+    --bg-dark: #030712;
+    --bg-card: rgba(11, 15, 30, 0.9);
+    --border-gold: rgba(0, 240, 255, 0.6);
+    --accent-gold: #00f0ff;
+    --accent-gold-bright: #7000ff;
+    --accent-gold-gradient: linear-gradient(135deg, #00f0ff 0%, #ff007f 100%);
+    --text-gold: #00f0ff;
+    --shadow-glow: 0 0 25px rgba(0, 240, 255, 0.4);
+}
+body.theme-cyberpunk .app-container {
+    background: radial-gradient(circle at 85% 5%, rgba(0, 240, 255, 0.2), transparent 45%),
+                radial-gradient(circle at 10% 90%, rgba(255, 0, 127, 0.2), transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(112, 0, 255, 0.12), transparent 60%);
+}
+
+/* 6. OLYMPUS REALM (Zeus Dawn) */
+body.theme-olympus {
+    --bg-dark: #0c1427;
+    --bg-card: rgba(20, 32, 60, 0.88);
+    --border-gold: rgba(251, 191, 36, 0.55);
+    --accent-gold: #fbbf24;
+    --accent-gold-bright: #fef08a;
+    --accent-gold-gradient: linear-gradient(135deg, #fef08a 0%, #d97706 50%, #0284c7 100%);
+    --text-gold: #fde047;
+    --shadow-glow: 0 0 25px rgba(251, 191, 36, 0.38);
+}
+body.theme-olympus .app-container {
+    background: radial-gradient(circle at 85% 5%, rgba(251, 191, 36, 0.2), transparent 45%),
+                radial-gradient(circle at 10% 90%, rgba(2, 132, 199, 0.2), transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(248, 250, 252, 0.05), transparent 60%);
+}
+
+/* 7. SCI-FI REALM (Galactic Fleet) */
+body.theme-scifi {
+    --bg-dark: #040614;
+    --bg-card: rgba(12, 18, 42, 0.9);
+    --border-gold: rgba(139, 92, 246, 0.55);
+    --accent-gold: #8b5cf6;
+    --accent-gold-bright: #a78bfa;
+    --accent-gold-gradient: linear-gradient(135deg, #a78bfa 0%, #3b82f6 50%, #06b6d4 100%);
+    --text-gold: #c084fc;
+    --shadow-glow: 0 0 25px rgba(139, 92, 246, 0.38);
+}
+body.theme-scifi .app-container {
+    background: radial-gradient(circle at 85% 5%, rgba(139, 92, 246, 0.2), transparent 45%),
+                radial-gradient(circle at 10% 90%, rgba(6, 182, 212, 0.2), transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1), transparent 60%);
+}
+
+/* ==================== MULTIVERSE REALM SELECTOR ==================== */
+.multiverse-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--border-gold);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: var(--shadow-card);
+    transition: all 0.3s ease;
+}
+
+.realm-badge {
+    background: rgba(139, 92, 246, 0.18);
+    color: var(--text-gold);
+    border: 1px solid var(--border-gold);
+}
+
+.multiverse-desc {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+}
+
+.realm-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+}
+
+.realm-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    user-select: none;
+}
+
+.realm-card:hover {
+    background: rgba(255, 255, 255, 0.07);
+    transform: translateY(-2px);
+}
+
+.realm-card.active {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.25);
+}
+
+.realm-icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.realm-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.realm-name {
+    font-family: var(--font-heading);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.realm-tag {
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.realm-check {
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: var(--accent-gold);
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.2s ease;
+}
+
+.realm-card.active .realm-check {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* ==================== TOGGLES ROW (ROLEPLAY & INTERACTIVE) ==================== */
+.experience-toggles-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.toggle-control-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.toggle-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.toggle-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.toggle-desc {
+    font-size: 0.66rem;
+    color: var(--text-muted);
+}
+
+.switch-ui {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.switch-ui input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider-ui {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.15);
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 24px;
+    border: 1px solid var(--border-color);
+}
+
+.slider-ui:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 2px;
+    background-color: #ffffff;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.switch-ui input:checked + .slider-ui {
+    background: var(--accent-gold-gradient);
+    border-color: var(--accent-gold);
+}
+
+.switch-ui input:checked + .slider-ui:before {
+    transform: translateX(20px);
+    background-color: #090d16;
+}
+
+/* ==================== TARGET GOAL MATRIX TRACKER ==================== */
+.matrix-tracker-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--border-gold);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: var(--shadow-card);
+}
+
+.matrix-badge {
+    background: rgba(16, 185, 129, 0.18);
+    color: var(--accent-emerald-bright);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.matrix-desc {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+}
+
+.matrix-goal-selector {
+    display: flex;
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 4px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.goal-btn {
+    flex: 1;
+    padding: 6px 8px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.goal-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.goal-btn.active {
+    background: var(--accent-gold-gradient);
+    color: #090d16;
+    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.35);
+}
+
+.matrix-status-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 12px;
+}
+
+.matrix-numbers-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.matrix-ratio {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.matrix-percentage-badge {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--text-gold);
+    background: rgba(245, 158, 11, 0.15);
+    padding: 3px 8px;
+    border-radius: 10px;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.matrix-progress-track {
+    width: 100%;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+}
+
+.matrix-progress-fill {
+    height: 100%;
+    background: var(--accent-gold-gradient);
+    border-radius: 6px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.matrix-glow-sparkle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 12px;
+    height: 100%;
+    background: #ffffff;
+    box-shadow: 0 0 10px #ffffff;
+    border-radius: 50%;
+    opacity: 0.8;
+}
+
+.matrix-footer-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.7rem;
+}
+
+.matrix-days-left {
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.matrix-milestone {
+    color: var(--accent-emerald-bright);
+    font-weight: 700;
+}
