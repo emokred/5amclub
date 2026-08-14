@@ -21,6 +21,9 @@ from aiogram.types import (
     ReplyKeyboardMarkup,
     KeyboardButton,
     BotCommand,
+    BotCommandScopeAllGroupChats,
+    BotCommandScopeAllPrivateChats,
+    ChatMemberUpdated,
     BufferedInputFile
 )
 from aiogram.enums import ParseMode, ChatType, ChatMemberStatus
@@ -34,6 +37,64 @@ TIMEZONE_STR = "Asia/Tashkent"
 DB_NAME = "5amclub.db"
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
+# ==================== STRICT TIME-WINDOW ENFORCEMENT ====================
+def is_time_in_window(start_str: str, end_str: str) -> bool:
+    """
+    Checks if current Asia/Tashkent time falls strictly between start_str and end_str (HH:MM).
+    Supports windows that span past midnight safely.
+    """
+    try:
+        tz = pytz.timezone(TIMEZONE_STR)
+        now = datetime.now(tz)
+        now_time = now.time()
+
+        s_hour, s_min = map(int, start_str.strip().split(":"))
+        e_hour, e_min = map(int, end_str.strip().split(":"))
+
+        start_time = datetime.now(tz).replace(hour=s_hour, minute=s_min, second=0, microsecond=0).time()
+        end_time = datetime.now(tz).replace(hour=e_hour, minute=e_min, second=59, microsecond=999999).time()
+
+        if start_time <= end_time:
+            return start_time <= now_time <= end_time
+        else:
+            # Handles overnight window (e.g. 23:00 to 06:00)
+            return now_time >= start_time or now_time <= end_time
+    except Exception as e:
+        logging.error(f"Error checking time window ({start_str} - {end_str}): {e}")
+        return True
+
+# ==================== SMART PHOTO VERIFICATION (PILLOW) ====================
+def verify_image_quality(image_bytes: bytes) -> tuple[bool, str]:
+    """
+    Analyzes brightness & color variance using Pillow.
+    Rejects pitch black, camera-covered, or uniform blank photos.
+    """
+    try:
+        img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        # Resize thumbnail to 100x100 for rapid statistical analysis
+        thumb = img.resize((100, 100))
+        pixels = list(thumb.getdata())
+
+        brightnesses = [0.299 * r + 0.587 * g + 0.114 * b for r, g, b in pixels]
+        avg_brightness = sum(brightnesses) / len(brightnesses)
+
+        variance = sum((b - avg_brightness) ** 2 for b in brightnesses) / len(brightnesses)
+        std_dev = variance ** 0.5
+
+        logging.info(f"Photo verification metrics: Brightness={avg_brightness:.2f}, StdDev={std_dev:.2f}")
+
+        # Dark threshold: < 26 (too dark/pitch black)
+        # Variance threshold: < 10 (solid color/blank sheet)
+        if avg_brightness < 26:
+            return False, "dark"
+        if std_dev < 10:
+            return False, "blank"
+
+        return True, "ok"
+    except Exception as e:
+        logging.error(f"Photo verification exception: {e}")
+        return True, "ok"
 
 # ==================== INFINITE RANDOM PHOTO MISSIONS ====================
 PHOTO_MISSIONS = {
@@ -80,7 +141,6 @@ def get_random_photo_mission(lang: str = "uz") -> str:
     return random.choice(missions)
 
 # ==================== MULTI-LANGUAGE DICTIONARY ====================
-# 100% Matching keys across 'uz', 'ru', 'en'
 TEXTS = {
     "uz": {
         "welcome": '👋 **"The 5 AM Club" botiga xush kelibsiz, {name}!**\n\n“Ertalabki vaqtingizga egalik qiling. Hayotingizni yuksaltiring.”\n\n⚙️ Tugmalar va menyulardan foydalanish uchun quyidagi menyuni bosing:',
@@ -98,15 +158,23 @@ TEXTS = {
         "btn_admin": "👑 Owner Admin Panel",
         "checkin_btn_inline": "⚡ CHECK-IN QILISH (MEN UYG'ONDIM)",
         "already_checked_in": "⚠️ Siz bugun allaqachon check-in qildingiz! Ertagacha! 🌅",
+        "not_in_window": "⚠️ Hozir check-in vaqti emas! Uyg'onish vaqti: {start} - {end} 🌅",
+        "photo_too_dark": "❌ Rasm juda qorong'u yoki talabga javob bermaydi! Iltimos, yorug'roq va aniq rasm yuboring! 📸",
+        "solo_menu_title": "⚡ **SOLO CHECK-IN MENYUSI**\n\nErtalabki intizom va natijalaringizni boshqarish uchun kerakli bo'limni tanlang:",
+        "btn_submenu_now": "⚡ Hozir Check-In Qilish",
+        "btn_submenu_photo": "📸 Foto Check-In",
+        "btn_submenu_time": "⏰ Vaqtni Sozlash",
+        "btn_submenu_stats": "📊 Shaxsiy Statistika",
+        "group_checkin_popup": "⚡ CHECK-IN MUVAFFAQIYATLI!\n🔥 Streak: {streak} kun | 🪙 +{coins} Tanga",
         "checkin_success": "⚡ **CHECK-IN MUVAFFAQIYATLI!**\n\n{quip}\n\n🔥 Streak: `{streak} kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🏅 Unvon: {rank}",
         "photo_mission_prompt": "📸 **KUNLIK FOTO TOPSHIRIQ:**\n\n{mission}\n\n📌 **Shart:** Rasm yuboring! Bot rasmingizga rasmiy **VERIFIED STAMP** muhrini bosib, tangalaringizni beradi! 🚀",
         "photo_success": "📸 **FOTO CHECK-IN VERIFIED! (+{coins_earned} COIN)**\n\n{quip}\n\n🔥 Streak: `{streak} kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🏅 Unvon: {rank}\n\n✨ *Yuqoridagi muhrlangan rasmni Story'ingizga joylashingiz mumkin!*",
-        "profile_title": "👤 **FOYDALANUVCHI PROFILI**\n\n🏷 Ism: {name}\n🔥 Streak: `{streak} Kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `{coins}`\n👥 Taklif qilinganlar: `{ref_count} kishi`\n🛡 Streak Freeze: `{freeze_count} ta`\n📸 Foto Check-Inlar: `{photo_count} ta`\n🏅 Unvon: {rank}\n🌐 Til: `{lang_str}`\n\n🏆 **TROPHY CABINET (NISHONLAR):**\n{badges}\n\n📈 **UNVON DARAJASI:**\n{progress_bar}",
+        "profile_title": "👤 **FOYDALANUVCHI PROFILI**\n\n🏷 Ism: {name}\n🔥 Streak: `{streak} Kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `{coins}`\n👥 Taklif qilinganlar: `{ref_count} kishi`\n🛡 Streak Freeze: `{freeze_count} ta`\n📸 Foto Check-Inlar: `{photo_count} ta`\n🏅 Unvon: {rank}\n🌐 Til: `{lang_str}`\n⏰ Shaxsiy vaqt: `{start}` — `{end}`\n\n🏆 **TROPHY CABINET (NISHONLAR):**\n{badges}\n\n📈 **UNVON DARAJASI:**\n{progress_bar}",
         "ref_text": "👥 **DO'STLARNI TAKLIF QILISH VA TANGA ISHLASH**\n\nSizning shaxsiy taklif havolangiz:\n`{ref_link}`\n\n📌 **Qoida:** Har bir taklif qilgan do'stingiz uchun sizga ham, do'stingizga ham **+100 tanga** beriladi!\n\nJami taklif qilingan do'stlar: `{ref_count} kishi`",
         "leaderboard_title": "🏆 **THE 5 AM CLUB REYTING JADVALI** 🏆\n\n",
         "leaderboard_empty": "🏆 Reyting jadvali hozircha bo'sh.",
         "quote_title": "💡 **KUN HIKMATI**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — QOIDALAR**\n\n1. **Ertalabki Check-In**: Uyg'onish vaqtingizni sozlang.\n2. **⚡ Streak Multiplier**: Streak oshgani sari tangalar 2.0X gacha ko'payadi!\n3. **🏆 21 Kunlik Maraton**: 21 kun uzluksiz uyg'onsangiz rasmiy Oltin Sertifikat va 👑 Elite 21 nishonini olasiz!\n4. **👥 Taklif Tizimi**: Do'stlarni taklif qiling va +100 tangadan ishlang!",
+        "help_text": "📖 **THE 5 AM CLUB — QOIDALAR**\n\n1. **Ertalabki Check-In**: Uyg'onish vaqti oralig'ida check-in qiling.\n2. **⚡ Streak Multiplier**: Streak oshgani sari tangalar 2.0X gacha ko'payadi!\n3. **📸 Smart Foto Tasdiq**: Pillow orqali qorong'u/soxta rasmlar rad etiladi.\n4. **🏆 21 Kunlik Maraton**: 21 kun uzluksiz uyg'onsangiz rasmiy Oltin Sertifikat va 👑 Elite 21 nishonini olasiz!\n5. **👥 Taklif Tizimi**: Do'stlarni taklif qiling va +100 tangadan ishlang!",
         "lang_select": "🌐 **Iltimos, o'zingizga ma'qul tilni tanlang:**",
         "lang_updated": "✅ **Botingiz tili O'zbek tiliga o'zgartirildi!**",
         "shop_main": "🛒 **THE 5 AM CLUB DO'KONI VA BOZORI**\n\nSizning tangalaringiz: 🪙 `{coins} tanga`\n\nQaysi bo'limga kirmoqchisiz?",
@@ -139,15 +207,23 @@ TEXTS = {
         "btn_admin": "👑 Owner Admin Panel",
         "checkin_btn_inline": "⚡ СДЕЛАТЬ CHECK-IN (Я ПРОСНУЛСЯ)",
         "already_checked_in": "⚠️ Вы уже отметились сегодня! До завтра! 🌅",
+        "not_in_window": "⚠️ Сейчас не время для check-in! Время подъема: {start} - {end} 🌅",
+        "photo_too_dark": "❌ Фото слишком темное или не соответствует требованиям! Пожалуйста, отправьте более четкое фото! 📸",
+        "solo_menu_title": "⚡ **МЕНЮ СОЛО CHECK-IN**\n\nВыберите действие для управления вашей утренней дисциплиной:",
+        "btn_submenu_now": "⚡ Сделать Check-In Сейчас",
+        "btn_submenu_photo": "📸 Фото Check-In",
+        "btn_submenu_time": "⏰ Настройка Времени",
+        "btn_submenu_stats": "📊 Личная Статистика",
+        "group_checkin_popup": "⚡ CHECK-IN УСПЕШЕН!\n🔥 Стрик: {streak} дн. | 🪙 +{coins} Монет",
         "checkin_success": "⚡ **CHECK-IN УСПЕШЕН!**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` (Множитель: `{multiplier}X`)\n🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🏅 Ранг: {rank}",
         "photo_mission_prompt": "📸 **ЕЖЕДНЕВНОЕ ФОТО-ЗАДАНИЕ:**\n\n{mission}\n\n📌 **Условие:** Отправьте фото! Бот поставит официальную печать **VERIFIED STAMP**! 🚀",
         "photo_success": "📸 **ФОТО CHECK-IN ПОДТВЕРЖДЕН! (+{coins_earned} МОНЕТ)**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` (Множитель: `{multiplier}X`)\n🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🏅 Ранг: {rank}\n\n✨ *Вы можете выложить фото с печатью в Сторис!*",
-        "profile_title": "👤 **ПРОФИЛЬ УЧАСТНИКА**\n\n🏷 Имя: {name}\n🔥 Стрик: `{streak} Дней` (Множитель: `{multiplier}X`)\n🪙 Монеты: `{coins}`\n👥 Приглашено: `{ref_count} чел`\n🛡 Защита Стрика: `{freeze_count} шт`\n📸 Фото Check-In: `{photo_count} раз`\n🏅 Ранг: {rank}\n🌐 Язык: `{lang_str}`\n\n🏆 **ВИТРИНА НАГРАД (TROPHY CABINET):**\n{badges}\n\n📈 **ПРОГРЕСС РАНГА:**\n{progress_bar}",
+        "profile_title": "👤 **ПРОФИЛЬ УЧАСТНИКА**\n\n🏷 Имя: {name}\n🔥 Стрик: `{streak} Дней` (Множитель: `{multiplier}X`)\n🪙 Монеты: `{coins}`\n👥 Приглашено: `{ref_count} чел`\n🛡 Защита Стрика: `{freeze_count} шт`\n📸 Фото Check-In: `{photo_count} раз`\n🏅 Ранг: {rank}\n🌐 Язык: `{lang_str}`\n⏰ Время: `{start}` — `{end}`\n\n🏆 **ВИТРИНА НАГРАД (TROPHY CABINET):**\n{badges}\n\n📈 **ПРОГРЕСС РАНГА:**\n{progress_bar}",
         "ref_text": "👥 **ПРИГЛАШАЙТЕ ДРУЗЕЙ И ЗАРАБАТЫВАЙТЕ МОНЕТЫ**\n\nВаша уникальная ссылка:\n`{ref_link}`\n\n📌 **Правило:** За каждого приглашенного друга вам и другу начисляется **+100 монет**!\n\nВсего приглашено: `{ref_count} чел`",
         "leaderboard_title": "🏆 **ТАБЛИЦА ЛИДЕРОВ THE 5 AM CLUB** 🏆\n\n",
         "leaderboard_empty": "🏆 Таблица лидеров пока пуста.",
         "quote_title": "💡 **МУДРОСТЬ ДНЯ**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — ПРАВИЛА**\n\n1. **Утренний Check-In**: Настройте время под себя.\n2. **⚡ Множитель Стрика**: Растет со временем до 2.0X!\n3. **🏆 21 Дневный Марафон**: Продержитесь 21 день и получите официальный Золотой Сертификат!\n4. **👥 Рефералы**: Приглашайте друзей и получайте +100 монет!",
+        "help_text": "📖 **THE 5 AM CLUB — ПРАВИЛА**\n\n1. **Утренний Check-In**: Отмечайтесь строго в заданное время.\n2. **⚡ Множитель Стрика**: Растет со временем до 2.0X!\n3. **📸 Smart Фото-Анализ**: Защита от темных и пустых фото.\n4. **🏆 21 Дневный Марафон**: Продержитесь 21 день и получите официальный Золотой Сертификат!\n5. **👥 Рефералы**: Приглашайте друзей и получайте +100 монет!",
         "lang_select": "🌐 **Пожалуйста, выберите удобный язык:**",
         "lang_updated": "✅ **Язык бота изменен на Русский!**",
         "shop_main": "🛒 **МАГАЗИН И РЫНОК THE 5 AM CLUB**\n\nВаши монеты: 🪙 `{coins} монет`\n\nВыберите раздел:",
@@ -180,15 +256,23 @@ TEXTS = {
         "btn_admin": "👑 Owner Admin Panel",
         "checkin_btn_inline": "⚡ CHECK-IN NOW (I'M AWAKE)",
         "already_checked_in": "⚠️ You already checked in today! See you tomorrow! 🌅",
+        "not_in_window": "⚠️ It's not check-in time right now! Wake-up window: {start} - {end} 🌅",
+        "photo_too_dark": "❌ Image is too dark or does not meet requirements! Please send a brighter and clearer photo! 📸",
+        "solo_menu_title": "⚡ **SOLO CHECK-IN SUBMENU**\n\nSelect an option below to manage your morning discipline:",
+        "btn_submenu_now": "⚡ Check-In Now",
+        "btn_submenu_photo": "📸 Photo Check-In",
+        "btn_submenu_time": "⏰ Adjust Time",
+        "btn_submenu_stats": "📊 Personal Stats",
+        "group_checkin_popup": "⚡ CHECK-IN SUCCESSFUL!\n🔥 Streak: {streak} days | 🪙 +{coins} Coins",
         "checkin_success": "⚡ **CHECK-IN SUCCESSFUL!**\n\n{quip}\n\n🔥 Streak: `{streak} days` (Multiplier: `{multiplier}X`)\n🪙 Coins: `+{coins_earned}` (Total: `{coins}`)\n🏅 Rank: {rank}",
         "photo_mission_prompt": "📸 **DAILY PHOTO MISSION:**\n\n{mission}\n\n📌 **Condition:** Send a photo! The bot will apply an official **VERIFIED STAMP**! 🚀",
         "photo_success": "📸 **PHOTO CHECK-IN VERIFIED! (+{coins_earned} COINS)**\n\n{quip}\n\n🔥 Streak: `{streak} days` (Multiplier: `{multiplier}X`)\n🪙 Coins: `+{coins_earned}` (Total: `{coins}`)\n🏅 Rank: {rank}\n\n✨ *Feel free to share your stamped photo on Stories!*",
-        "profile_title": "👤 **MEMBER PROFILE**\n\n🏷 Name: {name}\n🔥 Streak: `{streak} Days` (Multiplier: `{multiplier}X`)\n🪙 Coins: `{coins}`\n👥 Invited Friends: `{ref_count}`\n🛡 Streak Freezes: `{freeze_count}`\n📸 Photo Check-Ins: `{photo_count}`\n🏅 Rank: {rank}\n🌐 Language: `{lang_str}`\n\n🏆 **TROPHY CABINET:**\n{badges}\n\n📈 **RANK PROGRESSION:**\n{progress_bar}",
+        "profile_title": "👤 **MEMBER PROFILE**\n\n🏷 Name: {name}\n🔥 Streak: `{streak} Days` (Multiplier: `{multiplier}X`)\n🪙 Coins: `{coins}`\n👥 Invited Friends: `{ref_count}`\n🛡 Streak Freezes: `{freeze_count}`\n📸 Photo Check-Ins: `{photo_count}`\n🏅 Rank: {rank}\n🌐 Language: `{lang_str}`\n⏰ Window: `{start}` — `{end}`\n\n🏆 **TROPHY CABINET:**\n{badges}\n\n📈 **RANK PROGRESSION:**\n{progress_bar}",
         "ref_text": "👥 **INVITE FRIENDS & EARN COINS**\n\nYour personal referral link:\n`{ref_link}`\n\n📌 **Rule:** Earn **+100 coins** for both you and your friend for every successful invite!\n\nTotal Invited: `{ref_count}` friends",
         "leaderboard_title": "🏆 **THE 5 AM CLUB LEADERBOARD** 🏆\n\n",
         "leaderboard_empty": "🏆 Leaderboard is currently empty.",
         "quote_title": "💡 **DAILY MORNING WISDOM**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n1. **Morning Check-In**: Customize your check-in window.\n2. **⚡ Streak Multiplier**: Earn up to 2.0X coins as your streak grows!\n3. **🏆 21-Day Challenge**: Complete 21 days for an official Golden Certificate!\n4. **👥 Referral System**: Invite friends to earn +100 coins!",
+        "help_text": "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n1. **Morning Check-In**: Check in strictly within your wake-up window.\n2. **⚡ Streak Multiplier**: Earn up to 2.0X coins as your streak grows!\n3. **📸 Smart Photo Verification**: Pillow filters out blank/dark images.\n4. **🏆 21-Day Challenge**: Complete 21 days for an official Golden Certificate!\n5. **👥 Referral System**: Invite friends to earn +100 coins!",
         "lang_select": "🌐 **Please select your preferred language:**",
         "lang_updated": "✅ **Bot language updated to English!**",
         "shop_main": "🛒 **THE 5 AM CLUB MARKETPLACE**\n\nYour Balance: 🪙 `{coins} coins`\n\nSelect a section below:",
@@ -207,57 +291,111 @@ TEXTS = {
     }
 }
 
+# ==================== INFINITE DYNAMIC QUIPS & ROLEPLAY TITLES ====================
+ROLEPLAY_TITLES = {
+    "uz": ["🦁 Tonggi Arslon", "🦅 Lochin Nigoh", "⚡ Cha chaqmoq", "👑 Sahar Qiroli", "🌄 Tonggi Chempion", "⚔️ Intizom Bahodiri", "🚀 Koinot Sayyohi", "🏆 Oltin Qaqnus"],
+    "ru": ["🦁 Утренний Лев", "🦅 Соколиный Взор", "⚡ Утренняя Молния", "👑 Король Рассвета", "🌄 Чемпион Утра", "⚔️ Богатырь Дисциплины", "🚀 Покоритель Рассвета", "🏆 Золотой Феникс"],
+    "en": ["🦁 Morning Lion", "🦅 Falcon Eye", "⚡ Morning Lightning", "👑 Dawn King", "🌄 Morning Champion", "⚔️ Discipline Warrior", "🚀 Dawn Voyager", "🏆 Golden Phoenix"]
+}
+
 DYNAMIC_QUIPS = {
     "uz": [
         "Qarang, kim erta uyg'ondi! Kofe siz bilan faxrlanadi! ☕🔥",
-        "Quyoshdan oldin uyg'ondingiz-a! Haqiqiy arslon rejimi! 🦁⚡",
-        "Krovat sizni tutqinlikda ushlab turmoqchi edi, lekin intizom g'olib chiqdi! ⚔️😎",
-        "Ertalabki g'alaba bilan tabriklayman! To'xtab qolmang! 🚀",
-        "Hatto budilnigingiz ham hayratda! Yashang! ⏰🔥"
+        "Quyoshdan oldin uyg'ondingiz-a! Haqiqiy arslon intizomi! 🦁⚡",
+        "Krovat sizni tutqinlikda ushlab turmoqchi edi, lekin iroda g'olib chiqdi! ⚔️😎",
+        "Ertalabki g'alaba bilan tabriklayman! Bugungi kun sizniki! 🚀",
+        "Hatto budilnigingiz ham sizning intizomingizdan hayratda! ⏰🔥",
+        "Dunyo uxlayotganda g'oliblar o'z kelajagini quradi! 🌟💪",
+        "Robin Sharma aytganidek: 'Tonggi g'alaba — kunlik muvaffaqiyat garovidir!' 📖✨",
+        "Bunday sur'atda sizni hech narsa to'xtata olmaydi! 🦅🔥"
     ],
     "ru": [
         "Смотрите, кто проснулся раньше всех! Кофе гордится тобой! ☕🔥",
         "Проснулся раньше солнца! Настоящий режим льва! 🦁⚡",
         "Кровать пыталась удержать тебя, но дисциплина победила! ⚔️😎",
-        "Поздравляем с утренней победой! Не останавливайся! 🚀",
-        "Даже твой будильник в шоке! Отличная работа! ⏰🔥"
+        "Поздравляем с утренней победой! Этот день полностью твой! 🚀",
+        "Даже твой будильник в шоке от твоей пунктуальности! ⏰🔥",
+        "Пока весь мир спит, чемпионы куют свое великое будущее! 🌟💪",
+        "Как писал Робин Шарма: 'Владей своим утром — владей своей судьбой!' 📖✨",
+        "С таким невероятным темпом тебя ничто не остановит! 🦅🔥"
     ],
     "en": [
-        "Look who decided to join the living world! Coffee is proud! ☕🔥",
+        "Look who decided to rise and conquer! Coffee is proud! ☕🔥",
         "Woke up before the sun! Absolute beast mode activated! 🦁⚡",
-        "The bed tried to hold you hostage, but discipline won! ⚔️😎",
-        "Congrats on the morning victory! Keep moving forward! 🚀",
-        "Even your alarm clock is shocked! Great job! ⏰🔥"
+        "The bed tried to hold you hostage, but iron discipline won! ⚔️😎",
+        "Congrats on the morning victory! Today belongs to you! 🚀",
+        "Even your alarm clock is shocked by your consistency! ⏰🔥",
+        "While the world sleeps, champions forge their empire! 🌟💪",
+        "As Robin Sharma said: 'Own your morning, elevate your life!' 📖✨",
+        "Unstoppable momentum! Keep pushing past limits! 🦅🔥"
     ]
 }
 
 async def fetch_dynamic_quip(streak: int, name: str, lang: str = "uz") -> str:
+    titles = ROLEPLAY_TITLES.get(lang, ROLEPLAY_TITLES["uz"])
     quips_list = DYNAMIC_QUIPS.get(lang, DYNAMIC_QUIPS["uz"])
+    role_title = random.choice(titles)
     base_joke = random.choice(quips_list)
-    if streak >= 30:
-        return f"👑 **LEGEND ({streak} Days):** {base_joke}"
-    elif streak >= 10:
-        return f"🔥 **STREAK MONSTER ({streak} Days):** {base_joke}"
-    else:
-        return f"⚡ **{name}:** {base_joke}"
 
-async def fetch_motivational_quote() -> str:
-    fallback_quotes = [
-        "“Take care of the minutes and the hours will take care of themselves.” – Lord Chesterfield",
-        "“The secret of getting ahead is getting started.” – Mark Twain",
-        "“Own your morning. Elevate your life.” – Robin Sharma",
-        "“Victories are created before dawn, in the quiet solitude of discipline.” – Robin Sharma"
-    ]
+    # Optional dynamic online affirmation fetch
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get("https://zenquotes.io/api/random", timeout=aiohttp.ClientTimeout(total=3)) as resp:
+            async with session.get("https://www.affirmations.dev/", timeout=aiohttp.ClientTimeout(total=1.5)) as resp:
+                if resp.status == 200:
+                    data = await resp.json()
+                    aff = data.get("affirmation", "")
+                    if aff and lang == "en":
+                        return f"{role_title} **{name}**: {base_joke}\n✨ *Affirmation:* {aff}"
+    except Exception:
+        pass
+
+    if streak >= 30:
+        return f"👑 **LEGEND ({streak} Days) — {role_title}:**\n{base_joke}"
+    elif streak >= 10:
+        return f"🔥 **STREAK MONSTER ({streak} Days) — {role_title}:**\n{base_joke}"
+    else:
+        return f"⚡ **{role_title} ({name}):**\n{base_joke}"
+
+MOTIVATIONAL_QUOTES = {
+    "uz": [
+        "“Ertalabki vaqtingizga egalik qiling. Hayotingizni yuksaltiring.” – Robin Sharma",
+        "“G'alabalar tong otmasdan, sukunat va intizomda yaratiladi.” – Robin Sharma",
+        "“Daqiqalarga e'tibor bering, soatlar o'z-o'zidan tartibga tushadi.” – Lord Chesterfield",
+        "“Oldinga siljishning siri — boshlashdir.” – Mark Tven",
+        "“Intizom — bu hozir xohlagan narsangiz bilan eng ko'p xohlagan narsangiz o'rtasidagi tanlovdir.” – Avraam Linkoln",
+        "“Kichik kunlik o'sishlar vaqt o'tishi bilan aql bovar qilmas natijalarga olib keladi.” – Robin Sharma"
+    ],
+    "ru": [
+        "«Владейте своим утром. Поднимите свою жизнь.» – Робин Шарма",
+        "«Победы куются до рассвета, в тишине железной дисциплины.» – Робин Шарма",
+        "«Позаботьтесь о минутах, и часы позаботятся о себе сами.» – Лорд Честерфилд",
+        "«Секрет того, чтобы вырваться вперед — это начать.» – Марк Твен",
+        "«Дисциплина — это решение делать то, чего не хочется делать, чтобы достичь того, чего очень хочется.»",
+        "«Маленькие ежедневные улучшения со временем приводят к потрясающим результатам.»"
+    ],
+    "en": [
+        "“Own your morning. Elevate your life.” – Robin Sharma",
+        "“Victories are created before dawn, in the quiet solitude of discipline.” – Robin Sharma",
+        "“Take care of the minutes and the hours will take care of themselves.” – Lord Chesterfield",
+        "“The secret of getting ahead is getting started.” – Mark Twain",
+        "“Discipline is choosing between what you want now and what you want most.” – Abraham Lincoln",
+        "“Small daily improvements over time lead to stunning results.” – Robin Sharma"
+    ]
+}
+
+async def fetch_motivational_quote(lang: str = "uz") -> str:
+    fallback = MOTIVATIONAL_QUOTES.get(lang, MOTIVATIONAL_QUOTES["uz"])
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get("https://zenquotes.io/api/random", timeout=aiohttp.ClientTimeout(total=2.5)) as resp:
                 if resp.status == 200:
                     data = await resp.json()
                     if isinstance(data, list) and len(data) > 0:
-                        return f"“{data[0]['q']}”\n— *{data[0]['a']}*"
+                        if lang == "en":
+                            return f"“{data[0]['q']}”\n— *{data[0]['a']}*"
     except Exception:
         pass
-    return random.choice(fallback_quotes)
+    return random.choice(fallback)
 
 # ==================== PHOTO STAMPING ENGINE ====================
 def stamp_photo_with_watermark(image_bytes: bytes, name: str, streak: int, rank: str) -> bytes:
@@ -335,10 +473,6 @@ def get_streak_multiplier(streak: int) -> float:
 # ==================== SAFE DATABASE CONNECTION MANAGER ====================
 @contextmanager
 def get_db(row_factory: bool = True):
-    """
-    Context manager providing safe SQLite connections with WAL mode,
-    transaction rollback on error, busy timeout handling, and guaranteed cleanup.
-    """
     conn = sqlite3.connect(DB_NAME, timeout=20.0, check_same_thread=False)
     if row_factory:
         conn.row_factory = sqlite3.Row
@@ -391,6 +525,8 @@ def init_sqlite_db():
         if "referred_by" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN referred_by INTEGER DEFAULT 0")
         if "referral_count" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN referral_count INTEGER DEFAULT 0")
         if "cert_issued" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN cert_issued INTEGER DEFAULT 0")
+        if "checkin_start" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN checkin_start TEXT DEFAULT '04:30'")
+        if "checkin_end" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN checkin_end TEXT DEFAULT '06:00'")
 
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS groups (
@@ -729,6 +865,15 @@ def get_main_reply_keyboard(user_id: int) -> ReplyKeyboardMarkup:
         buttons.append([KeyboardButton(text=t["btn_admin"])])
     return ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
 
+def get_solo_checkin_submenu_keyboard(lang: str = "uz") -> InlineKeyboardMarkup:
+    t = TEXTS.get(lang, TEXTS["uz"])
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=t["btn_submenu_now"], callback_data="solo_do_checkin")],
+        [InlineKeyboardButton(text=t["btn_submenu_photo"], callback_data="solo_photo_checkin")],
+        [InlineKeyboardButton(text=t["btn_submenu_time"], callback_data="solo_setup_time")],
+        [InlineKeyboardButton(text=t["btn_submenu_stats"], callback_data="solo_my_stats")]
+    ])
+
 def get_checkin_inline_keyboard(lang: str = "uz") -> InlineKeyboardMarkup:
     t = TEXTS.get(lang, TEXTS["uz"])
     return InlineKeyboardMarkup(inline_keyboard=[
@@ -809,6 +954,192 @@ async def cmd_start(message: Message):
         welcome_text = t["welcome"].format(name=user.first_name)
         await message.answer(welcome_text, reply_markup=get_main_reply_keyboard(user.id), parse_mode=ParseMode.MARKDOWN)
 
+# --- SOLO CHECK-IN & SUBMENU HANDLERS ---
+@router.message(F.text.in_(["⚡ Solo Check-In", "⚡ Соло Check-In"]))
+@router.message(Command("checkin"))
+async def handle_solo_checkin_submenu(message: Message):
+    user_id = message.from_user.id
+    db_register_user(user_id, message.from_user.username, message.from_user.first_name)
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
+    await message.reply(
+        t["solo_menu_title"],
+        reply_markup=get_solo_checkin_submenu_keyboard(lang),
+        parse_mode=ParseMode.MARKDOWN
+    )
+
+@router.callback_query(F.data == "solo_do_checkin")
+async def handle_solo_do_checkin_callback(callback: CallbackQuery):
+    user_id = callback.from_user.id
+    db_register_user(user_id, callback.from_user.username, callback.from_user.first_name)
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
+    u = db_get_user(user_id)
+    start_t = u["checkin_start"] if u and "checkin_start" in u.keys() and u["checkin_start"] else "04:30"
+    end_t = u["checkin_end"] if u and "checkin_end" in u.keys() and u["checkin_end"] else "06:00"
+
+    # Strict Time-Window Enforcement
+    if not is_time_in_window(start_t, end_t):
+        warning_msg = t["not_in_window"].format(start=start_t, end=end_t)
+        await callback.answer(warning_msg, show_alert=True)
+        return
+
+    res = db_process_checkin(user_id, group_id=0, is_photo=False)
+
+    if res == "already":
+        await callback.answer(t["already_checked_in"], show_alert=True)
+    elif res:
+        await callback.answer("⚡ Check-in Muvaffaqiyatli!", show_alert=False)
+        try:
+            chosen_emoji = random.choice(["🔥", "⚡", "🦅", "🏆", "🎉", "💪", "👍"])
+            await callback.message.react(reaction=[ReactionTypeEmoji(emoji=chosen_emoji)])
+        except Exception:
+            pass
+
+        quip = await fetch_dynamic_quip(res["streak"], callback.from_user.first_name, lang=lang)
+        rank = get_user_rank(res["streak"], lang=lang)
+        msg_text = t["checkin_success"].format(
+            quip=quip,
+            streak=res["streak"],
+            multiplier=res["multiplier"],
+            coins_earned=res["coins_earned"],
+            coins=res["coins"],
+            rank=rank
+        )
+        await callback.message.answer(msg_text, parse_mode=ParseMode.MARKDOWN)
+
+@router.callback_query(F.data == "solo_photo_checkin")
+async def handle_solo_photo_checkin_callback(callback: CallbackQuery):
+    user_id = callback.from_user.id
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+    mission = get_random_photo_mission(lang)
+
+    prompt = t["photo_mission_prompt"].format(mission=mission)
+    await callback.answer()
+    await callback.message.answer(prompt, parse_mode=ParseMode.MARKDOWN)
+
+@router.callback_query(F.data == "solo_setup_time")
+async def handle_solo_setup_time_callback(callback: CallbackQuery):
+    user_id = callback.from_user.id
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+    u = db_get_user(user_id)
+    start_t = u["checkin_start"] if u and "checkin_start" in u.keys() and u["checkin_start"] else "04:30"
+    end_t = u["checkin_end"] if u and "checkin_end" in u.keys() and u["checkin_end"] else "06:00"
+
+    await callback.answer()
+    await callback.message.answer(
+        t["setup_user"].format(start=start_t, end=end_t),
+        reply_markup=get_setup_keyboard(is_group=False),
+        parse_mode=ParseMode.MARKDOWN
+    )
+
+@router.callback_query(F.data == "solo_my_stats")
+async def handle_solo_my_stats_callback(callback: CallbackQuery):
+    await callback.answer()
+    user_id = callback.from_user.id
+    user = db_get_user(user_id)
+    if not user:
+        db_register_user(user_id, callback.from_user.username, callback.from_user.first_name)
+        user = db_get_user(user_id)
+
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
+    streak = user["streak"]
+    coins = user["coins"]
+    photo_count = user["photo_count"] if "photo_count" in user.keys() else 0
+    freeze_count = user["freeze_count"] if "freeze_count" in user.keys() else 0
+    ref_count = user["referral_count"] if "referral_count" in user.keys() else 0
+    rank = get_user_rank(streak, lang=lang)
+    progress_bar = generate_progress_bar(streak, lang=lang)
+    lang_names = {"uz": "🇺🇿 O'zbekcha", "ru": "🇷🇺 Русский", "en": "🇬🇧 English"}
+    start_t = user["checkin_start"] if "checkin_start" in user.keys() and user["checkin_start"] else "04:30"
+    end_t = user["checkin_end"] if "checkin_end" in user.keys() and user["checkin_end"] else "06:00"
+
+    badges = []
+    if streak >= 7: badges.append("⚡ Early Bird")
+    if streak >= 21: badges.append("👑 Elite 21")
+    if streak >= 30: badges.append("👑 5 AM Legend")
+    if photo_count >= 5: badges.append("📸 Photo Master")
+    if freeze_count > 0: badges.append("🛡 Shielded")
+    if ref_count >= 5: badges.append("👥 Master Ambassador")
+    badges_str = " | ".join(badges) if badges else "Boshlang'ich nishonlar"
+
+    profile_text = t["profile_title"].format(
+        name=user['first_name'],
+        streak=streak,
+        multiplier=get_streak_multiplier(streak),
+        coins=coins,
+        ref_count=ref_count,
+        freeze_count=freeze_count,
+        photo_count=photo_count,
+        rank=rank,
+        start=start_t,
+        end=end_t,
+        badges=badges_str,
+        lang_str=lang_names.get(lang, "🇺🇿 O'zbekcha"),
+        progress_bar=progress_bar
+    )
+    await callback.message.answer(profile_text, parse_mode=ParseMode.MARKDOWN)
+
+# --- GROUP INLINE BUTTON CHECK-IN WITH COMPACT POPUP ALERT ---
+@router.callback_query(F.data == "do_checkin")
+async def handle_callback_checkin(callback: CallbackQuery):
+    user = callback.from_user
+    db_register_user(user.id, user.username, user.first_name)
+    lang = get_user_language(user.id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
+    group_id = callback.message.chat.id if callback.message.chat else 0
+    if group_id != 0:
+        db_link_group_member(group_id, user.id)
+        g = db_get_group(group_id)
+        start_t = g["checkin_start"] if g and "checkin_start" in g.keys() and g["checkin_start"] else "04:30"
+        end_t = g["checkin_end"] if g and "checkin_end" in g.keys() and g["checkin_end"] else "06:00"
+    else:
+        u = db_get_user(user.id)
+        start_t = u["checkin_start"] if u and "checkin_start" in u.keys() and u["checkin_start"] else "04:30"
+        end_t = u["checkin_end"] if u and "checkin_end" in u.keys() and u["checkin_end"] else "06:00"
+
+    # Strict Time-Window Enforcement
+    if not is_time_in_window(start_t, end_t):
+        warning_msg = t["not_in_window"].format(start=start_t, end=end_t)
+        await callback.answer(warning_msg, show_alert=True)
+        return
+
+    res = db_process_checkin(user.id, group_id=group_id, is_photo=False)
+
+    if res == "already":
+        await callback.answer(t["already_checked_in"], show_alert=True)
+    elif res:
+        # Compact Group Popup Alert (Item 2 Requirement)
+        popup_text = t["group_checkin_popup"].format(streak=res['streak'], coins=res['coins_earned'])
+        await callback.answer(popup_text, show_alert=True)
+
+        try:
+            chosen_emoji = random.choice(["🔥", "⚡", "🦅", "🏆", "🎉", "💪", "👍"])
+            await callback.message.react(reaction=[ReactionTypeEmoji(emoji=chosen_emoji)])
+        except Exception:
+            pass
+
+        # In private chats only, send full detailed confirmation
+        if group_id == 0:
+            quip = await fetch_dynamic_quip(res["streak"], user.first_name, lang=lang)
+            rank = get_user_rank(res["streak"], lang=lang)
+            msg_text = t["checkin_success"].format(
+                quip=quip,
+                streak=res["streak"],
+                multiplier=res["multiplier"],
+                coins_earned=res["coins_earned"],
+                coins=res["coins"],
+                rank=rank
+            )
+            await callback.message.answer(msg_text, parse_mode=ParseMode.MARKDOWN)
+
 # --- REFERRAL HANDLER ---
 @router.message(F.text.in_(["👥 Taklif Qilish (+100 Coin)", "👥 Пригласить (+100 Монет)", "👥 Invite Friends (+100 Coins)"]))
 @router.message(Command("ref"))
@@ -884,11 +1215,12 @@ async def cmd_set_duo_partner(message: Message):
         partner_id = int(args[1])
         db_set_duo_partner(user_id, partner_id)
         await message.reply(f"🤝 **Juftlik biriktirildi!** Endi `{user_id}` va `{partner_id}` har kuni birga uyg'onsa **+50 bonus tanga** oladi!", parse_mode=ParseMode.MARKDOWN)
-    except Exception as e:
+    except Exception:
         await message.reply("❌ Noto'g'ri user ID kiritildi.")
 
 # --- SHOP & MARKET HANDLERS ---
 @router.message(F.text.in_(["🛒 Do'kon & Bozor", "🛒 Магазин и Рынок", "🛒 Shop & Market"]))
+@router.message(Command("shop"))
 async def handle_shop_main(message: Message):
     user_id = message.from_user.id
     user = db_get_user(user_id)
@@ -955,6 +1287,51 @@ async def cmd_group_config_interactive(message: Message):
     )
     await message.reply(msg, reply_markup=get_group_config_inline_keyboard(), parse_mode=ParseMode.MARKDOWN)
 
+@router.message(Command("settime"))
+async def cmd_set_time(message: Message):
+    args = message.text.split()
+    if len(args) != 3:
+        await message.reply("ℹ️ **Foydalanish:** `/settime <boshlanish> <tugash>`\n*Misol:* `/settime 04:30 06:00`", parse_mode=ParseMode.MARKDOWN)
+        return
+
+    start_t, end_t = args[1], args[2]
+    if message.chat.type in [ChatType.GROUP, ChatType.SUPERGROUP]:
+        member = await message.bot.get_chat_member(message.chat.id, message.from_user.id)
+        if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] and message.from_user.id != SUPER_ADMIN_ID:
+            await message.reply("⛔ Bu buyruq faqat guruh adminlari uchun!")
+            return
+        db_register_group(message.chat.id, message.chat.title)
+        db_update_group_times(message.chat.id, start_t, end_t)
+        await message.reply(f"✅ **Guruh uyg'onish vaqti yangilandi:** `{start_t}` — `{end_t}` 🌅", parse_mode=ParseMode.MARKDOWN)
+    else:
+        db_register_user(message.from_user.id, message.from_user.username, message.from_user.first_name)
+        db_update_user_times(message.from_user.id, start_t, end_t)
+        await message.reply(f"✅ **Shaxsiy uyg'onish vaqtingiz yangilandi:** `{start_t}` — `{end_t}` 🌅", parse_mode=ParseMode.MARKDOWN)
+
+@router.message(Command("setcoins"))
+async def cmd_set_coins(message: Message):
+    if message.chat.type not in [ChatType.GROUP, ChatType.SUPERGROUP]:
+        await message.reply("❌ Bu buyruq faqat guruhlar uchun.")
+        return
+
+    member = await message.bot.get_chat_member(message.chat.id, message.from_user.id)
+    if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] and message.from_user.id != SUPER_ADMIN_ID:
+        await message.reply("⛔ Bu buyruq faqat guruh adminlari uchun!")
+        return
+
+    args = message.text.split()
+    if len(args) != 3:
+        await message.reply("ℹ️ **Foydalanish:** `/setcoins <oddiy_tanga> <foto_tanga>`\n*Misol:* `/setcoins 15 35`", parse_mode=ParseMode.MARKDOWN)
+        return
+
+    try:
+        normal_c, photo_c = int(args[1]), int(args[2])
+        db_register_group(message.chat.id, message.chat.title)
+        db_update_group_coins(message.chat.id, normal_c, photo_c)
+        await message.reply(f"✅ **Guruh tangalari yangilandi:**\n⚡ Oddiy: `+{normal_c}` | 📸 Foto: `+{photo_c}`", parse_mode=ParseMode.MARKDOWN)
+    except Exception:
+        await message.reply("❌ Noto'g'ri qiymatlar kiritildi.")
+
 @router.callback_query(F.data.startswith("set_coins_grp_"))
 async def handle_set_coins_grp_cb(callback: CallbackQuery):
     user_id = callback.from_user.id
@@ -975,7 +1352,7 @@ async def handle_set_coins_grp_cb(callback: CallbackQuery):
         parse_mode=ParseMode.MARKDOWN
     )
 
-# --- PHOTO CHECK-IN PROMPT & SUBMISSION ---
+# --- PHOTO CHECK-IN PROMPT & SMART VERIFICATION ---
 @router.message(F.text.in_(["📸 Foto Check-In", "📸 Фото Check-In", "📸 Photo Check-In"]))
 async def handle_photo_checkin_btn(message: Message):
     user_id = message.from_user.id
@@ -996,17 +1373,35 @@ async def handle_user_photo(message: Message):
     group_id = message.chat.id if message.chat.type in [ChatType.GROUP, ChatType.SUPERGROUP] else 0
     if group_id != 0:
         db_link_group_member(group_id, user.id)
+        g = db_get_group(group_id)
+        start_t = g["checkin_start"] if g and "checkin_start" in g.keys() and g["checkin_start"] else "04:30"
+        end_t = g["checkin_end"] if g and "checkin_end" in g.keys() and g["checkin_end"] else "06:00"
+    else:
+        u = db_get_user(user.id)
+        start_t = u["checkin_start"] if u and "checkin_start" in u.keys() and u["checkin_start"] else "04:30"
+        end_t = u["checkin_end"] if u and "checkin_end" in u.keys() and u["checkin_end"] else "06:00"
 
-    res = db_process_checkin(user.id, group_id=group_id, is_photo=True)
-
-    if res == "already":
-        await message.reply(t["already_checked_in"])
+    # Strict Time-Window Enforcement
+    if not is_time_in_window(start_t, end_t):
+        await message.reply(t["not_in_window"].format(start=start_t, end=end_t), parse_mode=ParseMode.MARKDOWN)
         return
 
+    # Download Photo and run Smart Photo Verification (Pillow)
     photo_file = message.photo[-1]
     file_info = await message.bot.get_file(photo_file.file_id)
     photo_bytes_io = await message.bot.download_file(file_info.file_path)
     photo_bytes = photo_bytes_io.read()
+
+    is_valid_img, _ = verify_image_quality(photo_bytes)
+    if not is_valid_img:
+        await message.reply(t["photo_too_dark"], parse_mode=ParseMode.MARKDOWN)
+        return
+
+    res = db_process_checkin(user.id, group_id=group_id, is_photo=True)
+
+    if res == "already":
+        await message.reply(t["already_checked_in"], parse_mode=ParseMode.MARKDOWN)
+        return
 
     rank = get_user_rank(res["streak"], lang=lang)
 
@@ -1213,68 +1608,10 @@ async def cmd_set_streak(message: Message):
     except Exception:
         await message.reply("❌ Noto'g'ri parametrlar kiritildi.")
 
-# --- SOLO CHECK-IN HANDLER ---
-@router.message(F.text.in_(["⚡ Solo Check-In", "⚡ Соло Check-In"]))
-async def handle_solo_checkin(message: Message):
-    user_id = message.from_user.id
-    db_register_user(user_id, message.from_user.username, message.from_user.first_name)
-    lang = get_user_language(user_id)
-    t = TEXTS.get(lang, TEXTS["uz"])
-
-    res = db_process_checkin(user_id, group_id=0, is_photo=False)
-
-    if res == "already":
-        await message.reply(t["already_checked_in"])
-    elif res:
-        quip = await fetch_dynamic_quip(res["streak"], message.from_user.first_name, lang=lang)
-        rank = get_user_rank(res["streak"], lang=lang)
-        msg_text = t["checkin_success"].format(
-            quip=quip,
-            streak=res["streak"],
-            multiplier=res["multiplier"],
-            coins_earned=res["coins_earned"],
-            coins=res["coins"],
-            rank=rank
-        )
-        await message.reply(msg_text, parse_mode=ParseMode.MARKDOWN)
-
-@router.callback_query(F.data == "do_checkin")
-async def handle_callback_checkin(callback: CallbackQuery):
-    user = callback.from_user
-    db_register_user(user.id, user.username, user.first_name)
-    lang = get_user_language(user.id)
-    t = TEXTS.get(lang, TEXTS["uz"])
-
-    group_id = callback.message.chat.id if callback.message.chat else 0
-    if group_id != 0:
-        db_link_group_member(group_id, user.id)
-
-    res = db_process_checkin(user.id, group_id=group_id, is_photo=False)
-
-    if res == "already":
-        await callback.answer(t["already_checked_in"], show_alert=True)
-    elif res:
-        await callback.answer("✅", show_alert=False)
-        try:
-            chosen_emoji = random.choice(["🔥", "⚡", "🦅", "🏆", "🎉", "💪", "👍"])
-            await callback.message.react(reaction=[ReactionTypeEmoji(emoji=chosen_emoji)])
-        except Exception:
-            pass
-
-        quip = await fetch_dynamic_quip(res["streak"], user.first_name, lang=lang)
-        rank = get_user_rank(res["streak"], lang=lang)
-        msg_text = t["checkin_success"].format(
-            quip=quip,
-            streak=res["streak"],
-            multiplier=res["multiplier"],
-            coins_earned=res["coins_earned"],
-            coins=res["coins"],
-            rank=rank
-        )
-        await callback.message.answer(msg_text, parse_mode=ParseMode.MARKDOWN)
-
-# --- PROFILE HANDLER ---
+# --- PROFILE HANDLER (WORKS IN GROUP & PRIVATE) ---
 @router.message(F.text.in_(["📊 Profilim", "📊 Мой Профиль", "📊 My Profile"]))
+@router.message(Command("profile"))
+@router.message(Command("myprofile"))
 async def handle_my_profile(message: Message):
     user_id = message.from_user.id
     user = db_get_user(user_id)
@@ -1293,6 +1630,8 @@ async def handle_my_profile(message: Message):
     rank = get_user_rank(streak, lang=lang)
     progress_bar = generate_progress_bar(streak, lang=lang)
     lang_names = {"uz": "🇺🇿 O'zbekcha", "ru": "🇷🇺 Русский", "en": "🇬🇧 English"}
+    start_t = user["checkin_start"] if "checkin_start" in user.keys() and user["checkin_start"] else "04:30"
+    end_t = user["checkin_end"] if "checkin_end" in user.keys() and user["checkin_end"] else "06:00"
 
     badges = []
     if streak >= 7: badges.append("⚡ Early Bird")
@@ -1312,50 +1651,64 @@ async def handle_my_profile(message: Message):
         freeze_count=freeze_count,
         photo_count=photo_count,
         rank=rank,
+        start=start_t,
+        end=end_t,
         badges=badges_str,
         lang_str=lang_names.get(lang, "🇺🇿 O'zbekcha"),
         progress_bar=progress_bar
     )
-    await message.answer(profile_text, parse_mode=ParseMode.MARKDOWN)
+    await message.reply(profile_text, parse_mode=ParseMode.MARKDOWN)
 
-# --- LEADERBOARD HANDLER ---
+# --- LEADERBOARD HANDLER (WORKS IN GROUP & PRIVATE) ---
 @router.message(F.text.in_(["🏆 Reyting", "🏆 Рейтинг", "🏆 Leaderboard"]))
+@router.message(Command("leaderboard"))
 async def handle_leaderboard(message: Message):
     lang = get_user_language(message.from_user.id)
     t = TEXTS.get(lang, TEXTS["uz"])
 
     lb = db_get_global_leaderboard(10)
     if not lb:
-        await message.answer(t["leaderboard_empty"])
+        await message.reply(t["leaderboard_empty"])
         return
 
     text = t["leaderboard_title"]
     for idx, row in enumerate(lb, 1):
         r_title = get_user_rank(row['streak'], lang=lang)
         text += f"`#{idx}` **{row['first_name']}** — `{row['streak']}d` | `{row['coins']} coins` | {r_title}\n"
-    await message.answer(text, parse_mode=ParseMode.MARKDOWN)
+    await message.reply(text, parse_mode=ParseMode.MARKDOWN)
 
 # --- DAILY QUOTE HANDLER ---
 @router.message(F.text.in_(["💡 Kun Iqtibosi", "💡 Цитата Дня", "💡 Daily Quote"]))
+@router.message(Command("quote"))
 async def handle_quote(message: Message):
     lang = get_user_language(message.from_user.id)
     t = TEXTS.get(lang, TEXTS["uz"])
-    quote = await fetch_motivational_quote()
+    quote = await fetch_motivational_quote(lang=lang)
     await message.answer(t["quote_title"].format(quote=quote), parse_mode=ParseMode.MARKDOWN)
 
 # --- HELP HANDLER ---
 @router.message(F.text.in_(["📖 Qoidalar", "📖 Правила", "📖 Help & Rules"]))
+@router.message(Command("help"))
 async def handle_help(message: Message):
     lang = get_user_language(message.from_user.id)
     t = TEXTS.get(lang, TEXTS["uz"])
     await message.answer(t["help_text"], parse_mode=ParseMode.MARKDOWN)
 
+# --- GROUP AUTO-CAPTURE & CHAT MEMBER TRACKING ---
 @router.message(F.chat.type.in_([ChatType.GROUP, ChatType.SUPERGROUP]))
 async def handle_group_auto_capture(message: Message):
     if message.from_user and not message.from_user.is_bot:
         db_register_user(message.from_user.id, message.from_user.username, message.from_user.first_name)
         db_register_group(message.chat.id, message.chat.title)
         db_link_group_member(message.chat.id, message.from_user.id)
+
+@router.chat_member()
+async def handle_chat_member_updated(event: ChatMemberUpdated):
+    if event.new_chat_member and not event.new_chat_member.user.is_bot:
+        u = event.new_chat_member.user
+        db_register_user(u.id, u.username, u.first_name)
+        db_register_group(event.chat.id, event.chat.title)
+        db_link_group_member(event.chat.id, u.id)
 
 # ==================== SCHEDULER ====================
 async def scheduler_loop(bot: Bot):
@@ -1397,7 +1750,7 @@ async def scheduler_loop(bot: Bot):
                         else:
                             sleepers.append(f"• **{m['first_name']}** 😴")
 
-                    quote = await fetch_motivational_quote()
+                    quote = await fetch_motivational_quote("uz")
                     rep_msg = (
                         f"🔒 **CHECK-IN CLOSED ({e_t})**\n\n"
                         f"🌅 **AWAKE MEMBERS:**\n" + ("\n".join(awake) if awake else "None 😞") + "\n\n"
@@ -1477,19 +1830,32 @@ async def start_dummy_web_server():
 
 # ==================== MAIN ENTRY POINT ====================
 async def set_bot_commands(bot: Bot):
-    commands = [
-        BotCommand(command="setup", description="⚙️ Vaqt sozlamalari / Time Setup"),
-        BotCommand(command="ref", description="👥 Taklif havolasi / Invite link"),
-        BotCommand(command="gconfig", description="📋 Guruh sozlamalari (Admin)"),
-        BotCommand(command="duo", description="🤝 Juftlik biriktirish / Duo Partner"),
-        BotCommand(command="lang", description="🌐 Tilni ozgartirish / Change language"),
-        BotCommand(command="myprofile", description="📊 Profil / Profile"),
-        BotCommand(command="leaderboard", description="🏆 Reyting / Leaderboard"),
-        BotCommand(command="admin", description="👑 Owner Admin Panel"),
-        BotCommand(command="help", description="📖 Qoidalar / Rules"),
+    group_commands = [
+        BotCommand(command="setup", description="⚙️ Guruh vaqtini sozlash (Admin)"),
+        BotCommand(command="gconfig", description="📋 Guruh boshqaruv paneli (Admin)"),
+        BotCommand(command="settime", description="⏰ Vaqtni sozlash (/settime 04:30 06:00)"),
+        BotCommand(command="setcoins", description="🪙 Tangalarni sozlash (/setcoins 10 25)"),
+        BotCommand(command="leaderboard", description="🏆 Guruh va global reyting"),
+        BotCommand(command="profile", description="📊 Shaxsiy profil va nishonlar"),
+        BotCommand(command="shop", description="🛒 5 AM Do'koni"),
+        BotCommand(command="help", description="📖 Guruh qoidalari"),
+    ]
+    private_commands = [
+        BotCommand(command="start", description="🚀 Botni boshlash / Start"),
+        BotCommand(command="checkin", description="⚡ Solo Check-In menyusi"),
+        BotCommand(command="profile", description="📊 Profilim va nishonlar"),
+        BotCommand(command="leaderboard", description="🏆 Reyting jadvali"),
+        BotCommand(command="shop", description="🛒 Do'kon va bozor"),
+        BotCommand(command="setup", description="⚙️ Uyg'onish vaqtini sozlash"),
+        BotCommand(command="ref", description="👥 Do'stlarni taklif qilish"),
+        BotCommand(command="duo", description="🤝 Sherik biriktirish"),
+        BotCommand(command="lang", description="🌐 Tilni tanlash / Language"),
+        BotCommand(command="help", description="📖 Bot qoidalari"),
     ]
     try:
-        await bot.set_my_commands(commands)
+        await bot.set_my_commands(group_commands, scope=BotCommandScopeAllGroupChats())
+        await bot.set_my_commands(private_commands, scope=BotCommandScopeAllPrivateChats())
+        await bot.set_my_commands(private_commands)
     except Exception as e:
         logging.error(f"Failed to set bot commands: {e}")
 
