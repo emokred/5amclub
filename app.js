@@ -10,6 +10,8 @@ const I18N = {
         rankLegend: "👑 5 AM Afsonasi",
         tabDashboard: "Bosh sahifa",
         tabCalendar: "Taqvim",
+        tabWheel: "G'ildirak",
+        tabSquad: "Guruhlar",
         tabInventory: "Xaridorlik",
         tabMarket: "Bozor",
         tabArena: "Arena",
@@ -96,7 +98,29 @@ const I18N = {
         descInteractiveToggle: "Jonli audio synth FX, zarralar & arena vizuallari",
         badgeMatrixGoal: "🎯 TARGET GOAL MATRIX",
         titleTargetMatrix: "Target Goal Matrix Tracker",
-        descTargetMatrix: "Intizom maqsadini tanlang va kunlik uyg'onish natijangizni real vaqtda kuzatib boring!"
+        descTargetMatrix: "Intizom maqsadini tanlang va kunlik uyg'onish natijangizni real vaqtda kuzatib boring!",
+        badgeWheelStatus: "🎡 KUNLIK OMAD G'ILDIRAGI",
+        titleWheelHeader: "Daily Wheel of Fortune",
+        descWheelHeader: "Har kuni omad g'ildiragini aylantiring va tangalar, XP va Streak Freeze qalqonlarini yutib oling!",
+        btnSpin: "G'ILDIRAGNI AYLANTIRISH (BEPUL)",
+        titleWheelPrizes: "🎁 Sovrinlar Jamg'armasi",
+        badgeSquadStatus: "🛡️ MENING GURUHIM",
+        titleMySquad: "Squad Dashboard",
+        badgeTopSquads: "🏆 GURUHLAR REYTINGI",
+        titleTopSquads: "Top Discipline Guilds",
+        descTopSquads: "Ertalabki uyg'onish intizomi va umumiy streak bo'yicha eng kuchli guruhlar!",
+        badgeCreateSquad: "🛡️ YANGI GURUH",
+        titleCreateSquad: "Yangi Squad Tuzish",
+        labelSquadName: "Squad Nomi:",
+        labelSquadTag: "Squad Tagi (3-5 harf):",
+        labelSquadMotto: "Shior (Motto):",
+        textBtnCreateSquad: "Squad Tuzish (100 Coins)",
+        labelBadgeCondition: "Ochish talabi:",
+        textBadgeModalClose: "Tushunarli 👍",
+        rarityCommon: "Oddiy",
+        rarityUncommon: "O'rtacha",
+        rarityRare: "Noyob",
+        rarityLegendary: "Afsonaviy"
     },
     ru: {
         rankNovice: "🌅 Рассветный Новичок",
@@ -106,6 +130,8 @@ const I18N = {
         rankLegend: "👑 Легенда 5 AM",
         tabDashboard: "Главная",
         tabCalendar: "Календарь",
+        tabWheel: "Колесо",
+        tabSquad: "Кланы",
         tabInventory: "Инвентарь",
         tabMarket: "Рынок",
         tabArena: "Арена",
@@ -192,7 +218,29 @@ const I18N = {
         descInteractiveToggle: "Живые синтез-аудио FX, частицы и арена-визуал",
         badgeMatrixGoal: "🎯 МАТРИЦА ЦЕЛЕЙ",
         titleTargetMatrix: "Трекер Матрицы Целей",
-        descTargetMatrix: "Выберите целевой марафон дисциплины и отслеживайте прогресс подъема!"
+        descTargetMatrix: "Выберите целевой марафон дисциплины и отслеживайте прогресс подъема!",
+        badgeWheelStatus: "🎡 ЕЖЕДНЕВНОЕ КОЛЕСО УДАЧИ",
+        titleWheelHeader: "Ежедневное Колесо Удачи",
+        descWheelHeader: "Крутите колесо удачи каждый день и выигрывайте монеты, XP и защитные щиты!",
+        btnSpin: "КРУТИТЬ КОЛЕСО (БЕСПЛАТНО)",
+        titleWheelPrizes: "🎁 Призовой Фонд",
+        badgeSquadStatus: "🛡️ МОЙ КЛАН",
+        titleMySquad: "Дашборд Клана",
+        badgeTopSquads: "🏆 РЕЙТИНГ КЛАНОВ",
+        titleTopSquads: "Лучшие Гильдии Дисциплины",
+        descTopSquads: "Самые сильные кланы по дисциплине утреннего подъема и общему стрику!",
+        badgeCreateSquad: "🛡️ НОВЫЙ КЛАН",
+        titleCreateSquad: "Создать Новый Клан",
+        labelSquadName: "Название Клана:",
+        labelSquadTag: "Тег Клана (3-5 букв):",
+        labelSquadMotto: "Девиз Клана:",
+        textBtnCreateSquad: "Создать Клан (100 Монет)",
+        labelBadgeCondition: "Условие разблокировки:",
+        textBadgeModalClose: "Понятно 👍",
+        rarityCommon: "Обычный",
+        rarityUncommon: "Необычный",
+        rarityRare: "Редкий",
+        rarityLegendary: "Легендарный"
     },
     en: {
         rankNovice: "🌅 Dawn Novice",
@@ -202,6 +250,8 @@ const I18N = {
         rankLegend: "👑 5 AM Legend",
         tabDashboard: "Dashboard",
         tabCalendar: "Calendar",
+        tabWheel: "Wheel",
+        tabSquad: "Squads",
         tabInventory: "Inventory",
         tabMarket: "Market",
         tabArena: "Arena",
@@ -288,7 +338,29 @@ const I18N = {
         descInteractiveToggle: "Live audio synth FX, particle glow & arena visual engine",
         badgeMatrixGoal: "🎯 TARGET GOAL MATRIX",
         titleTargetMatrix: "Target Goal Matrix Tracker",
-        descTargetMatrix: "Choose your discipline target goal and track daily wake-up progress in real time!"
+        descTargetMatrix: "Choose your discipline target goal and track daily wake-up progress in real time!",
+        badgeWheelStatus: "🎡 DAILY WHEEL OF FORTUNE",
+        titleWheelHeader: "Daily Wheel of Fortune",
+        descWheelHeader: "Spin the wheel of fortune daily to win coins, XP, and streak freeze shields!",
+        btnSpin: "SPIN THE WHEEL (FREE)",
+        titleWheelPrizes: "🎁 Prize Pool Showcase",
+        badgeSquadStatus: "🛡️ MY SQUAD",
+        titleMySquad: "Squad Dashboard",
+        badgeTopSquads: "🏆 TOP SQUADS",
+        titleTopSquads: "Top Discipline Guilds",
+        descTopSquads: "Top performing squads ranked by total morning discipline and streak!",
+        badgeCreateSquad: "🛡️ NEW SQUAD",
+        titleCreateSquad: "Create New Squad",
+        labelSquadName: "Squad Name:",
+        labelSquadTag: "Squad Tag (3-5 chars):",
+        labelSquadMotto: "Squad Motto:",
+        textBtnCreateSquad: "Create Squad (100 Coins)",
+        labelBadgeCondition: "Unlock Condition:",
+        textBadgeModalClose: "Got It 👍",
+        rarityCommon: "Common",
+        rarityUncommon: "Uncommon",
+        rarityRare: "Rare",
+        rarityLegendary: "Legendary"
     }
 };
 
@@ -357,8 +429,6 @@ const MULTIVERSE_REALM_TITLES = {
         }
     }
 };
-    }
-};
 
 const RPG_LEVEL_TITLES = {
     uz: [
@@ -409,7 +479,17 @@ const defaultState = {
         active_universe: "marvel",
         roleplay_enabled: true,
         interactive_enabled: true,
-        target_goal: "21"
+        target_goal: "21",
+        lastWheelSpinDate: null,
+        squad: {
+            id: "sq_1",
+            name: "Dawn Titans",
+            tag: "TITAN",
+            motto: "Birgalikda 5 AM ga egalik qilamiz!",
+            streak: 142,
+            membersCount: 12,
+            role: "Leader"
+        }
     },
     soundEnabled: true,
     lang: "uz"
@@ -425,6 +505,7 @@ let state = (() => {
             if (parsed.user.roleplay_enabled === undefined) parsed.user.roleplay_enabled = true;
             if (parsed.user.interactive_enabled === undefined) parsed.user.interactive_enabled = true;
             if (!parsed.user.target_goal) parsed.user.target_goal = "21";
+            if (parsed.user.squad === undefined) parsed.user.squad = defaultState.user.squad;
             return parsed;
         }
     } catch (e) {
@@ -448,10 +529,15 @@ class SoundEffects {
     }
 
     init() {
-        if (!this.ctx) {
-            const AudioCtx = window.AudioContext || window.webkitAudioContext;
-            if (AudioCtx) this.ctx = new AudioCtx();
-        }
+        try {
+            if (!this.ctx) {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (AudioCtx) this.ctx = new AudioCtx();
+            }
+            if (this.ctx && this.ctx.state === "suspended") {
+                this.ctx.resume();
+            }
+        } catch (e) {}
     }
 
     playTone(freq, type, duration, startDelay = 0, gainLevel = 0.15) {
@@ -476,6 +562,17 @@ class SoundEffects {
 
     click() {
         this.playTone(650, "sine", 0.04, 0, 0.1);
+    }
+
+    wheelTick() {
+        this.playTone(800 + Math.random() * 200, "triangle", 0.03, 0, 0.08);
+    }
+
+    wheelWin() {
+        this.playTone(523.25, "sine", 0.1, 0, 0.15);
+        this.playTone(659.25, "sine", 0.1, 0.08, 0.15);
+        this.playTone(783.99, "sine", 0.1, 0.16, 0.15);
+        this.playTone(1046.50, "sine", 0.3, 0.24, 0.22);
     }
 
     coin() {
@@ -524,6 +621,8 @@ class SoundEffects {
     }
 }
 const sfx = new SoundEffects();
+window.addEventListener("touchstart", () => { sfx.init(); }, { passive: true });
+window.addEventListener("click", () => { sfx.init(); }, { passive: true });
 
 // ==================== RPG & LEVELING FORMULAS ====================
 function calculateRPG(xp, lang = "uz") {
@@ -750,6 +849,8 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCalendar();
     renderInventory();
     renderLeaderboard();
+    renderWheelCanvas(0);
+    renderSquadsTab();
     initActions();
     updateUI();
     renderHDCanvasCertificate();
@@ -871,6 +972,8 @@ function applyLanguage() {
     // Navigation
     setElementText("tab-nav-dashboard", t.tabDashboard);
     setElementText("tab-nav-calendar", t.tabCalendar);
+    setElementText("tab-nav-wheel", t.tabWheel);
+    setElementText("tab-nav-squad", t.tabSquad);
     setElementText("tab-nav-inventory", t.tabInventory);
     setElementText("tab-nav-shop", t.tabMarket);
     setElementText("tab-nav-arena", t.tabArena);
@@ -913,6 +1016,38 @@ function applyLanguage() {
     setElementText("title-habit", t.habitTitle);
     setElementText("sub-habit", t.habitSub);
     setElementText("btn-quick-cert", t.btnQuickCert);
+
+    // Wheel Tab
+    setElementText("badge-wheel-status", t.badgeWheelStatus);
+    setElementText("title-wheel-header", t.titleWheelHeader);
+    setElementText("desc-wheel-header", t.descWheelHeader);
+    setElementText("text-btn-spin", t.btnSpin);
+    setElementText("title-wheel-prizes", t.titleWheelPrizes);
+    setElementText("rarity-common-1", t.rarityCommon);
+    setElementText("rarity-common-2", t.rarityCommon);
+    setElementText("rarity-common-3", t.rarityCommon);
+    setElementText("rarity-common-4", t.rarityCommon);
+    setElementText("rarity-uncommon-1", t.rarityUncommon);
+    setElementText("rarity-rare-1", t.rarityRare);
+    setElementText("rarity-rare-2", t.rarityRare);
+    setElementText("rarity-legendary-1", t.rarityLegendary);
+
+    // Squad Tab & Modal
+    setElementText("badge-squad-status", t.badgeSquadStatus);
+    setElementText("title-my-squad", t.titleMySquad);
+    setElementText("badge-top-squads", t.badgeTopSquads);
+    setElementText("title-top-squads", t.titleTopSquads);
+    setElementText("desc-top-squads", t.descTopSquads);
+    setElementText("badge-create-squad", t.badgeCreateSquad);
+    setElementText("title-create-squad", t.titleCreateSquad);
+    setElementText("label-squad-name", t.labelSquadName);
+    setElementText("label-squad-tag", t.labelSquadTag);
+    setElementText("label-squad-motto", t.labelSquadMotto);
+    setElementText("text-btn-create-squad", t.textBtnCreateSquad);
+
+    // Badge Modal
+    setElementText("label-badge-condition", t.labelBadgeCondition);
+    setElementText("text-badge-modal-close", t.textBadgeModalClose);
 
     // Inventory Tab
     setElementText("badge-inventory", t.inventoryBadge);
@@ -967,6 +1102,9 @@ function applyLanguage() {
     setElementText("badge-matrix-goal", t.badgeMatrixGoal);
     setElementText("title-target-matrix", t.titleTargetMatrix);
     setElementText("desc-target-matrix", t.descTargetMatrix);
+
+    if (typeof renderSquadsTab === "function") renderSquadsTab();
+    if (typeof renderWheelCanvas === "function") renderWheelCanvas(wheelCurrentAngle);
 }
 
 function setElementText(id, text) {
@@ -1055,8 +1193,8 @@ function initTabs() {
     const tabContents = document.querySelectorAll(".tab-content");
 
     tabBtns.forEach(btn => {
-        btn.addEventListener("click", () => {
-            sfx.click();
+        btn.addEventListener("click", (e) => {
+            try { sfx.click(); } catch(err) {}
             const targetTab = btn.getAttribute("data-tab");
 
             tabBtns.forEach(b => b.classList.remove("active"));
@@ -1066,7 +1204,7 @@ function initTabs() {
             const targetContent = document.getElementById(targetTab);
             if (targetContent) targetContent.classList.add("active");
 
-            triggerHapticFeedback("light");
+            try { triggerHapticFeedback("light"); } catch(err) {}
         });
     });
 }
@@ -1097,23 +1235,19 @@ function renderInventory() {
 
     // Render Badges Cabinet
     const cabinet = document.getElementById("badges-cabinet-list");
-    if (cabinet) {
-        const badgesData = [
-            { icon: "⚡", name: "Early Bird", req: "7 streak", unlocked: state.user.streak >= 7 },
-            { icon: "📸", name: "Photo Master", req: "5 foto", unlocked: state.user.photoCount >= 5 },
-            { icon: "👑", name: "Elite 21", req: "21 streak", unlocked: state.user.streak >= 21 },
-            { icon: "🦁", name: "5 AM Legend", req: "30 streak", unlocked: state.user.streak >= 30 },
-            { icon: "🛡", name: "Shielded", req: "1 freeze", unlocked: (state.user.freezeCount || 0) > 0 },
-            { icon: "⚔️", name: "Gladiator", req: "100 pts", unlocked: (state.user.tourneyPoints || 0) >= 100 }
-        ];
-
-        cabinet.innerHTML = badgesData.map(b => `
-            <div class="badge-card ${b.unlocked ? 'unlocked' : 'locked'}">
-                <span class="b-icon">${b.icon}</span>
-                <span class="b-name">${b.name}</span>
-                <small class="b-status">${b.unlocked ? '✅ Faol' : b.req}</small>
-            </div>
-        `).join("");
+    if (cabinet && typeof BADGES_DATABASE !== "undefined") {
+        const lang = state.lang || "uz";
+        cabinet.innerHTML = BADGES_DATABASE.map(b => {
+            const unlocked = b.current(state.user) >= b.target;
+            const bName = b.name[lang] || b.name.uz;
+            return `
+                <div class="badge-card ${unlocked ? 'unlocked' : 'locked'}" onclick="openBadgeModal('${b.id}')">
+                    <span class="b-icon">${b.icon}</span>
+                    <span class="b-name">${bName}</span>
+                    <small class="b-status">${unlocked ? '✅ Unlocked' : b.req}</small>
+                </div>
+            `;
+        }).join("");
     }
 }
 
@@ -1665,3 +1799,442 @@ function triggerHapticFeedback(type = "medium") {
         }
     }
 }
+
+// ==================== WHEEL OF FORTUNE ENGINE ====================
+const WHEEL_SEGMENTS = [
+    { label: "+15 Coins", icon: "🪙", type: "coins", val: 15, color: "#f59e0b", rarity: "common" },
+    { label: "+50 XP", icon: "⚡", type: "xp", val: 50, color: "#10b981", rarity: "common" },
+    { label: "Shield 🛡️", icon: "🛡️", type: "shield", val: 1, color: "#3b82f6", rarity: "rare" },
+    { label: "+30 Coins", icon: "🪙", type: "coins", val: 30, color: "#d97706", rarity: "uncommon" },
+    { label: "+100 XP", icon: "⚡", type: "xp", val: 100, color: "#8b5cf6", rarity: "rare" },
+    { label: "+5 Coins", icon: "🪙", type: "coins", val: 5, color: "#f59e0b", rarity: "common" },
+    { label: "+20 XP", icon: "⚡", type: "xp", val: 20, color: "#10b981", rarity: "common" },
+    { label: "Jackpot 👑", icon: "👑", type: "jackpot", val: 100, color: "#ef4444", rarity: "legendary" }
+];
+
+let wheelCurrentAngle = 0;
+let isSpinningWheel = false;
+
+function renderWheelCanvas(angle = 0) {
+    const canvas = document.getElementById("wheel-canvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const size = canvas.width;
+    const center = size / 2;
+    const radius = center - 12;
+    const sliceAngle = (Math.PI * 2) / WHEEL_SEGMENTS.length;
+
+    ctx.clearRect(0, 0, size, size);
+
+    ctx.save();
+    ctx.translate(center, center);
+    ctx.rotate(angle);
+
+    // Draw outer ring
+    ctx.beginPath();
+    ctx.arc(0, 0, radius + 8, 0, Math.PI * 2);
+    ctx.fillStyle = "#0f172a";
+    ctx.fill();
+    ctx.strokeStyle = "#fbbf24";
+    ctx.lineWidth = 6;
+    ctx.stroke();
+
+    // Draw slices
+    WHEEL_SEGMENTS.forEach((seg, i) => {
+        const startAngle = i * sliceAngle;
+        const endAngle = startAngle + sliceAngle;
+
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, radius, startAngle, endAngle);
+        ctx.closePath();
+
+        const segGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, radius);
+        if (i % 2 === 0) {
+            segGrad.addColorStop(0, "#1e293b");
+            segGrad.addColorStop(1, "#0f172a");
+        } else {
+            segGrad.addColorStop(0, "#334155");
+            segGrad.addColorStop(1, "#1e293b");
+        }
+        ctx.fillStyle = segGrad;
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(251, 191, 36, 0.35)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.rotate(startAngle + sliceAngle / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = seg.color || "#ffffff";
+        ctx.font = "bold 13px 'Outfit', sans-serif";
+        ctx.fillText(`${seg.icon} ${seg.label}`, radius - 20, 5);
+        ctx.restore();
+    });
+
+    // Draw center hub
+    ctx.beginPath();
+    ctx.arc(0, 0, 32, 0, Math.PI * 2);
+    ctx.fillStyle = "#fbbf24";
+    ctx.fill();
+    ctx.strokeStyle = "#090d16";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    ctx.fillStyle = "#090d16";
+    ctx.font = "bold 16px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("⭐", 0, 1);
+
+    ctx.restore();
+}
+
+function spinWheel() {
+    if (isSpinningWheel) return;
+
+    const todayStr = new Date().toISOString().split("T")[0];
+    if (state.user.lastWheelSpinDate === todayStr) {
+        sfx.click();
+        const msg = state.lang === "uz" 
+            ? "❌ Siz bugungi bepul imkoniyatingizdan foydalandingiz! Ertaga yana keling!" 
+            : (state.lang === "ru" ? "❌ Вы уже использовали бесплатное вращение сегодня! Приходите завтра!" : "❌ You have already used your free spin today! Come back tomorrow!");
+        showToast(msg);
+        triggerHapticFeedback("error");
+        return;
+    }
+
+    isSpinningWheel = true;
+    const btn = document.getElementById("btn-spin-wheel");
+    if (btn) btn.disabled = true;
+
+    const spinRotations = 6 + Math.floor(Math.random() * 4);
+    const targetSliceIndex = Math.floor(Math.random() * WHEEL_SEGMENTS.length);
+    const sliceArc = (Math.PI * 2) / WHEEL_SEGMENTS.length;
+    const targetAngleOffset = (Math.PI * 2) - (targetSliceIndex * sliceArc + sliceArc / 2) - (Math.PI / 2);
+    const totalRotation = spinRotations * (Math.PI * 2) + targetAngleOffset;
+
+    const duration = 4500;
+    const startTime = performance.now();
+    const startAngle = wheelCurrentAngle % (Math.PI * 2);
+    let lastTickSlice = -1;
+
+    function animateSpin(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        wheelCurrentAngle = startAngle + easeOut * (totalRotation - startAngle);
+
+        renderWheelCanvas(wheelCurrentAngle);
+
+        const normalizedAngle = (2 * Math.PI - (wheelCurrentAngle + Math.PI / 2) % (2 * Math.PI)) % (2 * Math.PI);
+        const currentSlice = Math.floor(normalizedAngle / sliceArc) % WHEEL_SEGMENTS.length;
+        if (currentSlice !== lastTickSlice) {
+            sfx.wheelTick();
+            triggerHapticFeedback("light");
+            lastTickSlice = currentSlice;
+        }
+
+        if (progress < 1) {
+            requestAnimationFrame(animateSpin);
+        } else {
+            isSpinningWheel = false;
+            if (btn) btn.disabled = false;
+            state.user.lastWheelSpinDate = todayStr;
+            saveState();
+
+            const prize = WHEEL_SEGMENTS[targetSliceIndex];
+            applyWheelPrize(prize);
+        }
+    }
+
+    requestAnimationFrame(animateSpin);
+}
+window.spinWheel = spinWheel;
+
+function applyWheelPrize(prize) {
+    if (prize.type === "coins" || prize.type === "jackpot") {
+        state.user.coins += prize.val;
+    } else if (prize.type === "xp") {
+        addXP(prize.val);
+    } else if (prize.type === "shield") {
+        state.user.freezeCount = (state.user.freezeCount || 0) + prize.val;
+    }
+
+    updateUI();
+    renderInventory();
+    sfx.wheelWin();
+    launchConfetti();
+    triggerHapticFeedback("heavy");
+
+    const statusEl = document.getElementById("wheel-status-text");
+    if (statusEl) {
+        const spunMsg = state.lang === "uz" ? "✅ Bugungi bepul aylantirish ishlatildi!" : (state.lang === "ru" ? "✅ Использовано бесплатное вращение!" : "✅ Free spin used today!");
+        statusEl.textContent = spunMsg;
+    }
+
+    const winTitle = state.lang === "uz" ? "🎉 G'ALABA!" : (state.lang === "ru" ? "🎉 ПОБЕДА!" : "🎉 WINNER!");
+    showToast(`${winTitle} ${prize.icon} ${prize.label}!`);
+}
+
+// ==================== SQUAD / GUILD CLAN SYSTEM ====================
+const TOP_SQUADS_DATA = [
+    { id: "sq_1", name: "Dawn Titans", tag: "TITAN", streak: 450, membersCount: 15, motto: "Ertalabki 5 AM afsonalari!" },
+    { id: "sq_2", name: "Bushido Sunrise", tag: "BUSHI", streak: 380, membersCount: 12, motto: "Katana intizomi va sabr!" },
+    { id: "sq_3", name: "5 AM Phoenix", tag: "PHNX", streak: 310, membersCount: 10, motto: "Har kun quyosh bilan uyg'onamiz!" },
+    { id: "sq_4", name: "Sun Chasers Clan", tag: "SUN", streak: 240, membersCount: 8, motto: "Nurlarga intiluvchilar" }
+];
+
+function renderSquadsTab() {
+    const heroBox = document.getElementById("squad-info-box");
+    const listEl = document.getElementById("squads-list");
+    if (!heroBox || !listEl) return;
+
+    if (state.user.squad) {
+        const sq = state.user.squad;
+        heroBox.innerHTML = `
+            <div class="squad-active-header">
+                <div class="squad-emblem">🛡️</div>
+                <div class="squad-main-meta">
+                    <h4>${sq.name} <span class="squad-tag-badge">[${sq.tag}]</span></h4>
+                    <p class="squad-motto">“${sq.motto}”</p>
+                </div>
+            </div>
+            <div class="squad-stats-row">
+                <div class="squad-stat-item">
+                    <span class="s-val">🔥 ${sq.streak}</span>
+                    <small class="s-lbl">Umumiy Streak</small>
+                </div>
+                <div class="squad-stat-item">
+                    <span class="s-val">👥 ${sq.membersCount || 1}</span>
+                    <small class="s-lbl">A'zolar</small>
+                </div>
+                <div class="squad-stat-item">
+                    <span class="s-val">👑 ${sq.role || "Member"}</span>
+                    <small class="s-lbl">Maqom</small>
+                </div>
+            </div>
+            <div class="squad-actions-row">
+                <button class="secondary-btn action-sm-btn" onclick="leaveSquad()">Guruhdan Chiqish 🚪</button>
+            </div>
+        `;
+    } else {
+        heroBox.innerHTML = `
+            <div class="squad-empty-box">
+                <p>Siz hali hech qanday guruhga a'zo emassiz! Do'stlaringiz bilan birlashing va umumiy streak to'plang!</p>
+                <div class="squad-btn-group">
+                    <button class="primary-btn glow-btn" onclick="openSquadModal()">➕ Yangi Squad Tuzish (100 🪙)</button>
+                    <button class="secondary-btn" onclick="joinRandomSquad()">🎲 Tasodifiy Squadga Qo'shilish</button>
+                </div>
+            </div>
+        `;
+    }
+
+    listEl.innerHTML = TOP_SQUADS_DATA.map((sq, index) => `
+        <div class="squad-item-card">
+            <span class="sq-rank">#${index + 1}</span>
+            <div class="sq-icon">🛡️</div>
+            <div class="sq-details">
+                <div class="sq-title-row">
+                    <strong>${sq.name}</strong>
+                    <span class="sq-tag">[${sq.tag}]</span>
+                </div>
+                <span class="sq-motto">${sq.motto}</span>
+            </div>
+            <div class="sq-right-stats">
+                <span class="sq-streak">🔥 ${sq.streak} Kun</span>
+                <span class="sq-members">👥 ${sq.membersCount}</span>
+            </div>
+        </div>
+    `).join("");
+}
+
+function openSquadModal() {
+    sfx.click();
+    const modal = document.getElementById("squad-modal");
+    if (modal) modal.style.display = "flex";
+}
+window.openSquadModal = openSquadModal;
+
+function closeSquadModal() {
+    const modal = document.getElementById("squad-modal");
+    if (modal) modal.style.display = "none";
+}
+window.closeSquadModal = closeSquadModal;
+
+function submitCreateSquad() {
+    const nameInput = document.getElementById("input-squad-name");
+    const tagInput = document.getElementById("input-squad-tag");
+    const mottoInput = document.getElementById("input-squad-motto");
+
+    const name = nameInput ? nameInput.value.trim() : "";
+    const tag = tagInput ? tagInput.value.trim().toUpperCase() : "";
+    const motto = mottoInput ? mottoInput.value.trim() : "5 AM Club Clan";
+
+    if (!name || !tag) {
+        showToast("❌ Squad nomi va tagini kiriting!");
+        triggerHapticFeedback("error");
+        return;
+    }
+
+    if (state.user.coins < 100) {
+        showToast("❌ Squad tuzish uchun 100 tanga kerak!");
+        triggerHapticFeedback("error");
+        return;
+    }
+
+    state.user.coins -= 100;
+    state.user.squad = {
+        id: `sq_${Date.now()}`,
+        name: name,
+        tag: tag,
+        motto: motto,
+        streak: state.user.streak,
+        membersCount: 1,
+        role: "Leader",
+        members: [{ name: state.user.name, streak: state.user.streak, rank: "Leader" }]
+    };
+
+    saveState();
+    updateUI();
+    renderSquadsTab();
+    closeSquadModal();
+    sfx.victory();
+    launchConfetti();
+    showToast(`🎉 Squad created: '${name}' [${tag}]!`);
+}
+window.submitCreateSquad = submitCreateSquad;
+
+function joinRandomSquad() {
+    sfx.click();
+    const randomSq = TOP_SQUADS_DATA[Math.floor(Math.random() * TOP_SQUADS_DATA.length)];
+    state.user.squad = {
+        id: randomSq.id,
+        name: randomSq.name,
+        tag: randomSq.tag,
+        motto: randomSq.motto,
+        streak: randomSq.streak + state.user.streak,
+        membersCount: randomSq.membersCount + 1,
+        role: "Member"
+    };
+
+    saveState();
+    renderSquadsTab();
+    sfx.coin();
+    showToast(`🎉 Joined '${randomSq.name}' [${randomSq.tag}]!`);
+    triggerHapticFeedback("medium");
+}
+window.joinRandomSquad = joinRandomSquad;
+
+function leaveSquad() {
+    sfx.click();
+    state.user.squad = null;
+    saveState();
+    renderSquadsTab();
+    showToast("🚪 You left the squad.");
+}
+window.leaveSquad = leaveSquad;
+
+// ==================== INTERACTIVE BADGE VAULT INSPECTOR ====================
+const BADGES_DATABASE = [
+    {
+        id: "early_bird",
+        icon: "⚡",
+        name: { uz: "Early Bird", ru: "Ранняя Пташка", en: "Early Bird" },
+        desc: { uz: "7 kun ketma-ket soat 5:00 da uyg'onish intizomi", ru: "7 дней подряд успешного подъема в 5:00", en: "7 consecutive days of verified 5 AM wake-ups" },
+        req: "7 Days Streak",
+        target: 7,
+        current: (u) => u.streak
+    },
+    {
+        id: "photo_master",
+        icon: "📸",
+        name: { uz: "Photo Master", ru: "Мастер Фото", en: "Photo Master" },
+        desc: { uz: "5 ta tasdiqlangan kunlik kofe/suv foto isboti yuborildi", ru: "5 подтвержденных утренних фото-заданий", en: "5 verified morning photo proof missions" },
+        req: "5 Photo Proofs",
+        target: 5,
+        current: (u) => u.photoCount || 0
+    },
+    {
+        id: "elite_21",
+        icon: "🏆",
+        name: { uz: "Elite 21", ru: "Элита 21", en: "Elite 21" },
+        desc: { uz: "21 kunlik odat maratonini to'liq yakunlab, Oltin Sertifikat olish", ru: "Завершение 21-дневного марафона и получение Золотого Сертификата", en: "Complete 21-day habit challenge & earn Golden Certificate" },
+        req: "21 Days Streak",
+        target: 21,
+        current: (u) => u.streak
+    },
+    {
+        id: "lion_legend",
+        icon: "🦁",
+        name: { uz: "5 AM Legend", ru: "Легенда 5 AM", en: "5 AM Legend" },
+        desc: { uz: "30 kunlik intizom cho'qqisini fohishasiz bosib o'tish", ru: "Достижение 30 дней непрерывной дисциплины", en: "Reach ultimate 30-day discipline milestone" },
+        req: "30 Days Streak",
+        target: 30,
+        current: (u) => u.streak
+    },
+    {
+        id: "shielded",
+        icon: "🛡️",
+        name: { uz: "Shield Master", ru: "Мастер Щита", en: "Shield Master" },
+        desc: { uz: "Bozordan kamida 1 ta Streak Freeze qalqonini xarid qilish", ru: "Приобретение хотя бы 1 Защитного Щита Стрика", en: "Possess at least 1 Streak Freeze shield" },
+        req: "1 Streak Freeze",
+        target: 1,
+        current: (u) => u.freezeCount || 0
+    },
+    {
+        id: "gladiator",
+        icon: "⚔️",
+        name: { uz: "Gladiator", ru: "Гладиатор", en: "Gladiator" },
+        desc: { uz: "Turnirda va 1v1 duellarda 100 dan ortiq ball to'plash", ru: "Набрать более 100 очков в турнире и дуэлях", en: "Earn 100+ tournament & duel points" },
+        req: "100 Tourney Pts",
+        target: 100,
+        current: (u) => u.tourneyPoints || 0
+    }
+];
+
+function openBadgeModal(badgeId) {
+    const b = BADGES_DATABASE.find(item => item.id === badgeId);
+    if (!b) return;
+
+    sfx.click();
+    const lang = state.lang || "uz";
+    const title = b.name[lang] || b.name.uz;
+    const desc = b.desc[lang] || b.desc.uz;
+    const currentVal = b.current(state.user);
+    const isUnlocked = currentVal >= b.target;
+    const pct = Math.min(100, Math.round((currentVal / b.target) * 100));
+
+    setElementText("badge-modal-icon", b.icon);
+    setElementText("badge-modal-title", title);
+    setElementText("badge-modal-desc", desc);
+    setElementText("badge-modal-req", b.req);
+
+    const statusTag = document.getElementById("badge-modal-status");
+    if (statusTag) {
+        if (isUnlocked) {
+            statusTag.textContent = "✅ UNLOCKED";
+            statusTag.className = "badge-status-tag unlocked";
+        } else {
+            statusTag.textContent = "🔒 LOCKED";
+            statusTag.className = "badge-status-tag locked";
+        }
+    }
+
+    const fill = document.getElementById("badge-modal-progress-fill");
+    const progressText = document.getElementById("badge-modal-progress-text");
+    if (fill) fill.style.width = `${pct}%`;
+    if (progressText) progressText.textContent = `Progress: ${currentVal} / ${b.target} (${pct}%)`;
+
+    const modal = document.getElementById("badge-modal");
+    if (modal) modal.style.display = "flex";
+    triggerHapticFeedback("medium");
+}
+window.openBadgeModal = openBadgeModal;
+
+function closeBadgeModal() {
+    const modal = document.getElementById("badge-modal");
+    if (modal) modal.style.display = "none";
+}
+window.closeBadgeModal = closeBadgeModal;
