@@ -1,15 +1,20 @@
 import asyncio
+import hashlib
+import hmac
+import html
+import io
+import json
 import logging
 import os
 import random
 import sqlite3
+import urllib.parse
 from contextlib import contextmanager
 from datetime import datetime, timedelta
 import pytz
 import aiohttp
 from aiohttp import web
 from PIL import Image, ImageDraw, ImageFont
-import io
 
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.filters import Command, CommandStart
@@ -42,7 +47,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 def is_time_in_window(start_str: str, end_str: str) -> bool:
     """
     Checks if current Asia/Tashkent time falls strictly between start_str and end_str (HH:MM).
-    Supports windows that span past midnight safely.
+    Supports overnight windows safely. Fail closed.
     """
     try:
         tz = pytz.timezone(TIMEZONE_STR)
@@ -58,21 +63,55 @@ def is_time_in_window(start_str: str, end_str: str) -> bool:
         if start_time <= end_time:
             return start_time <= now_time <= end_time
         else:
-            # Handles overnight window (e.g. 23:00 to 06:00)
             return now_time >= start_time or now_time <= end_time
     except Exception as e:
         logging.error(f"Error checking time window ({start_str} - {end_str}): {e}")
-        return True
+        return False
+
+# ==================== TELEGRAM initData HMAC-SHA256 VERIFICATION ====================
+def verify_telegram_init_data(init_data: str, bot_token: str = BOT_TOKEN) -> tuple[bool, dict]:
+    """
+    Validates Telegram WebApp initData query string using HMAC-SHA256 according to official spec.
+    """
+    if not init_data:
+        return False, {}
+    try:
+        parsed_data = urllib.parse.parse_qsl(init_data, keep_blank_values=True)
+        data_dict = dict(parsed_data)
+        received_hash = data_dict.pop("hash", None)
+        if not received_hash:
+            return False, {}
+
+        data_check_list = [f"{k}={v}" for k, v in sorted(data_dict.items())]
+        data_check_string = "\n".join(data_check_list)
+
+        secret_key = hmac.new(b"WebAppData", bot_token.encode("utf-8"), hashlib.sha256).digest()
+        calculated_hash = hmac.new(secret_key, data_check_string.encode("utf-8"), hashlib.sha256).hexdigest()
+
+        if not hmac.compare_digest(calculated_hash, received_hash):
+            return False, {}
+
+        user_data = {}
+        if "user" in data_dict:
+            user_data = json.loads(data_dict["user"])
+
+        return True, {
+            "user": user_data,
+            "auth_date": int(data_dict.get("auth_date", 0)),
+            "query_id": data_dict.get("query_id", ""),
+            "raw": data_dict
+        }
+    except Exception as e:
+        logging.error(f"HMAC Verification exception: {e}")
+        return False, {}
 
 # ==================== SMART PHOTO VERIFICATION (PILLOW) ====================
 def verify_image_quality(image_bytes: bytes) -> tuple[bool, str]:
     """
-    Analyzes brightness & color variance using Pillow.
-    Rejects pitch black, camera-covered, or uniform blank photos.
+    Analyzes brightness & variance using Pillow. Rejects black or solid/blank sheets.
     """
     try:
         img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-        # Resize thumbnail to 100x100 for rapid statistical analysis
         thumb = img.resize((100, 100))
         pixels = list(thumb.getdata())
 
@@ -82,10 +121,6 @@ def verify_image_quality(image_bytes: bytes) -> tuple[bool, str]:
         variance = sum((b - avg_brightness) ** 2 for b in brightnesses) / len(brightnesses)
         std_dev = variance ** 0.5
 
-        logging.info(f"Photo verification metrics: Brightness={avg_brightness:.2f}, StdDev={std_dev:.2f}")
-
-        # Dark threshold: < 26 (too dark/pitch black)
-        # Variance threshold: < 10 (solid color/blank sheet)
         if avg_brightness < 26:
             return False, "dark"
         if std_dev < 10:
@@ -151,6 +186,7 @@ TEXTS = {
         "btn_ref": "👥 Taklif Qilish (+100 Coin)",
         "btn_profile": "📊 Profilim",
         "btn_leaderboard": "🏆 Reyting",
+        "btn_tournament": "⚔️ Haftalik Turnir",
         "btn_quote": "💡 Kun Iqtibosi",
         "btn_setup": "⚙️ Sozlamalar",
         "btn_lang": "🌐 Til / Language",
@@ -165,23 +201,23 @@ TEXTS = {
         "btn_submenu_photo": "📸 Foto Check-In",
         "btn_submenu_time": "⏰ Vaqtni Sozlash",
         "btn_submenu_stats": "📊 Shaxsiy Statistika",
-        "group_checkin_popup": "⚡ CHECK-IN MUVAFFAQIYATLI!\n🔥 Streak: {streak} kun | 🪙 +{coins} Tanga",
-        "checkin_success": "⚡ **CHECK-IN MUVAFFAQIYATLI!**\n\n{quip}\n\n🔥 Streak: `{streak} kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🏅 Unvon: {rank}",
-        "photo_mission_prompt": "📸 **KUNLIK FOTO TOPSHIRIQ:**\n\n{mission}\n\n📌 **Shart:** Rasm yuboring! Bot rasmingizga rasmiy **VERIFIED STAMP** muhrini bosib, tangalaringizni beradi! 🚀",
-        "photo_success": "📸 **FOTO CHECK-IN VERIFIED! (+{coins_earned} COIN)**\n\n{quip}\n\n🔥 Streak: `{streak} kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🏅 Unvon: {rank}\n\n✨ *Yuqoridagi muhrlangan rasmni Story'ingizga joylashingiz mumkin!*",
-        "profile_title": "👤 **FOYDALANUVCHI PROFILI**\n\n🏷 Ism: {name}\n🔥 Streak: `{streak} Kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `{coins}`\n👥 Taklif qilinganlar: `{ref_count} kishi`\n🛡 Streak Freeze: `{freeze_count} ta`\n📸 Foto Check-Inlar: `{photo_count} ta`\n🏅 Unvon: {rank}\n🌐 Til: `{lang_str}`\n⏰ Shaxsiy vaqt: `{start}` — `{end}`\n\n🏆 **TROPHY CABINET (NISHONLAR):**\n{badges}\n\n📈 **UNVON DARAJASI:**\n{progress_bar}",
+        "group_checkin_popup": "⚡ CHECK-IN MUVAFFAQIYATLI!\n🔥 Streak: {streak} kun | 🪙 +{coins} Tanga | 🌟 +{xp} XP",
+        "checkin_success": "⚡ **CHECK-IN MUVAFFAQIYATLI!**\n\n{quip}\n\n🔥 Streak: `{streak} kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🌟 XP: `+{xp_earned}` (Jami: `{xp}` XP | Level `{level}`)\n⚡ Stamina: `100/100 🟢 (Vitality Surge!)`\n🏅 Unvon: {rank}",
+        "photo_mission_prompt": "📸 **KUNLIK FOTO TOPSHIRIQ:**\n\n{mission}\n\n📌 **Shart:** Rasm yuboring! Bot rasmingizga rasmiy **VERIFIED STAMP** muhrini bosib, tangalaringiz va XP beradi! 🚀",
+        "photo_success": "📸 **FOTO CHECK-IN VERIFIED! (+{coins_earned} COIN, +{xp_earned} XP)**\n\n{quip}\n\n🔥 Streak: `{streak} kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🌟 XP: `+{xp_earned}` (Jami: `{xp}` XP | Level `{level}`)\n⚡ Stamina: `100/100 🟢`\n🏅 Unvon: {rank}\n\n✨ *Yuqoridagi muhrlangan rasmni Story'ingizga joylashingiz mumkin!*",
+        "profile_title": "👤 **FOYDALANUVCHI PROFILI & RPG STATS**\n\n🏷 Ism: {name}\n🛡 Level: `{level}` — **{level_title}**\n🌟 XP: `{xp} / {next_level_xp} XP` ({progress_pct}%)\n⚡ Stamina: `{stamina}/100` {stamina_badge}\n🔥 Streak: `{streak} Kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `{coins}`\n⚔️ Turnir Ballari: `{tourney_pts} pts`\n👥 Taklif qilinganlar: `{ref_count} kishi`\n🛡 Streak Freeze: `{freeze_count} ta`\n📸 Foto Check-Inlar: `{photo_count} ta`\n🏅 Unvon: {rank}\n🌐 Til: `{lang_str}`\n⏰ Shaxsiy vaqt: `{start}` — `{end}`\n\n🏆 **TROPHY CABINET (NISHONLAR):**\n{badges}\n\n📈 **XP VA LEVEL PROGRESSI:**\n{xp_bar}\n\n📈 **UNVON DARAJASI:**\n{progress_bar}",
         "ref_text": "👥 **DO'STLARNI TAKLIF QILISH VA TANGA ISHLASH**\n\nSizning shaxsiy taklif havolangiz:\n`{ref_link}`\n\n📌 **Qoida:** Har bir taklif qilgan do'stingiz uchun sizga ham, do'stingizga ham **+100 tanga** beriladi!\n\nJami taklif qilingan do'stlar: `{ref_count} kishi`",
         "leaderboard_title": "🏆 **THE 5 AM CLUB REYTING JADVALI** 🏆\n\n",
         "leaderboard_empty": "🏆 Reyting jadvali hozircha bo'sh.",
         "quote_title": "💡 **KUN HIKMATI**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — QOIDALAR**\n\n1. **Ertalabki Check-In**: Uyg'onish vaqti oralig'ida check-in qiling.\n2. **⚡ Streak Multiplier**: Streak oshgani sari tangalar 2.0X gacha ko'payadi!\n3. **📸 Smart Foto Tasdiq**: Pillow orqali qorong'u/soxta rasmlar rad etiladi.\n4. **🏆 21 Kunlik Maraton**: 21 kun uzluksiz uyg'onsangiz rasmiy Oltin Sertifikat va 👑 Elite 21 nishonini olasiz!\n5. **👥 Taklif Tizimi**: Do'stlarni taklif qiling va +100 tangadan ishlang!",
+        "help_text": "📖 **THE 5 AM CLUB — QOIDALAR**\n\n1. **Ertalabki Check-In**: Uyg'onish vaqti oralig'ida check-in qiling.\n2. **⚡ RPG XP & Leveling**: Har bir uyg'onish XP beradi va yangi darajalarni ochadi!\n3. **⚡ Stamina Tizimi**: Tonggi vaqtda to'liq 100% quvvat, duel va arenada kuch sarflanadi.\n4. **🌙 21:30 Uyqu Protokoli**: Har kuni 21:30 da uxlashga yotib +20 XP va 100% Stamina oling.\n5. **⚔️ Haftalik Turnir**: Har haftada eng ko'p ball to'plagan 3 ta qatnashchiga 1000 coinlik sovrin jamg'armasi!\n6. **🏆 21 Kunlik Maraton**: 21 kun uzluksiz uyg'onsangiz rasmiy Oltin Sertifikat va 👑 Elite 21 nishonini olasiz!",
         "lang_select": "🌐 **Iltimos, o'zingizga ma'qul tilni tanlang:**",
         "lang_updated": "✅ **Botingiz tili O'zbek tiliga o'zgartirildi!**",
         "shop_main": "🛒 **THE 5 AM CLUB DO'KONI VA BOZORI**\n\nSizning tangalaringiz: 🪙 `{coins} tanga`\n\nQaysi bo'limga kirmoqchisiz?",
         "shop_global": "🌐 **GLOBAL DO'KON (TIZIM MAHSULOTLARI)**\n\nSizning tangalaringiz: 🪙 `{coins}`\n\n1. 🛡 **Streak Freeze (Qalqon)** — `100 tanga`\n*(Uxlab qolganda Streakni 0 ga tushishdan 1 marta saqlaydi)*",
         "shop_buy_freeze_ok": "🎉 **Muvaffaqiyatli sotib olindi!** Sizda 1 ta 🛡 **Streak Freeze** qalqoni bor!",
         "shop_no_coins": "❌ **Tangalaringiz yetarli emas!** Sizda `{coins}` tanga bor.",
-        "games_main": "🎮 **THE 5 AM CLUB O'YINLAR VA ARENA KATALOGI**\n\nO'zingizga ma'qul rejimni tanlang:\n\n⚔️ **1v1 Uyg'onish Dueli** — 50 coin tikib bellashish\n🤝 **Duo Combo** — Sherik bilan birga uyg'onib bonus olish\n🎲 **Random Matchmaking** — Tizimdan avtomatik begona sherik topish",
+        "games_main": "🎮 **THE 5 AM CLUB O'YINLAR VA ARENA KATALOGI**\n\nO'zingizga ma'qul rejimni tanlang:\n\n⚔️ **1v1 Uyg'onish Dueli** — 50 coin tikib bellashish (-20 Stamina)\n🤝 **Duo Combo** — Sherik bilan birga uyg'onib bonus olish\n🎲 **Random Matchmaking** — Tizimdan avtomatik begona sherik topish",
         "matchmaking_searching": "🎲 **RANDOM SHERIK QIDIRILMOQDA...**\n\nTizim sizga mos begona o'yinchini qidirmoqda. Sherik topilishi bilan bot xabar beradi!",
         "matchmaking_found": "🎉 **SHERIK TOPILDI!**\n\nSizning yangi Duo sherigingiz: `{partner_name}`!\nEndi ikkangiz ham erta uyg'onsangiz +50 bonus tanga olasiz! 🚀",
         "duo_title": "🤝 **DUO COMBO SHERIKLIK TIZIMI**",
@@ -189,7 +225,12 @@ TEXTS = {
         "setup_group": "⚙️ **Guruh uyg'onish vaqti oralig'ini tanlang:**",
         "setup_user": "⚙️ **Shaxsiy uyg'onish vaqtingizni sozlang:**\nHozirgi vaqt: `{start}` — `{end}`",
         "setup_updated": "✅ **Uyg'onish vaqti muvaffaqiyatli o'zgartirildi:** `{start}` — `{end}` 🌅",
-        "cert_congrats": "🏆 **TABRIKLAYMIZ! 21 KUNLIK MARATON YUKSAK ZAFARI!**\n\nSiz 21 kun uzluksiz soat 05:00 da uyg'onib, intizom maratonini muvaffaqiyatli yakunladingiz!\n\nSizga rasmiy **21-Day Discipline Certificate** hamda **👑 Elite 21** nishoni topshirildi!"
+        "cert_congrats": "🏆 **TABRIKLAYMIZ! 21 KUNLIK MARATON YUKSAK ZAFARI!**\n\nSiz 21 kun uzluksiz soat 05:00 da uyg'onib, intizom maratonini muvaffaqiyatli yakunladingiz!\n\nSizga rasmiy **21-Day Discipline Certificate** hamda **👑 Elite 21** nishoni topshirildi!",
+        "bedtime_btn": "😴 Men Uxlashga Yotdim (+20 XP)",
+        "bedtime_reminder": "🌙 **THE 5 AM CLUB: UXLASH PROTOKOLI (21:30)**\n\n🛌 *“Ertalabki vaqtingizga egalik qilish uchun uyqungizni asrang!”* – Robin Sharma\n\n✨ Ekranlarni o'chiring, xonani shamollating va 7.5 soatlik shifobaxsh uyquga tayyorlaning.\n⏰ Ertalabki 5 AM check-in oynasi ochiladi: `04:30` — `06:00`!\n\n👇 *Uxlashdan oldin quyidagi tugmani bosib +20 XP va 100% Stamina oling:*",
+        "bedtime_success": "😴 **XAYRLI TUN, CHAMPION! (+20 XP)**\n\n⚡ Staminangiz ertangi tong uchun to'liq (100%) tiklanmoqda.\n🌅 Ertalab soat 05:00 da g'alaba bilan kutamiz!",
+        "tournament_head": "⚔️ **5 AM HAFTALIK TOURNAMENT (SEZON #{season})** 🏆\n\n⏳ Tugash vaqti: `{end_date}` (Yakshanba 23:59)\n💰 Mukofot jamg'armasi: `1,000 Coin + 👑 Champion Badges`\n\n",
+        "tournament_empty": "⚔️ Ushbu haftalik turnirda hali qatnashchilar yo'q. Birinchi bo'lib check-in qiling!"
     },
     "ru": {
         "welcome": '👋 **Добро пожаловать в бот "The 5 AM Club", {name}!**\n\n«Владейте своим утром. Поднимите свою жизнь.»\n\n⚙️ Используйте меню ниже для навигации:',
@@ -200,6 +241,7 @@ TEXTS = {
         "btn_ref": "👥 Пригласить (+100 Монет)",
         "btn_profile": "📊 Мой Профиль",
         "btn_leaderboard": "🏆 Рейтинг",
+        "btn_tournament": "⚔️ Турнир Недели",
         "btn_quote": "💡 Цитата Дня",
         "btn_setup": "⚙️ Настройки",
         "btn_lang": "🌐 Til / Language",
@@ -214,23 +256,23 @@ TEXTS = {
         "btn_submenu_photo": "📸 Фото Check-In",
         "btn_submenu_time": "⏰ Настройка Времени",
         "btn_submenu_stats": "📊 Личная Статистика",
-        "group_checkin_popup": "⚡ CHECK-IN УСПЕШЕН!\n🔥 Стрик: {streak} дн. | 🪙 +{coins} Монет",
-        "checkin_success": "⚡ **CHECK-IN УСПЕШЕН!**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` (Множитель: `{multiplier}X`)\n🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🏅 Ранг: {rank}",
-        "photo_mission_prompt": "📸 **ЕЖЕДНЕВНОЕ ФОТО-ЗАДАНИЕ:**\n\n{mission}\n\n📌 **Условие:** Отправьте фото! Бот поставит официальную печать **VERIFIED STAMP**! 🚀",
-        "photo_success": "📸 **ФОТО CHECK-IN ПОДТВЕРЖДЕН! (+{coins_earned} МОНЕТ)**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` (Множитель: `{multiplier}X`)\n🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🏅 Ранг: {rank}\n\n✨ *Вы можете выложить фото с печатью в Сторис!*",
-        "profile_title": "👤 **ПРОФИЛЬ УЧАСТНИКА**\n\n🏷 Имя: {name}\n🔥 Стрик: `{streak} Дней` (Множитель: `{multiplier}X`)\n🪙 Монеты: `{coins}`\n👥 Приглашено: `{ref_count} чел`\n🛡 Защита Стрика: `{freeze_count} шт`\n📸 Фото Check-In: `{photo_count} раз`\n🏅 Ранг: {rank}\n🌐 Язык: `{lang_str}`\n⏰ Время: `{start}` — `{end}`\n\n🏆 **ВИТРИНА НАГРАД (TROPHY CABINET):**\n{badges}\n\n📈 **ПРОГРЕСС РАНГА:**\n{progress_bar}",
+        "group_checkin_popup": "⚡ CHECK-IN УСПЕШЕН!\n🔥 Стрик: {streak} дн. | 🪙 +{coins} Монет | 🌟 +{xp} XP",
+        "checkin_success": "⚡ **CHECK-IN УСПЕШЕН!**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` (Множитель: `{multiplier}X`)\n🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🌟 XP: `+{xp_earned}` (Всего: `{xp}` XP | Level `{level}`)\n⚡ Энергия: `100/100 🟢 (Vitality Surge!)`\n🏅 Ранг: {rank}",
+        "photo_mission_prompt": "📸 **ЕЖЕДНЕВНОЕ ФОТО-ЗАДАНИЕ:**\n\n{mission}\n\n📌 **Условие:** Отправьте фото! Бот поставит официальную печать **VERIFIED STAMP** и начислит XP! 🚀",
+        "photo_success": "📸 **ФОТО CHECK-IN ПОДТВЕРЖДЕН! (+{coins_earned} МОНЕТ, +{xp_earned} XP)**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` (Множитель: `{multiplier}X`)\n🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🌟 XP: `+{xp_earned}` (Всего: `{xp}` XP | Level `{level}`)\n⚡ Энергия: `100/100 🟢`\n🏅 Ранг: {rank}\n\n✨ *Вы можете выложить фото с печатью в Сторис!*",
+        "profile_title": "👤 **ПРОФИЛЬ УЧАСТНИКА & RPG СТАТИСТИКА**\n\n🏷 Имя: {name}\n🛡 Уровень: `{level}` — **{level_title}**\n🌟 XP: `{xp} / {next_level_xp} XP` ({progress_pct}%)\n⚡ Энергия (Stamina): `{stamina}/100` {stamina_badge}\n🔥 Стрик: `{streak} Дней` (Множитель: `{multiplier}X`)\n🪙 Монеты: `{coins}`\n⚔️ Турнирные Очки: `{tourney_pts} pts`\n👥 Приглашено: `{ref_count} чел`\n🛡 Защита Стрика: `{freeze_count} шт`\n📸 Фото Check-In: `{photo_count} раз`\n🏅 Ранг: {rank}\n🌐 Язык: `{lang_str}`\n⏰ Время: `{start}` — `{end}`\n\n🏆 **ВИТРИНА НАГРАД (TROPHY CABINET):**\n{badges}\n\n📈 **ПРОГРЕСС УРОВНЯ (XP):**\n{xp_bar}\n\n📈 **ПРОГРЕСС РАНГА:**\n{progress_bar}",
         "ref_text": "👥 **ПРИГЛАШАЙТЕ ДРУЗЕЙ И ЗАРАБАТЫВАЙТЕ МОНЕТЫ**\n\nВаша уникальная ссылка:\n`{ref_link}`\n\n📌 **Правило:** За каждого приглашенного друга вам и другу начисляется **+100 монет**!\n\nВсего приглашено: `{ref_count} чел`",
         "leaderboard_title": "🏆 **ТАБЛИЦА ЛИДЕРОВ THE 5 AM CLUB** 🏆\n\n",
         "leaderboard_empty": "🏆 Таблица лидеров пока пуста.",
         "quote_title": "💡 **МУДРОСТЬ ДНЯ**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — ПРАВИЛА**\n\n1. **Утренний Check-In**: Отмечайтесь строго в заданное время.\n2. **⚡ Множитель Стрика**: Растет со временем до 2.0X!\n3. **📸 Smart Фото-Анализ**: Защита от темных и пустых фото.\n4. **🏆 21 Дневный Марафон**: Продержитесь 21 день и получите официальный Золотой Сертификат!\n5. **👥 Рефералы**: Приглашайте друзей и получайте +100 монет!",
+        "help_text": "📖 **THE 5 AM CLUB — ПРАВИЛА**\n\n1. **Утренний Check-In**: Отмечайтесь строго в заданное время.\n2. **⚡ RPG XP & Уровни**: Каждый подъем дает опыт и открывает новые звания!\n3. **⚡ Энергия (Stamina)**: 100% бодрость утром, тратится на арену и дуэли.\n4. **🌙 21:30 Протокол Сна**: Ложитесь вовремя и получайте +20 XP и заряд энергии.\n5. **⚔️ Недельный Турнир**: Еженедельный призовой фонд 1000 монет для топ-3 участников!\n6. **🏆 21 Дневный Марафон**: Продержитесь 21 день и получите официальный Золотой Сертификат!",
         "lang_select": "🌐 **Пожалуйста, выберите удобный язык:**",
         "lang_updated": "✅ **Язык бота изменен на Русский!**",
         "shop_main": "🛒 **МАГАЗИН И РЫНОК THE 5 AM CLUB**\n\nВаши монеты: 🪙 `{coins} монет`\n\nВыберите раздел:",
         "shop_global": "🌐 **ГЛОБАЛЬНЫЙ МАГАЗИН**\n\nВаши монеты: 🪙 `{coins}`\n\n1. 🛡 **Streak Freeze** — `100 монет`\n*(Сохраняет Стрик при пропуске 1 дня)*",
         "shop_buy_freeze_ok": "🎉 **Успешно куплено!** У вас есть 1 🛡 **Streak Freeze**!",
         "shop_no_coins": "❌ **Недостаточно монет!** У вас `{coins}` монет.",
-        "games_main": "🎮 **КАТАЛОГ ИГР И АРЕНА THE 5 AM CLUB**\n\nВыберите режим:\n\n⚔️ **Дуэль 1v1** — Ставка 50 монет на ранний подъем\n🤝 **Парный Комбо** — Совместный подъем для бонуса\n🎲 **Случайный подбор** — Автоматический поиск партнера",
+        "games_main": "🎮 **КАТАЛОГ ИГР И АРЕНА THE 5 AM CLUB**\n\nВыберите режим:\n\n⚔️ **Дуэль 1v1** — Ставка 50 монет на ранний подъем (-20 Stamina)\n🤝 **Парный Комбо** — Совместный подъем для бонуса\n🎲 **Случайный подбор** — Автоматический поиск партнера",
         "matchmaking_searching": "🎲 **ПОИСК СЛУЧАЙНОГО ПАРТНЕРА...**\n\nСистема ищет игрока. Бот уведомит при подборе!",
         "matchmaking_found": "🎉 **ПАРТНЕР НАЙДЕН!**\n\nВаш новый партнер: `{partner_name}`!\nПросыпайтесь вовремя вместе и получайте +50 монет! 🚀",
         "duo_title": "🤝 **ПАРНЫЙ РЕЖИМ DUO COMBO**",
@@ -238,7 +280,12 @@ TEXTS = {
         "setup_group": "⚙️ **Выберите временное окно подъема для группы:**",
         "setup_user": "⚙️ **Настройте ваше персональное время подъема:**\nТекущее время: `{start}` — `{end}`",
         "setup_updated": "✅ **Время подъема успешно обновлено:** `{start}` — `{end}` 🌅",
-        "cert_congrats": "🏆 **ПОЗДРАВЛЯЕМ! ПОБЕДА В 21-ДНЕВНОМ МАРАФОНЕ!**\n\nВы просыпались в 5:00 утра 21 день подряд и успешно завершили марафон дисциплины!\n\nВам вручен официальный **21-Day Discipline Certificate** и знак отличия **👑 Elite 21**!"
+        "cert_congrats": "🏆 **ПОЗДРАВЛЯЕМ! ПОБЕДА В 21-ДНЕВНОМ МАРАФОНЕ!**\n\nВы просыпались в 5:00 утра 21 день подряд и успешно завершили марафон дисциплины!\n\nВам вручен официальный **21-Day Discipline Certificate** и знак отличия **👑 Elite 21**!",
+        "bedtime_btn": "😴 Я Ложусь Спать (+20 XP)",
+        "bedtime_reminder": "🌙 **THE 5 AM CLUB: ПРОТОКОЛ СНА (21:30)**\n\n🛌 *«Чтобы владеть своим утром, защищайте свой сон!»* – Робин Шарма\n\n✨ Выключите экраны, проветрите комнату и приготовьтесь к 7.5 часам глубокого сна.\n⏰ Окно 5 AM откроется завтра: `04:30` — `06:00`!\n\n👇 *Нажмите кнопку перед сном для +20 XP и 100% энергии:*",
+        "bedtime_success": "😴 **СПОКОЙНОЙ НОЧИ, ЧЕМПИОН! (+20 XP)**\n\n⚡ Ваша энергия восстанавливается на 100% для завтрашнего утра.\n🌅 Ждем вас завтра в 05:00 с победой!",
+        "tournament_head": "⚔️ **5 AM ЕЖЕНЕДЕЛЬНЫЙ ТУРНИР (СЕЗОН #{season})** 🏆\n\n⏳ Финал: `{end_date}` (Воскресенье 23:59)\n💰 Призовой фонд: `1,000 Монет + 👑 Значки Чемпиона`\n\n",
+        "tournament_empty": "⚔️ В текущем турнире пока нет участников. Будьте первыми!"
     },
     "en": {
         "welcome": '👋 **Welcome to The 5 AM Club, {name}!**\n\n“Own your morning. Elevate your life.”\n\n⚙️ Use the menu below to navigate:',
@@ -249,6 +296,7 @@ TEXTS = {
         "btn_ref": "👥 Invite Friends (+100 Coins)",
         "btn_profile": "📊 My Profile",
         "btn_leaderboard": "🏆 Leaderboard",
+        "btn_tournament": "⚔️ Weekly Tournament",
         "btn_quote": "💡 Daily Quote",
         "btn_setup": "⚙️ Time Setup",
         "btn_lang": "🌐 Til / Language",
@@ -263,23 +311,23 @@ TEXTS = {
         "btn_submenu_photo": "📸 Photo Check-In",
         "btn_submenu_time": "⏰ Adjust Time",
         "btn_submenu_stats": "📊 Personal Stats",
-        "group_checkin_popup": "⚡ CHECK-IN SUCCESSFUL!\n🔥 Streak: {streak} days | 🪙 +{coins} Coins",
-        "checkin_success": "⚡ **CHECK-IN SUCCESSFUL!**\n\n{quip}\n\n🔥 Streak: `{streak} days` (Multiplier: `{multiplier}X`)\n🪙 Coins: `+{coins_earned}` (Total: `{coins}`)\n🏅 Rank: {rank}",
-        "photo_mission_prompt": "📸 **DAILY PHOTO MISSION:**\n\n{mission}\n\n📌 **Condition:** Send a photo! The bot will apply an official **VERIFIED STAMP**! 🚀",
-        "photo_success": "📸 **PHOTO CHECK-IN VERIFIED! (+{coins_earned} COINS)**\n\n{quip}\n\n🔥 Streak: `{streak} days` (Multiplier: `{multiplier}X`)\n🪙 Coins: `+{coins_earned}` (Total: `{coins}`)\n🏅 Rank: {rank}\n\n✨ *Feel free to share your stamped photo on Stories!*",
-        "profile_title": "👤 **MEMBER PROFILE**\n\n🏷 Name: {name}\n🔥 Streak: `{streak} Days` (Multiplier: `{multiplier}X`)\n🪙 Coins: `{coins}`\n👥 Invited Friends: `{ref_count}`\n🛡 Streak Freezes: `{freeze_count}`\n📸 Photo Check-Ins: `{photo_count}`\n🏅 Rank: {rank}\n🌐 Language: `{lang_str}`\n⏰ Window: `{start}` — `{end}`\n\n🏆 **TROPHY CABINET:**\n{badges}\n\n📈 **RANK PROGRESSION:**\n{progress_bar}",
+        "group_checkin_popup": "⚡ CHECK-IN SUCCESSFUL!\n🔥 Streak: {streak} days | 🪙 +{coins} Coins | 🌟 +{xp} XP",
+        "checkin_success": "⚡ **CHECK-IN SUCCESSFUL!**\n\n{quip}\n\n🔥 Streak: `{streak} days` (Multiplier: `{multiplier}X`)\n🪙 Coins: `+{coins_earned}` (Total: `{coins}`)\n🌟 XP: `+{xp_earned}` (Total: `{xp}` XP | Level `{level}`)\n⚡ Stamina: `100/100 🟢 (Vitality Surge Active!)`\n🏅 Rank: {rank}",
+        "photo_mission_prompt": "📸 **DAILY PHOTO MISSION:**\n\n{mission}\n\n📌 **Condition:** Send a photo! The bot will apply an official **VERIFIED STAMP** and award XP! 🚀",
+        "photo_success": "📸 **PHOTO CHECK-IN VERIFIED! (+{coins_earned} COINS, +{xp_earned} XP)**\n\n{quip}\n\n🔥 Streak: `{streak} days` (Multiplier: `{multiplier}X`)\n🪙 Coins: `+{coins_earned}` (Total: `{coins}`)\n🌟 XP: `+{xp_earned}` (Total: `{xp}` XP | Level `{level}`)\n⚡ Stamina: `100/100 🟢`\n🏅 Rank: {rank}\n\n✨ *Feel free to share your stamped photo on Stories!*",
+        "profile_title": "👤 **MEMBER PROFILE & RPG STATS**\n\n🏷 Name: {name}\n🛡 Level: `{level}` — **{level_title}**\n🌟 XP: `{xp} / {next_level_xp} XP` ({progress_pct}%)\n⚡ Stamina: `{stamina}/100` {stamina_badge}\n🔥 Streak: `{streak} Days` (Multiplier: `{multiplier}X`)\n🪙 Coins: `{coins}`\n⚔️ Tournament Points: `{tourney_pts} pts`\n👥 Invited Friends: `{ref_count}`\n🛡 Streak Freezes: `{freeze_count}`\n📸 Photo Check-Ins: `{photo_count}`\n🏅 Rank: {rank}\n🌐 Language: `{lang_str}`\n⏰ Window: `{start}` — `{end}`\n\n🏆 **TROPHY CABINET:**\n{badges}\n\n📈 **XP & LEVEL PROGRESSION:**\n{xp_bar}\n\n📈 **RANK PROGRESSION:**\n{progress_bar}",
         "ref_text": "👥 **INVITE FRIENDS & EARN COINS**\n\nYour personal referral link:\n`{ref_link}`\n\n📌 **Rule:** Earn **+100 coins** for both you and your friend for every successful invite!\n\nTotal Invited: `{ref_count}` friends",
         "leaderboard_title": "🏆 **THE 5 AM CLUB LEADERBOARD** 🏆\n\n",
         "leaderboard_empty": "🏆 Leaderboard is currently empty.",
         "quote_title": "💡 **DAILY MORNING WISDOM**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n1. **Morning Check-In**: Check in strictly within your wake-up window.\n2. **⚡ Streak Multiplier**: Earn up to 2.0X coins as your streak grows!\n3. **📸 Smart Photo Verification**: Pillow filters out blank/dark images.\n4. **🏆 21-Day Challenge**: Complete 21 days for an official Golden Certificate!\n5. **👥 Referral System**: Invite friends to earn +100 coins!",
+        "help_text": "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n1. **Morning Check-In**: Check in strictly within your wake-up window.\n2. **⚡ RPG XP & Leveling**: Gain XP on wakeups and level up to unlock elite titles!\n3. **⚡ Stamina Vitality**: 100% Morning Vitality, fuels duels and challenges.\n4. **🌙 21:30 Bedtime Protocol**: Protect your sleep every evening for +20 XP & Stamina boost.\n5. **⚔️ Weekly Tournament**: Compete for the 1,000 coin prize pool every week!\n6. **🏆 21-Day Challenge**: Complete 21 days for an official Golden Certificate!",
         "lang_select": "🌐 **Please select your preferred language:**",
         "lang_updated": "✅ **Bot language updated to English!**",
         "shop_main": "🛒 **THE 5 AM CLUB MARKETPLACE**\n\nYour Balance: 🪙 `{coins} coins`\n\nSelect a section below:",
         "shop_global": "🌐 **GLOBAL SHOP**\n\nYour Balance: 🪙 `{coins}`\n\n1. 🛡 **Streak Freeze Shield** — `100 coins`\n*(Protects your streak if you miss 1 day)*",
         "shop_buy_freeze_ok": "🎉 **Purchase Successful!** You have 1 🛡 **Streak Freeze** shield!",
         "shop_no_coins": "❌ **Insufficient coins!** You have `{coins}` coins.",
-        "games_main": "🎮 **THE 5 AM CLUB GAMES & ARENA**\n\nSelect a game mode below:\n\n⚔️ **1v1 Wake-Up Duel** — Bet 50 coins on waking up early\n🤝 **Duo Combo** — Team up for daily bonus coins\n🎲 **Random Matchmaking** — Find a random player instantly",
+        "games_main": "🎮 **THE 5 AM CLUB GAMES & ARENA**\n\nSelect a game mode below:\n\n⚔️ **1v1 Wake-Up Duel** — Bet 50 coins on waking up early (-20 Stamina)\n🤝 **Duo Combo** — Team up for daily bonus coins\n🎲 **Random Matchmaking** — Find a random player instantly",
         "matchmaking_searching": "🎲 **SEARCHING FOR RANDOM PARTNER...**\n\nThe system is matching you with another player. You will be notified!",
         "matchmaking_found": "🎉 **PARTNER FOUND!**\n\nYour new Duo Partner: `{partner_name}`!\nWake up early together to earn +50 bonus coins! 🚀",
         "duo_title": "🤝 **DUO COMBO PARTNER SYSTEM**",
@@ -287,7 +335,12 @@ TEXTS = {
         "setup_group": "⚙️ **Select the check-in time window for the group:**",
         "setup_user": "⚙️ **Customize your personal morning check-in window:**\nCurrent window: `{start}` — `{end}`",
         "setup_updated": "✅ **Morning check-in window successfully updated:** `{start}` — `{end}` 🌅",
-        "cert_congrats": "🏆 **CONGRATULATIONS! 21-DAY MARATHON VICTORY!**\n\nYou woke up at 5:00 AM for 21 consecutive days and mastered morning discipline!\n\nYou have been awarded the official **21-Day Discipline Certificate** and **👑 Elite 21** badge!"
+        "cert_congrats": "🏆 **CONGRATULATIONS! 21-DAY MARATHON VICTORY!**\n\nYou woke up at 5:00 AM for 21 consecutive days and mastered morning discipline!\n\nYou have been awarded the official **21-Day Discipline Certificate** and **👑 Elite 21** badge!",
+        "bedtime_btn": "😴 I'm Going to Sleep (+20 XP)",
+        "bedtime_reminder": "🌙 **THE 5 AM CLUB: BEDTIME PROTOCOL (21:30)**\n\n🛌 *“To own your morning, protect your sleep!”* – Robin Sharma\n\n✨ Turn off blue light screens, dim lights, and prepare for 7.5 hours of restorative sleep.\n⏰ Tomorrow's 5 AM check-in window opens at `04:30` — `06:00`!\n\n👇 *Tap below before sleeping to claim +20 XP and 100% Stamina boost:*",
+        "bedtime_success": "😴 **GOOD NIGHT, CHAMPION! (+20 XP)**\n\n⚡ Your stamina is recharging to 100% for tomorrow morning.\n🌅 See you at 5:00 AM ready to conquer!",
+        "tournament_head": "⚔️ **5 AM WEEKLY TOURNAMENT (SEASON #{season})** 🏆\n\n⏳ Ends on: `{end_date}` (Sunday 23:59)\n💰 Prize Pool: `1,000 Coins + 👑 Champion Badges`\n\n",
+        "tournament_empty": "⚔️ No participants in current weekly tournament yet. Be the first to check in!"
     }
 }
 
@@ -337,18 +390,6 @@ async def fetch_dynamic_quip(streak: int, name: str, lang: str = "uz") -> str:
     role_title = random.choice(titles)
     base_joke = random.choice(quips_list)
 
-    # Optional dynamic online affirmation fetch
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get("https://www.affirmations.dev/", timeout=aiohttp.ClientTimeout(total=1.5)) as resp:
-                if resp.status == 200:
-                    data = await resp.json()
-                    aff = data.get("affirmation", "")
-                    if aff and lang == "en":
-                        return f"{role_title} **{name}**: {base_joke}\n✨ *Affirmation:* {aff}"
-    except Exception:
-        pass
-
     if streak >= 30:
         return f"👑 **LEGEND ({streak} Days) — {role_title}:**\n{base_joke}"
     elif streak >= 10:
@@ -387,26 +428,22 @@ async def fetch_motivational_quote(lang: str = "uz") -> str:
     fallback = MOTIVATIONAL_QUOTES.get(lang, MOTIVATIONAL_QUOTES["uz"])
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get("https://zenquotes.io/api/random", timeout=aiohttp.ClientTimeout(total=2.5)) as resp:
+            async with session.get("https://zenquotes.io/api/random", timeout=aiohttp.ClientTimeout(total=2.0)) as resp:
                 if resp.status == 200:
                     data = await resp.json()
-                    if isinstance(data, list) and len(data) > 0:
-                        if lang == "en":
-                            return f"“{data[0]['q']}”\n— *{data[0]['a']}*"
+                    if isinstance(data, list) and len(data) > 0 and lang == "en":
+                        return f"“{data[0]['q']}”\n— *{data[0]['a']}*"
     except Exception:
         pass
     return random.choice(fallback)
 
-# ==================== PHOTO STAMPING ENGINE ====================
-def stamp_photo_with_watermark(image_bytes: bytes, name: str, streak: int, rank: str) -> bytes:
+# ==================== ASYNC PILLOW PHOTO STAMPING & CERTIFICATES ====================
+def _sync_stamp_photo(image_bytes: bytes, name: str, streak: int, rank: str) -> bytes:
     try:
         img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
         width, height = img.size
 
-        banner_height = int(height * 0.12)
-        if banner_height < 60:
-            banner_height = 60
-
+        banner_height = max(60, int(height * 0.12))
         banner = Image.new("RGBA", (width, banner_height), (15, 23, 42, 220))
         img.paste(banner, (0, height - banner_height), banner)
 
@@ -432,8 +469,10 @@ def stamp_photo_with_watermark(image_bytes: bytes, name: str, streak: int, rank:
         logging.error(f"Error stamping photo: {e}")
         return image_bytes
 
-# ==================== 21-DAY CERTIFICATE GENERATOR ====================
-def generate_21day_certificate(name: str) -> bytes:
+async def stamp_photo_with_watermark(image_bytes: bytes, name: str, streak: int, rank: str) -> bytes:
+    return await asyncio.to_thread(_sync_stamp_photo, image_bytes, name, streak, rank)
+
+def _sync_generate_certificate(name: str) -> bytes:
     try:
         img = Image.new("RGB", (1000, 600), (15, 23, 42))
         draw = ImageDraw.Draw(img)
@@ -463,7 +502,68 @@ def generate_21day_certificate(name: str) -> bytes:
         logging.error(f"Error generating certificate: {e}")
         return b""
 
-# ==================== STREAK MULTIPLIER ENGINE ====================
+async def generate_21day_certificate(name: str) -> bytes:
+    return await asyncio.to_thread(_sync_generate_certificate, name)
+
+# ==================== RPG XP, LEVELING & STAMINA SYSTEM ====================
+RPG_LEVEL_TITLES = {
+    "uz": [
+        (1, "🌅 Tonggi Shogird"),
+        (5, "⚡ Quyosh Quluvchisi"),
+        (10, "⚔️ Temir Intizom Ritsari"),
+        (20, "👑 Tonggi Master"),
+        (35, "🌌 Koinot Buyuk Ustasi")
+    ],
+    "ru": [
+        (1, "🌅 Новичок Рассвета"),
+        (5, "⚡ Искатель Солнца"),
+        (10, "⚔️ Рыцарь Дисциплины"),
+        (20, "👑 Мастер Рассвета"),
+        (35, "🌌 Грандмастер 5 AM")
+    ],
+    "en": [
+        (1, "🌅 Dawn Initiate"),
+        (5, "⚡ Sun Chaser"),
+        (10, "⚔️ Iron Discipline Knight"),
+        (20, "👑 Dawn Master"),
+        (35, "🌌 Grandmaster of 5 AM Dawn")
+    ]
+}
+
+def calculate_rpg_level(xp: int, lang: str = "uz") -> dict:
+    """
+    Calculates RPG level and progress from total XP.
+    Level L threshold: 50 * (L-1) * L
+    """
+    level = 1
+    while True:
+        next_req = int(50 * level * (level + 1))
+        if xp < next_req:
+            break
+        level += 1
+
+    curr_floor = int(50 * (level - 1) * level)
+    next_ceil = int(50 * level * (level + 1))
+    xp_in_level = max(0, xp - curr_floor)
+    xp_needed_level = max(1, next_ceil - curr_floor)
+    progress_pct = round((xp_in_level / xp_needed_level) * 100, 1)
+
+    titles = RPG_LEVEL_TITLES.get(lang, RPG_LEVEL_TITLES["uz"])
+    title = titles[0][1]
+    for min_lvl, t_name in titles:
+        if level >= min_lvl:
+            title = t_name
+
+    return {
+        "level": level,
+        "total_xp": xp,
+        "xp_in_level": xp_in_level,
+        "xp_needed_level": xp_needed_level,
+        "next_level_total_xp": next_ceil,
+        "progress_pct": progress_pct,
+        "title": title
+    }
+
 def get_streak_multiplier(streak: int) -> float:
     if streak >= 30: return 2.0
     elif streak >= 15: return 1.5
@@ -499,6 +599,12 @@ def init_sqlite_db():
                 first_name TEXT,
                 streak INTEGER DEFAULT 0,
                 coins INTEGER DEFAULT 0,
+                xp INTEGER DEFAULT 0,
+                level INTEGER DEFAULT 1,
+                stamina INTEGER DEFAULT 100,
+                max_stamina INTEGER DEFAULT 100,
+                last_stamina_update TEXT,
+                last_bedtime_date TEXT,
                 freeze_count INTEGER DEFAULT 0,
                 photo_count INTEGER DEFAULT 0,
                 duo_partner_id INTEGER DEFAULT 0,
@@ -527,6 +633,12 @@ def init_sqlite_db():
         if "cert_issued" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN cert_issued INTEGER DEFAULT 0")
         if "checkin_start" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN checkin_start TEXT DEFAULT '04:30'")
         if "checkin_end" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN checkin_end TEXT DEFAULT '06:00'")
+        if "xp" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN xp INTEGER DEFAULT 0")
+        if "level" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN level INTEGER DEFAULT 1")
+        if "stamina" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN stamina INTEGER DEFAULT 100")
+        if "max_stamina" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN max_stamina INTEGER DEFAULT 100")
+        if "last_stamina_update" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN last_stamina_update TEXT")
+        if "last_bedtime_date" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN last_bedtime_date TEXT")
 
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS groups (
@@ -551,6 +663,7 @@ def init_sqlite_db():
                 PRIMARY KEY (group_id, user_id)
             )
         """)
+
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS checkins (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -559,6 +672,34 @@ def init_sqlite_db():
                 checkin_timestamp TEXT,
                 checkin_date TEXT,
                 coins_earned INTEGER
+            )
+        """)
+
+        # TOURNAMENT SEASONS & PARTICIPANTS
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS tournament_seasons (
+                season_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                season_number INTEGER,
+                start_date TEXT,
+                end_date TEXT,
+                is_active INTEGER DEFAULT 1,
+                winner_id INTEGER DEFAULT 0,
+                winner_name TEXT DEFAULT '',
+                winner_points INTEGER DEFAULT 0
+            )
+        """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS tournament_participants (
+                season_id INTEGER,
+                user_id INTEGER,
+                first_name TEXT,
+                username TEXT,
+                points INTEGER DEFAULT 0,
+                checkins_count INTEGER DEFAULT 0,
+                photos_count INTEGER DEFAULT 0,
+                rank_tier TEXT DEFAULT 'Bronze',
+                PRIMARY KEY (season_id, user_id)
             )
         """)
 
@@ -573,9 +714,9 @@ def db_register_user(user_id: int, username: str, first_name: str, ref_by: int =
         if not existing:
             initial_coins = 100 if ref_by and ref_by != user_id else 0
             cursor.execute("""
-                INSERT INTO users (user_id, username, first_name, coins, referred_by, created_at)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (user_id, username or "", first_name or "Member", initial_coins, ref_by, now_str))
+                INSERT INTO users (user_id, username, first_name, coins, xp, level, stamina, max_stamina, last_stamina_update, referred_by, created_at)
+                VALUES (?, ?, ?, ?, 0, 1, 100, 100, ?, ?, ?)
+            """, (user_id, username or "", first_name or "Member", initial_coins, now_str, ref_by, now_str))
 
             if ref_by and ref_by != user_id:
                 cursor.execute("UPDATE users SET coins = coins + 100, referral_count = referral_count + 1 WHERE user_id = ?", (ref_by,))
@@ -694,6 +835,132 @@ def db_set_cert_issued(user_id: int):
         cursor = conn.cursor()
         cursor.execute("UPDATE users SET cert_issued = 1 WHERE user_id = ?", (user_id,))
 
+# ==================== TOURNAMENT ENGINE ====================
+def db_get_or_create_active_season():
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM tournament_seasons WHERE is_active = 1 ORDER BY season_id DESC LIMIT 1")
+        season = cursor.fetchone()
+        if season:
+            return dict(season)
+
+        tz = pytz.timezone(TIMEZONE_STR)
+        now = datetime.now(tz)
+        # Week starts Monday, ends Sunday
+        start_of_week = now - timedelta(days=now.weekday())
+        start_str = start_of_week.strftime("%Y-%m-%d 00:00:00")
+        end_of_week = start_of_week + timedelta(days=6)
+        end_str = end_of_week.strftime("%Y-%m-%d 23:59:59")
+
+        cursor.execute("SELECT COUNT(*) as cnt FROM tournament_seasons")
+        cnt_row = cursor.fetchone()
+        season_num = (cnt_row["cnt"] if cnt_row else 0) + 1
+
+        cursor.execute("""
+            INSERT INTO tournament_seasons (season_number, start_date, end_date, is_active)
+            VALUES (?, ?, ?, 1)
+        """, (season_num, start_str, end_str))
+        season_id = cursor.lastrowid
+        return {
+            "season_id": season_id,
+            "season_number": season_num,
+            "start_date": start_str,
+            "end_date": end_str,
+            "is_active": 1
+        }
+
+def db_add_tournament_points(user_id: int, first_name: str, username: str, points: int, is_photo: bool = False):
+    season = db_get_or_create_active_season()
+    season_id = season["season_id"]
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO tournament_participants (season_id, user_id, first_name, username, points, checkins_count, photos_count)
+            VALUES (?, ?, ?, ?, ?, 1, ?)
+            ON CONFLICT(season_id, user_id) DO UPDATE SET
+                points = points + excluded.points,
+                checkins_count = checkins_count + 1,
+                photos_count = photos_count + excluded.photos_count,
+                first_name = excluded.first_name,
+                username = excluded.username
+        """, (season_id, user_id, first_name, username or "", points, 1 if is_photo else 0))
+
+def db_get_tournament_leaderboard(limit: int = 10):
+    season = db_get_or_create_active_season()
+    season_id = season["season_id"]
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT user_id, first_name, username, points, checkins_count, photos_count
+            FROM tournament_participants
+            WHERE season_id = ?
+            ORDER BY points DESC, checkins_count DESC
+            LIMIT ?
+        """, (season_id, limit))
+        return cursor.fetchall(), season
+
+def db_get_user_tournament_points(user_id: int) -> int:
+    season = db_get_or_create_active_season()
+    season_id = season["season_id"]
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT points FROM tournament_participants WHERE season_id = ? AND user_id = ?
+        """, (season_id, user_id))
+        row = cursor.fetchone()
+        return row["points"] if row else 0
+
+# ==================== BEDTIME & STAMINA OPERATIONS ====================
+def db_calculate_and_update_stamina(user: dict) -> int:
+    current_stamina = user["stamina"] if "stamina" in user.keys() and user["stamina"] is not None else 100
+    last_update_str = user["last_stamina_update"] if "last_stamina_update" in user.keys() and user["last_stamina_update"] else None
+    
+    if not last_update_str:
+        return current_stamina
+
+    try:
+        last_dt = datetime.strptime(last_update_str, "%Y-%m-%d %H:%M:%S")
+        hours_passed = (datetime.now() - last_dt).total_seconds() / 3600.0
+        regen = int(hours_passed * 5)  # +5 stamina per hour
+        new_stamina = min(100, current_stamina + regen)
+        if new_stamina != current_stamina:
+            with get_db() as conn:
+                conn.cursor().execute("UPDATE users SET stamina = ?, last_stamina_update = ? WHERE user_id = ?",
+                                      (new_stamina, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user["user_id"]))
+        return new_stamina
+    except Exception:
+        return current_stamina
+
+def db_record_bedtime(user_id: int) -> tuple[bool, str]:
+    tz = pytz.timezone(TIMEZONE_STR)
+    now = datetime.now(tz)
+    today_str = now.strftime("%Y-%m-%d")
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    user = db_get_user(user_id)
+    if not user:
+        return False, "not_found"
+
+    if user["last_bedtime_date"] == today_str:
+        return False, "already_recorded"
+
+    with get_db() as conn:
+        cursor = conn.cursor()
+        # Award +20 XP, max out stamina to 100, record bedtime
+        new_xp = (user["xp"] or 0) + 20
+        rpg_data = calculate_rpg_level(new_xp, user["lang"] or "uz")
+        new_level = rpg_data["level"]
+
+        cursor.execute("""
+            UPDATE users
+            SET xp = ?, level = ?, stamina = 100, last_stamina_update = ?, last_bedtime_date = ?
+            WHERE user_id = ?
+        """, (new_xp, new_level, now_str, today_str, user_id))
+
+        db_add_tournament_points(user_id, user["first_name"], user["username"], 25, is_photo=False)
+        return True, "ok"
+
+# ==================== MAIN CHECKIN PIPELINE ====================
 def db_process_checkin(user_id: int, group_id: int = 0, is_photo: bool = False):
     with get_db() as conn:
         cursor = conn.cursor()
@@ -734,9 +1001,12 @@ def db_process_checkin(user_id: int, group_id: int = 0, is_photo: bool = False):
                 photo_reward = g_row["photo_coins"] if g_row["photo_coins"] else 25
 
         base_coins = photo_reward if is_photo else normal_reward
-
         multiplier = get_streak_multiplier(new_streak)
         coins_earned = int(round(base_coins * multiplier))
+
+        # RPG XP & Tournament Points
+        xp_earned = 100 if is_photo else 50
+        tourney_pts = 100 if is_photo else 50
 
         partner_id = user["duo_partner_id"]
         if partner_id and partner_id != 0:
@@ -744,15 +1014,21 @@ def db_process_checkin(user_id: int, group_id: int = 0, is_photo: bool = False):
             p_row = cursor.fetchone()
             if p_row and p_row["last_checkin_date"] == today_str:
                 coins_earned += 50
+                xp_earned += 25
+                tourney_pts += 25
 
         new_coins = user["coins"] + coins_earned
+        new_xp = (user["xp"] if "xp" in user.keys() and user["xp"] else 0) + xp_earned
+        rpg_data = calculate_rpg_level(new_xp, user["lang"] or "uz")
+        new_level = rpg_data["level"]
         new_photo_count = user["photo_count"] + (1 if is_photo else 0)
 
+        # Restore stamina to 100 on verified morning checkin
         cursor.execute("""
             UPDATE users 
-            SET streak = ?, coins = ?, photo_count = ?, last_checkin_date = ?, status = 'awake'
+            SET streak = ?, coins = ?, xp = ?, level = ?, stamina = 100, last_stamina_update = ?, photo_count = ?, last_checkin_date = ?, status = 'awake'
             WHERE user_id = ?
-        """, (new_streak, new_coins, new_photo_count, today_str, user_id))
+        """, (new_streak, new_coins, new_xp, new_level, now_str, new_photo_count, today_str, user_id))
 
         if group_id != 0:
             cursor.execute("""
@@ -769,10 +1045,16 @@ def db_process_checkin(user_id: int, group_id: int = 0, is_photo: bool = False):
             VALUES (?, ?, ?, ?, ?)
         """, (user_id, group_id, now_str, today_str, coins_earned))
 
+        db_add_tournament_points(user_id, user["first_name"], user["username"], tourney_pts, is_photo=is_photo)
+
         return {
             "streak": new_streak,
             "multiplier": multiplier,
             "coins": new_coins,
+            "xp": new_xp,
+            "level": new_level,
+            "level_title": rpg_data["title"],
+            "xp_earned": xp_earned,
             "photo_count": new_photo_count,
             "coins_earned": coins_earned,
             "checkin_time": time_str
@@ -797,7 +1079,7 @@ def db_get_group_attendance_report(group_id: int):
 def db_get_global_leaderboard(limit: int = 10):
     with get_db() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT first_name, username, streak, coins FROM users ORDER BY streak DESC, coins DESC LIMIT ?", (limit,))
+        cursor.execute("SELECT first_name, username, streak, coins, level, xp FROM users ORDER BY streak DESC, coins DESC LIMIT ?", (limit,))
         return cursor.fetchall()
 
 # ==================== GAMIFICATION HELPERS ====================
@@ -843,6 +1125,13 @@ def generate_progress_bar(streak: int, lang: str = "uz") -> str:
     }
     return labels.get(lang, labels["uz"])
 
+def generate_xp_progress_bar(xp: int, lang: str = "uz") -> str:
+    rpg = calculate_rpg_level(xp, lang)
+    pct = int(rpg["progress_pct"])
+    filled = int(round(10 * (pct / 100)))
+    bar = '█' * filled + '░' * (10 - filled)
+    return f"Level {rpg['level']} [{bar}] {pct}% ({rpg['xp_in_level']}/{rpg['xp_needed_level']} XP)"
+
 def get_user_language(user_id: int) -> str:
     user = db_get_user(user_id)
     if user and "lang" in user.keys() and user["lang"]:
@@ -856,10 +1145,11 @@ def get_main_reply_keyboard(user_id: int) -> ReplyKeyboardMarkup:
 
     buttons = [
         [KeyboardButton(text=t["btn_checkin"]), KeyboardButton(text=t["btn_photo_checkin"])],
-        [KeyboardButton(text=t["btn_games"]), KeyboardButton(text=t["btn_shop"])],
-        [KeyboardButton(text=t["btn_ref"]), KeyboardButton(text=t["btn_profile"])],
-        [KeyboardButton(text=t["btn_leaderboard"]), KeyboardButton(text=t["btn_quote"])],
-        [KeyboardButton(text=t["btn_setup"]), KeyboardButton(text=t["btn_lang"]), KeyboardButton(text=t["btn_help"])]
+        [KeyboardButton(text=t["btn_tournament"]), KeyboardButton(text=t["btn_games"])],
+        [KeyboardButton(text=t["btn_shop"]), KeyboardButton(text=t["btn_profile"])],
+        [KeyboardButton(text=t["btn_leaderboard"]), KeyboardButton(text=t["btn_ref"])],
+        [KeyboardButton(text=t["btn_quote"]), KeyboardButton(text=t["btn_setup"]), KeyboardButton(text=t["btn_lang"])],
+        [KeyboardButton(text=t["btn_help"])]
     ]
     if user_id == SUPER_ADMIN_ID:
         buttons.append([KeyboardButton(text=t["btn_admin"])])
@@ -880,11 +1170,17 @@ def get_checkin_inline_keyboard(lang: str = "uz") -> InlineKeyboardMarkup:
         [InlineKeyboardButton(text=t["checkin_btn_inline"], callback_data="do_checkin")]
     ])
 
+def get_bedtime_inline_keyboard(lang: str = "uz") -> InlineKeyboardMarkup:
+    t = TEXTS.get(lang, TEXTS["uz"])
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=t["bedtime_btn"], callback_data="bedtime_sleep_now")]
+    ])
+
 def get_games_inline_keyboard() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🎲 Random Sherik Topish (Matchmaking)", callback_data="game_matchmaking")],
         [InlineKeyboardButton(text="🤝 Duo Combo (Sherik Taklif Qilish)", callback_data="game_duo_info")],
-        [InlineKeyboardButton(text="⚔️ 1v1 Uyg'onish Dueli (50 Coin Tikish)", callback_data="game_1v1_info")]
+        [InlineKeyboardButton(text="⚔️ 1v1 Uyg'onish Dueli (-20 Stamina)", callback_data="game_1v1_info")]
     ])
 
 def get_language_inline_keyboard() -> InlineKeyboardMarkup:
@@ -951,7 +1247,7 @@ async def cmd_start(message: Message):
         db_link_group_member(message.chat.id, user.id)
         await message.reply("🌅 **The 5 AM Club Bot is Active!** Group members auto-registered.", parse_mode=ParseMode.MARKDOWN)
     else:
-        welcome_text = t["welcome"].format(name=user.first_name)
+        welcome_text = t["welcome"].format(name=html.escape(user.first_name))
         await message.answer(welcome_text, reply_markup=get_main_reply_keyboard(user.id), parse_mode=ParseMode.MARKDOWN)
 
 # --- SOLO CHECK-IN & SUBMENU HANDLERS ---
@@ -980,7 +1276,6 @@ async def handle_solo_do_checkin_callback(callback: CallbackQuery):
     start_t = u["checkin_start"] if u and "checkin_start" in u.keys() and u["checkin_start"] else "04:30"
     end_t = u["checkin_end"] if u and "checkin_end" in u.keys() and u["checkin_end"] else "06:00"
 
-    # Strict Time-Window Enforcement
     if not is_time_in_window(start_t, end_t):
         warning_msg = t["not_in_window"].format(start=start_t, end=end_t)
         await callback.answer(warning_msg, show_alert=True)
@@ -1006,6 +1301,9 @@ async def handle_solo_do_checkin_callback(callback: CallbackQuery):
             multiplier=res["multiplier"],
             coins_earned=res["coins_earned"],
             coins=res["coins"],
+            xp_earned=res["xp_earned"],
+            xp=res["xp"],
+            level=res["level"],
             rank=rank
         )
         await callback.message.answer(msg_text, parse_mode=ParseMode.MARKDOWN)
@@ -1051,11 +1349,17 @@ async def handle_solo_my_stats_callback(callback: CallbackQuery):
 
     streak = user["streak"]
     coins = user["coins"]
+    xp = user["xp"] if "xp" in user.keys() and user["xp"] else 0
+    rpg = calculate_rpg_level(xp, lang=lang)
+    stamina = db_calculate_and_update_stamina(dict(user))
+    stamina_badge = "🟢 (Vitality Surge!)" if stamina >= 80 else "🟡 (Normal)"
     photo_count = user["photo_count"] if "photo_count" in user.keys() else 0
     freeze_count = user["freeze_count"] if "freeze_count" in user.keys() else 0
     ref_count = user["referral_count"] if "referral_count" in user.keys() else 0
+    tourney_pts = db_get_user_tournament_points(user_id)
     rank = get_user_rank(streak, lang=lang)
     progress_bar = generate_progress_bar(streak, lang=lang)
+    xp_bar = generate_xp_progress_bar(xp, lang=lang)
     lang_names = {"uz": "🇺🇿 O'zbekcha", "ru": "🇷🇺 Русский", "en": "🇬🇧 English"}
     start_t = user["checkin_start"] if "checkin_start" in user.keys() and user["checkin_start"] else "04:30"
     end_t = user["checkin_end"] if "checkin_end" in user.keys() and user["checkin_end"] else "06:00"
@@ -1070,10 +1374,18 @@ async def handle_solo_my_stats_callback(callback: CallbackQuery):
     badges_str = " | ".join(badges) if badges else "Boshlang'ich nishonlar"
 
     profile_text = t["profile_title"].format(
-        name=user['first_name'],
+        name=html.escape(user['first_name']),
+        level=rpg["level"],
+        level_title=rpg["title"],
+        xp=xp,
+        next_level_xp=rpg["next_level_total_xp"],
+        progress_pct=rpg["progress_pct"],
+        stamina=stamina,
+        stamina_badge=stamina_badge,
         streak=streak,
         multiplier=get_streak_multiplier(streak),
         coins=coins,
+        tourney_pts=tourney_pts,
         ref_count=ref_count,
         freeze_count=freeze_count,
         photo_count=photo_count,
@@ -1082,6 +1394,7 @@ async def handle_solo_my_stats_callback(callback: CallbackQuery):
         end=end_t,
         badges=badges_str,
         lang_str=lang_names.get(lang, "🇺🇿 O'zbekcha"),
+        xp_bar=xp_bar,
         progress_bar=progress_bar
     )
     await callback.message.answer(profile_text, parse_mode=ParseMode.MARKDOWN)
@@ -1105,7 +1418,6 @@ async def handle_callback_checkin(callback: CallbackQuery):
         start_t = u["checkin_start"] if u and "checkin_start" in u.keys() and u["checkin_start"] else "04:30"
         end_t = u["checkin_end"] if u and "checkin_end" in u.keys() and u["checkin_end"] else "06:00"
 
-    # Strict Time-Window Enforcement
     if not is_time_in_window(start_t, end_t):
         warning_msg = t["not_in_window"].format(start=start_t, end=end_t)
         await callback.answer(warning_msg, show_alert=True)
@@ -1116,8 +1428,7 @@ async def handle_callback_checkin(callback: CallbackQuery):
     if res == "already":
         await callback.answer(t["already_checked_in"], show_alert=True)
     elif res:
-        # Compact Group Popup Alert (Item 2 Requirement)
-        popup_text = t["group_checkin_popup"].format(streak=res['streak'], coins=res['coins_earned'])
+        popup_text = t["group_checkin_popup"].format(streak=res['streak'], coins=res['coins_earned'], xp=res['xp_earned'])
         await callback.answer(popup_text, show_alert=True)
 
         try:
@@ -1126,7 +1437,6 @@ async def handle_callback_checkin(callback: CallbackQuery):
         except Exception:
             pass
 
-        # In private chats only, send full detailed confirmation
         if group_id == 0:
             quip = await fetch_dynamic_quip(res["streak"], user.first_name, lang=lang)
             rank = get_user_rank(res["streak"], lang=lang)
@@ -1136,9 +1446,35 @@ async def handle_callback_checkin(callback: CallbackQuery):
                 multiplier=res["multiplier"],
                 coins_earned=res["coins_earned"],
                 coins=res["coins"],
+                xp_earned=res["xp_earned"],
+                xp=res["xp"],
+                level=res["level"],
                 rank=rank
             )
             await callback.message.answer(msg_text, parse_mode=ParseMode.MARKDOWN)
+
+# --- BEDTIME PROTOCOL CALLBACK ---
+@router.callback_query(F.data == "bedtime_sleep_now")
+async def handle_bedtime_sleep_callback(callback: CallbackQuery):
+    user_id = callback.from_user.id
+    db_register_user(user_id, callback.from_user.username, callback.from_user.first_name)
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
+    success, reason = db_record_bedtime(user_id)
+    if success:
+        await callback.answer("😴 Xayrli tun! +20 XP berildi!", show_alert=True)
+        await callback.message.answer(t["bedtime_success"], parse_mode=ParseMode.MARKDOWN)
+    elif reason == "already_recorded":
+        await callback.answer("⚠️ Bugun uxlash protokoli allaqachon qayd etilgan! Xayrli tun! 😴", show_alert=True)
+    else:
+        await callback.answer("✅", show_alert=False)
+
+@router.message(Command("bedtime"))
+async def cmd_bedtime(message: Message):
+    lang = get_user_language(message.from_user.id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+    await message.reply(t["bedtime_reminder"], reply_markup=get_bedtime_inline_keyboard(lang), parse_mode=ParseMode.MARKDOWN)
 
 # --- REFERRAL HANDLER ---
 @router.message(F.text.in_(["👥 Taklif Qilish (+100 Coin)", "👥 Пригласить (+100 Монет)", "👥 Invite Friends (+100 Coins)"]))
@@ -1155,6 +1491,25 @@ async def handle_referral_btn(message: Message):
 
     msg = t["ref_text"].format(ref_link=ref_link, ref_count=ref_count)
     await message.answer(msg, parse_mode=ParseMode.MARKDOWN)
+
+# --- TOURNAMENT HANDLER ---
+@router.message(F.text.in_(["⚔️ Haftalik Turnir", "⚔️ Турнир Недели", "⚔️ Weekly Tournament"]))
+@router.message(Command("tournament"))
+async def handle_tournament(message: Message):
+    lang = get_user_language(message.from_user.id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
+    participants, season = db_get_tournament_leaderboard(10)
+    text = t["tournament_head"].format(season=season["season_number"], end_date=season["end_date"])
+
+    if not participants:
+        text += t["tournament_empty"]
+    else:
+        for idx, row in enumerate(participants, 1):
+            medal = "👑 🥇" if idx == 1 else ("🥈" if idx == 2 else ("🥉" if idx == 3 else f"#{idx}"))
+            text += f"`{medal}` **{html.escape(row['first_name'])}** — `{row['points']} pts` | 🔥 `{row['checkins_count']} check-in` | 📸 `{row['photos_count']} foto`\n"
+
+    await message.reply(text, parse_mode=ParseMode.MARKDOWN)
 
 # --- GAMES & ARENA CATALOG HANDLERS ---
 @router.message(F.text.in_(["🎮 O'yinlar va Duyellar", "🎮 Игры и Дуэли", "🎮 Games & Duels"]))
@@ -1173,9 +1528,9 @@ async def handle_matchmaking_cb(callback: CallbackQuery):
 
     partner_id, partner_name = db_matchmaking_find_or_enqueue(user_id)
     if partner_id:
-        await callback.message.edit_text(t["matchmaking_found"].format(partner_name=partner_name), parse_mode=ParseMode.MARKDOWN)
+        await callback.message.edit_text(t["matchmaking_found"].format(partner_name=html.escape(partner_name)), parse_mode=ParseMode.MARKDOWN)
         try:
-            await callback.bot.send_message(partner_id, t["matchmaking_found"].format(partner_name=callback.from_user.first_name), parse_mode=ParseMode.MARKDOWN)
+            await callback.bot.send_message(partner_id, t["matchmaking_found"].format(partner_name=html.escape(callback.from_user.first_name)), parse_mode=ParseMode.MARKDOWN)
         except Exception:
             pass
     else:
@@ -1198,7 +1553,8 @@ async def handle_duo_info_cb(callback: CallbackQuery):
 async def handle_1v1_info_cb(callback: CallbackQuery):
     msg = (
         "⚔️ **1v1 UYG'ONISH DUELI (CHALLENGE MODE)**\n\n"
-        "Do'stingiz bilan 50 tanga tikib bellashing! Kim ertalab birinchi foto check-in qilsa, **100 tangalik bank**ni yutib oladi!\n\n"
+        "Do'stingiz bilan 50 tanga tikib bellashing! (-20 Stamina)\n"
+        "Kim ertalab birinchi foto check-in qilsa, **100 tangalik bank** va **+75 Turnir Balli**ni yutib oladi!\n\n"
         "📌 **Chaqirish uchun:** `/duel <do'stingizning_user_id>` yuboring!"
     )
     await callback.message.edit_text(msg, parse_mode=ParseMode.MARKDOWN)
@@ -1279,7 +1635,7 @@ async def cmd_group_config_interactive(message: Message):
 
     msg = (
         f"⚙️ **GURUH SOZLAMALARI (INTERAKTIV PANEL):**\n\n"
-        f"👥 Guruh: **{g['title']}**\n"
+        f"👥 Guruh: **{html.escape(g['title'])}**\n"
         f"⏰ Check-In Vaqti: `{s_t}` — `{e_t}`\n"
         f"⚡ Oddiy Check-In: `+{n_c} tanga`\n"
         f"📸 Foto Check-In: `+{p_c} tanga`\n\n"
@@ -1381,12 +1737,10 @@ async def handle_user_photo(message: Message):
         start_t = u["checkin_start"] if u and "checkin_start" in u.keys() and u["checkin_start"] else "04:30"
         end_t = u["checkin_end"] if u and "checkin_end" in u.keys() and u["checkin_end"] else "06:00"
 
-    # Strict Time-Window Enforcement
     if not is_time_in_window(start_t, end_t):
         await message.reply(t["not_in_window"].format(start=start_t, end=end_t), parse_mode=ParseMode.MARKDOWN)
         return
 
-    # Download Photo and run Smart Photo Verification (Pillow)
     photo_file = message.photo[-1]
     file_info = await message.bot.get_file(photo_file.file_id)
     photo_bytes_io = await message.bot.download_file(file_info.file_path)
@@ -1405,7 +1759,7 @@ async def handle_user_photo(message: Message):
 
     rank = get_user_rank(res["streak"], lang=lang)
 
-    stamped_bytes = stamp_photo_with_watermark(photo_bytes, user.first_name, res["streak"], rank)
+    stamped_bytes = await stamp_photo_with_watermark(photo_bytes, user.first_name, res["streak"], rank)
     input_file = BufferedInputFile(stamped_bytes, filename="verified_stamp.jpg")
 
     quip = await fetch_dynamic_quip(res["streak"], user.first_name, lang=lang)
@@ -1415,6 +1769,9 @@ async def handle_user_photo(message: Message):
         multiplier=res["multiplier"],
         coins_earned=res["coins_earned"],
         coins=res["coins"],
+        xp_earned=res["xp_earned"],
+        xp=res["xp"],
+        level=res["level"],
         rank=rank
     )
 
@@ -1430,11 +1787,11 @@ async def handle_user_photo(message: Message):
 
     await message.answer_photo(photo=input_file, caption=caption_text, reply_markup=share_keyboard, parse_mode=ParseMode.MARKDOWN)
 
-    # 21-Day Challenge Certificate Check!
+    # 21-Day Challenge Certificate Check
     if res["streak"] >= 21:
         u_info = db_get_user(user.id)
         if u_info and ("cert_issued" not in u_info.keys() or u_info["cert_issued"] == 0):
-            cert_bytes = generate_21day_certificate(user.first_name)
+            cert_bytes = await generate_21day_certificate(user.first_name)
             if cert_bytes:
                 cert_file = BufferedInputFile(cert_bytes, filename="21day_certificate.jpg")
                 cert_caption = t["cert_congrats"]
@@ -1608,7 +1965,7 @@ async def cmd_set_streak(message: Message):
     except Exception:
         await message.reply("❌ Noto'g'ri parametrlar kiritildi.")
 
-# --- PROFILE HANDLER (WORKS IN GROUP & PRIVATE) ---
+# --- PROFILE HANDLER ---
 @router.message(F.text.in_(["📊 Profilim", "📊 Мой Профиль", "📊 My Profile"]))
 @router.message(Command("profile"))
 @router.message(Command("myprofile"))
@@ -1624,11 +1981,17 @@ async def handle_my_profile(message: Message):
 
     streak = user["streak"]
     coins = user["coins"]
+    xp = user["xp"] if "xp" in user.keys() and user["xp"] else 0
+    rpg = calculate_rpg_level(xp, lang=lang)
+    stamina = db_calculate_and_update_stamina(dict(user))
+    stamina_badge = "🟢 (Vitality Surge!)" if stamina >= 80 else "🟡 (Normal)"
     photo_count = user["photo_count"] if "photo_count" in user.keys() else 0
     freeze_count = user["freeze_count"] if "freeze_count" in user.keys() else 0
     ref_count = user["referral_count"] if "referral_count" in user.keys() else 0
+    tourney_pts = db_get_user_tournament_points(user_id)
     rank = get_user_rank(streak, lang=lang)
     progress_bar = generate_progress_bar(streak, lang=lang)
+    xp_bar = generate_xp_progress_bar(xp, lang=lang)
     lang_names = {"uz": "🇺🇿 O'zbekcha", "ru": "🇷🇺 Русский", "en": "🇬🇧 English"}
     start_t = user["checkin_start"] if "checkin_start" in user.keys() and user["checkin_start"] else "04:30"
     end_t = user["checkin_end"] if "checkin_end" in user.keys() and user["checkin_end"] else "06:00"
@@ -1643,10 +2006,18 @@ async def handle_my_profile(message: Message):
     badges_str = " | ".join(badges) if badges else "Boshlang'ich nishonlar"
 
     profile_text = t["profile_title"].format(
-        name=user['first_name'],
+        name=html.escape(user['first_name']),
+        level=rpg["level"],
+        level_title=rpg["title"],
+        xp=xp,
+        next_level_xp=rpg["next_level_total_xp"],
+        progress_pct=rpg["progress_pct"],
+        stamina=stamina,
+        stamina_badge=stamina_badge,
         streak=streak,
         multiplier=get_streak_multiplier(streak),
         coins=coins,
+        tourney_pts=tourney_pts,
         ref_count=ref_count,
         freeze_count=freeze_count,
         photo_count=photo_count,
@@ -1655,11 +2026,12 @@ async def handle_my_profile(message: Message):
         end=end_t,
         badges=badges_str,
         lang_str=lang_names.get(lang, "🇺🇿 O'zbekcha"),
+        xp_bar=xp_bar,
         progress_bar=progress_bar
     )
     await message.reply(profile_text, parse_mode=ParseMode.MARKDOWN)
 
-# --- LEADERBOARD HANDLER (WORKS IN GROUP & PRIVATE) ---
+# --- LEADERBOARD HANDLER ---
 @router.message(F.text.in_(["🏆 Reyting", "🏆 Рейтинг", "🏆 Leaderboard"]))
 @router.message(Command("leaderboard"))
 async def handle_leaderboard(message: Message):
@@ -1674,7 +2046,8 @@ async def handle_leaderboard(message: Message):
     text = t["leaderboard_title"]
     for idx, row in enumerate(lb, 1):
         r_title = get_user_rank(row['streak'], lang=lang)
-        text += f"`#{idx}` **{row['first_name']}** — `{row['streak']}d` | `{row['coins']} coins` | {r_title}\n"
+        lvl = row['level'] if 'level' in row.keys() and row['level'] else 1
+        text += f"`#{idx}` **{html.escape(row['first_name'])}** (Lvl {lvl}) — `{row['streak']}d` | `{row['coins']} coins` | {r_title}\n"
     await message.reply(text, parse_mode=ParseMode.MARKDOWN)
 
 # --- DAILY QUOTE HANDLER ---
@@ -1710,9 +2083,62 @@ async def handle_chat_member_updated(event: ChatMemberUpdated):
         db_register_group(event.chat.id, event.chat.title)
         db_link_group_member(event.chat.id, u.id)
 
-# ==================== SCHEDULER ====================
+# ==================== SCHEDULER & BEDTIME PROTOCOL ====================
+async def check_weekly_tournament_reset(bot: Bot):
+    """
+    Checks if active season has ended (Sunday 23:59 Asia/Tashkent).
+    Awards Top 3 winners, broadcasts results, closes season, and starts next season.
+    """
+    try:
+        tz = pytz.timezone(TIMEZONE_STR)
+        now = datetime.now(tz)
+        season = db_get_or_create_active_season()
+        end_dt = datetime.strptime(season["end_date"], "%Y-%m-%d %H:%M:%S").replace(tzinfo=tz)
+
+        if now >= end_dt:
+            participants, _ = db_get_tournament_leaderboard(limit=3)
+            with get_db() as conn:
+                cursor = conn.cursor()
+                # Close season
+                w_id, w_name, w_pts = 0, "No Winner", 0
+                if participants:
+                    w1 = participants[0]
+                    w_id, w_name, w_pts = w1["user_id"], w1["first_name"], w1["points"]
+                    # Award 1st place: 500 coins, 2 freezes
+                    cursor.execute("UPDATE users SET coins = coins + 500, freeze_count = freeze_count + 2 WHERE user_id = ?", (w_id,))
+                    if len(participants) > 1:
+                        w2 = participants[1]
+                        cursor.execute("UPDATE users SET coins = coins + 300, freeze_count = freeze_count + 1 WHERE user_id = ?", (w2["user_id"],))
+                    if len(participants) > 2:
+                        w3 = participants[2]
+                        cursor.execute("UPDATE users SET coins = coins + 150 WHERE user_id = ?", (w3["user_id"],))
+
+                cursor.execute("""
+                    UPDATE tournament_seasons
+                    SET is_active = 0, winner_id = ?, winner_name = ?, winner_points = ?
+                    WHERE season_id = ?
+                """, (w_id, w_name, w_pts, season["season_id"]))
+
+            # Broadcast announcement
+            groups = db_get_active_groups()
+            broadcast_msg = (
+                f"🏆 **HAFTALIK TOURNAMENT #{season['season_number']} G'OLIBLARI E'LON QILINDI!** 🏆\n\n"
+                f"👑 **1-o'rin (Chempion):** {w_name} (`{w_pts} pts`) — `+500 tanga, 2x Freeze va 👑 Haftalik Chempion nishoni!`\n\n"
+                f"🚀 Yangi #{season['season_number'] + 1}-mavsum boshlandi! Barcha ballar yangilandi. Bellashuv davom etadi!"
+            )
+            for g in groups:
+                try:
+                    await bot.send_message(g["group_id"], broadcast_msg, parse_mode=ParseMode.MARKDOWN)
+                    await asyncio.sleep(0.05)
+                except Exception:
+                    pass
+
+            db_get_or_create_active_season()
+    except Exception as e:
+        logging.error(f"Error checking weekly tournament reset: {e}")
+
 async def scheduler_loop(bot: Bot):
-    sent_start, sent_end = {}, {}
+    sent_start, sent_end, sent_bedtime = {}, {}, {}
     while True:
         try:
             tz = pytz.timezone(TIMEZONE_STR)
@@ -1725,6 +2151,42 @@ async def scheduler_loop(bot: Bot):
                 db_register_group(DEFAULT_GROUP_ID, "5 AM Club Group")
                 groups = db_get_active_groups()
 
+            # 1. EVENING BEDTIME PROTOCOL AT 21:30 PM (Asia/Tashkent)
+            if hhmm == "21:30":
+                if sent_bedtime.get(f"grp_bedtime_{today_str}") != True:
+                    sent_bedtime[f"grp_bedtime_{today_str}"] = True
+                    for g in groups:
+                        try:
+                            await bot.send_message(
+                                g["group_id"],
+                                TEXTS["uz"]["bedtime_reminder"],
+                                reply_markup=get_bedtime_inline_keyboard("uz"),
+                                parse_mode=ParseMode.MARKDOWN
+                            )
+                            await asyncio.sleep(0.05)
+                        except Exception:
+                            pass
+
+                # Also send to active private users
+                users = db_get_all_users()
+                for u in users:
+                    uid = u["user_id"]
+                    if sent_bedtime.get(f"usr_{uid}_{today_str}") != True and u["streak"] > 0:
+                        sent_bedtime[f"usr_{uid}_{today_str}"] = True
+                        u_lang = u["lang"] if "lang" in u.keys() and u["lang"] else "uz"
+                        t = TEXTS.get(u_lang, TEXTS["uz"])
+                        try:
+                            await bot.send_message(
+                                uid,
+                                t["bedtime_reminder"],
+                                reply_markup=get_bedtime_inline_keyboard(u_lang),
+                                parse_mode=ParseMode.MARKDOWN
+                            )
+                            await asyncio.sleep(0.05)
+                        except Exception:
+                            pass
+
+            # 2. MORNING CHECK-IN OPEN / CLOSE FOR GROUPS
             for g in groups:
                 gid = g["group_id"]
                 s_t, e_t = g["checkin_start"], g["checkin_end"]
@@ -1746,9 +2208,9 @@ async def scheduler_loop(bot: Bot):
                     awake, sleepers = [], []
                     for m in report:
                         if m["status"] == "awake":
-                            awake.append(f"• **{m['first_name']}** (`{m['last_checkin_time']}`) — 🔥 `{m['streak']}d`")
+                            awake.append(f"• **{html.escape(m['first_name'])}** (`{m['last_checkin_time']}`) — 🔥 `{m['streak']}d`")
                         else:
-                            sleepers.append(f"• **{m['first_name']}** 😴")
+                            sleepers.append(f"• **{html.escape(m['first_name'])}** 😴")
 
                     quote = await fetch_motivational_quote("uz")
                     rep_msg = (
@@ -1758,11 +2220,15 @@ async def scheduler_loop(bot: Bot):
                         f"💡 **QUOTE:**\n{quote}"
                     )
                     await bot.send_message(gid, rep_msg, parse_mode=ParseMode.MARKDOWN)
+
+            # 3. WEEKLY TOURNAMENT EXPIRATION CHECK
+            await check_weekly_tournament_reset(bot)
+
         except Exception as e:
             logging.error(f"Scheduler error: {e}")
         await asyncio.sleep(25)
 
-# ==================== RENDER WEBAPP SERVER (SERVES HTML, CSS, JS & API) ====================
+# ==================== RENDER WEBAPP SERVER & HMAC AUTH REST API ====================
 async def serve_index(req):
     if os.path.exists("index.html"):
         return web.FileResponse("index.html")
@@ -1781,34 +2247,158 @@ async def serve_app_js(req):
 async def web_ping(req):
     return web.Response(text="Bot is active 24/7!", content_type="text/plain")
 
+async def api_auth_validate(req):
+    try:
+        body = await req.json()
+        init_data = body.get("initData", "")
+        valid, auth_result = verify_telegram_init_data(init_data)
+
+        if valid and auth_result:
+            user_data = auth_result.get("user", {})
+            user_id = user_data.get("id")
+            if user_id:
+                db_user = db_get_user(user_id)
+                if not db_user:
+                    db_register_user(user_id, user_data.get("username", ""), user_data.get("first_name", ""))
+                    db_user = db_get_user(user_id)
+
+                db_user_dict = dict(db_user)
+                stamina = db_calculate_and_update_stamina(db_user_dict)
+                xp = db_user_dict.get("xp") or 0
+                rpg = calculate_rpg_level(xp, db_user_dict.get("lang") or "uz")
+                tourney_pts = db_get_user_tournament_points(user_id)
+
+                return web.json_response({
+                    "status": "ok",
+                    "verified": True,
+                    "user": {
+                        "id": db_user_dict["user_id"],
+                        "name": db_user_dict["first_name"],
+                        "username": db_user_dict["username"],
+                        "streak": db_user_dict["streak"],
+                        "coins": db_user_dict["coins"],
+                        "xp": xp,
+                        "level": rpg["level"],
+                        "level_title": rpg["title"],
+                        "xp_in_level": rpg["xp_in_level"],
+                        "xp_needed_level": rpg["xp_needed_level"],
+                        "next_level_total_xp": rpg["next_level_total_xp"],
+                        "progress_pct": rpg["progress_pct"],
+                        "stamina": stamina,
+                        "max_stamina": 100,
+                        "tournament_points": tourney_pts,
+                        "photo_count": db_user_dict["photo_count"],
+                        "freeze_count": db_user_dict["freeze_count"],
+                        "ref_count": db_user_dict["referral_count"],
+                        "lang": db_user_dict["lang"],
+                        "checkin_start": db_user_dict["checkin_start"],
+                        "checkin_end": db_user_dict["checkin_end"]
+                    }
+                })
+    except Exception as e:
+        logging.error(f"API Auth validate error: {e}")
+    return web.json_response({"status": "error", "verified": False, "message": "Invalid initData signature"}, status=401)
+
 async def api_user_stats(req):
     user_id_str = req.match_info.get("user_id", "")
     try:
         user_id = int(user_id_str)
         user = db_get_user(user_id)
         if user:
+            user_dict = dict(user)
+            stamina = db_calculate_and_update_stamina(user_dict)
+            xp = user_dict.get("xp") or 0
+            rpg = calculate_rpg_level(xp, user_dict.get("lang") or "uz")
+            tourney_pts = db_get_user_tournament_points(user_id)
+
             return web.json_response({
                 "status": "ok",
                 "user": {
-                    "id": user["user_id"],
-                    "name": user["first_name"],
-                    "username": user["username"],
-                    "streak": user["streak"],
-                    "coins": user["coins"],
-                    "photo_count": user["photo_count"],
-                    "freeze_count": user["freeze_count"],
-                    "ref_count": user["referral_count"],
-                    "lang": user["lang"]
+                    "id": user_dict["user_id"],
+                    "name": user_dict["first_name"],
+                    "username": user_dict["username"],
+                    "streak": user_dict["streak"],
+                    "coins": user_dict["coins"],
+                    "xp": xp,
+                    "level": rpg["level"],
+                    "level_title": rpg["title"],
+                    "xp_in_level": rpg["xp_in_level"],
+                    "xp_needed_level": rpg["xp_needed_level"],
+                    "progress_pct": rpg["progress_pct"],
+                    "stamina": stamina,
+                    "max_stamina": 100,
+                    "tournament_points": tourney_pts,
+                    "photo_count": user_dict["photo_count"],
+                    "freeze_count": user_dict["freeze_count"],
+                    "ref_count": user_dict["referral_count"],
+                    "lang": user_dict["lang"]
                 }
             })
     except Exception as e:
         logging.error(f"API user error: {e}")
     return web.json_response({"status": "error", "message": "User not found"}, status=404)
 
+async def api_action_bedtime(req):
+    try:
+        body = await req.json()
+        init_data = body.get("initData", "")
+        valid, auth_result = verify_telegram_init_data(init_data)
+        if not valid or not auth_result:
+            return web.json_response({"status": "error", "message": "Unauthorized"}, status=401)
+
+        user_id = auth_result.get("user", {}).get("id")
+        success, reason = db_record_bedtime(user_id)
+        if success:
+            user = db_get_user(user_id)
+            user_dict = dict(user)
+            rpg = calculate_rpg_level(user_dict["xp"] or 0, user_dict["lang"] or "uz")
+            return web.json_response({
+                "status": "ok",
+                "message": "Bedtime protocol recorded (+20 XP, 100% Stamina)",
+                "xp": user_dict["xp"],
+                "level": rpg["level"],
+                "stamina": 100
+            })
+        else:
+            return web.json_response({"status": "already", "message": "Already recorded bedtime today"})
+    except Exception as e:
+        return web.json_response({"status": "error", "message": str(e)}, status=500)
+
+async def api_tournament(req):
+    try:
+        participants, season = db_get_tournament_leaderboard(20)
+        data = [{
+            "rank": idx + 1,
+            "name": r["first_name"],
+            "username": r["username"],
+            "points": r["points"],
+            "checkins": r["checkins_count"],
+            "photos": r["photos_count"]
+        } for idx, r in enumerate(participants)]
+
+        return web.json_response({
+            "status": "ok",
+            "season": {
+                "number": season["season_number"],
+                "start_date": season["start_date"],
+                "end_date": season["end_date"]
+            },
+            "leaderboard": data
+        })
+    except Exception as e:
+        return web.json_response({"status": "error", "message": str(e)}, status=500)
+
 async def api_leaderboard(req):
     try:
         lb = db_get_global_leaderboard(10)
-        data = [{"name": r["first_name"], "username": r["username"], "streak": r["streak"], "coins": r["coins"]} for r in lb]
+        data = [{
+            "name": r["first_name"],
+            "username": r["username"],
+            "streak": r["streak"],
+            "coins": r["coins"],
+            "level": r["level"] if "level" in r.keys() and r["level"] else 1,
+            "xp": r["xp"] if "xp" in r.keys() and r["xp"] else 0
+        } for r in lb]
         return web.json_response({"status": "ok", "leaderboard": data})
     except Exception as e:
         return web.json_response({"status": "error", "message": str(e)}, status=500)
@@ -1820,7 +2410,10 @@ async def start_dummy_web_server():
     app.router.add_get('/styles.css', serve_styles)
     app.router.add_get('/app.js', serve_app_js)
     app.router.add_get('/health', web_ping)
+    app.router.add_post('/api/auth/validate', api_auth_validate)
+    app.router.add_post('/api/action/bedtime', api_action_bedtime)
     app.router.add_get('/api/user/{user_id}', api_user_stats)
+    app.router.add_get('/api/tournament', api_tournament)
     app.router.add_get('/api/leaderboard', api_leaderboard)
 
     runner = web.AppRunner(app)
@@ -1835,15 +2428,18 @@ async def set_bot_commands(bot: Bot):
         BotCommand(command="gconfig", description="📋 Guruh boshqaruv paneli (Admin)"),
         BotCommand(command="settime", description="⏰ Vaqtni sozlash (/settime 04:30 06:00)"),
         BotCommand(command="setcoins", description="🪙 Tangalarni sozlash (/setcoins 10 25)"),
+        BotCommand(command="tournament", description="⚔️ Haftalik guruh turniri"),
         BotCommand(command="leaderboard", description="🏆 Guruh va global reyting"),
-        BotCommand(command="profile", description="📊 Shaxsiy profil va nishonlar"),
+        BotCommand(command="profile", description="📊 Shaxsiy profil va RPG stats"),
         BotCommand(command="shop", description="🛒 5 AM Do'koni"),
         BotCommand(command="help", description="📖 Guruh qoidalari"),
     ]
     private_commands = [
         BotCommand(command="start", description="🚀 Botni boshlash / Start"),
         BotCommand(command="checkin", description="⚡ Solo Check-In menyusi"),
-        BotCommand(command="profile", description="📊 Profilim va nishonlar"),
+        BotCommand(command="tournament", description="⚔️ Haftalik turnir reytingi"),
+        BotCommand(command="bedtime", description="🌙 21:30 Uxlash protokoli (+20 XP)"),
+        BotCommand(command="profile", description="📊 Profilim va RPG stats"),
         BotCommand(command="leaderboard", description="🏆 Reyting jadvali"),
         BotCommand(command="shop", description="🛒 Do'kon va bozor"),
         BotCommand(command="setup", description="⚙️ Uyg'onish vaqtini sozlash"),
