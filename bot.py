@@ -3,6 +3,7 @@ import logging
 import os
 import random
 import sqlite3
+from contextlib import contextmanager
 from datetime import datetime, timedelta
 import pytz
 import aiohttp
@@ -79,6 +80,7 @@ def get_random_photo_mission(lang: str = "uz") -> str:
     return random.choice(missions)
 
 # ==================== MULTI-LANGUAGE DICTIONARY ====================
+# 100% Matching keys across 'uz', 'ru', 'en'
 TEXTS = {
     "uz": {
         "welcome": '👋 **"The 5 AM Club" botiga xush kelibsiz, {name}!**\n\n“Ertalabki vaqtingizga egalik qiling. Hayotingizni yuksaltiring.”\n\n⚙️ Tugmalar va menyulardan foydalanish uchun quyidagi menyuni bosing:',
@@ -99,7 +101,7 @@ TEXTS = {
         "checkin_success": "⚡ **CHECK-IN MUVAFFAQIYATLI!**\n\n{quip}\n\n🔥 Streak: `{streak} kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🏅 Unvon: {rank}",
         "photo_mission_prompt": "📸 **KUNLIK FOTO TOPSHIRIQ:**\n\n{mission}\n\n📌 **Shart:** Rasm yuboring! Bot rasmingizga rasmiy **VERIFIED STAMP** muhrini bosib, tangalaringizni beradi! 🚀",
         "photo_success": "📸 **FOTO CHECK-IN VERIFIED! (+{coins_earned} COIN)**\n\n{quip}\n\n🔥 Streak: `{streak} kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🏅 Unvon: {rank}\n\n✨ *Yuqoridagi muhrlangan rasmni Story'ingizga joylashingiz mumkin!*",
-        "profile_title": "👤 **FOYDALANUVCHI PROFILI**\n\n🏷 Ism: {name}\n🔥 Streak: `{streak} Kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `{coins}`\n👥 Taklif qilinganlar: `{ref_count} kishi`\n🛡 Streak Freeze: `{freeze_count} ta`\n📸 Foto Check-Inlar: `{photo_count} ta`\n🏅 Unvon: {rank}\n🌐 Til: `{lang_str}`\n\n🏆 **TROPHY CABINET (NISHONLAR):**\n{badges}\n\n📈 **UNVON DARAJTASI:**\n{progress_bar}",
+        "profile_title": "👤 **FOYDALANUVCHI PROFILI**\n\n🏷 Ism: {name}\n🔥 Streak: `{streak} Kun` (Koeffitsiyent: `{multiplier}X`)\n🪙 Tangalar: `{coins}`\n👥 Taklif qilinganlar: `{ref_count} kishi`\n🛡 Streak Freeze: `{freeze_count} ta`\n📸 Foto Check-Inlar: `{photo_count} ta`\n🏅 Unvon: {rank}\n🌐 Til: `{lang_str}`\n\n🏆 **TROPHY CABINET (NISHONLAR):**\n{badges}\n\n📈 **UNVON DARAJASI:**\n{progress_bar}",
         "ref_text": "👥 **DO'STLARNI TAKLIF QILISH VA TANGA ISHLASH**\n\nSizning shaxsiy taklif havolangiz:\n`{ref_link}`\n\n📌 **Qoida:** Har bir taklif qilgan do'stingiz uchun sizga ham, do'stingizga ham **+100 tanga** beriladi!\n\nJami taklif qilingan do'stlar: `{ref_count} kishi`",
         "leaderboard_title": "🏆 **THE 5 AM CLUB REYTING JADVALI** 🏆\n\n",
         "leaderboard_empty": "🏆 Reyting jadvali hozircha bo'sh.",
@@ -113,11 +115,17 @@ TEXTS = {
         "shop_no_coins": "❌ **Tangalaringiz yetarli emas!** Sizda `{coins}` tanga bor.",
         "games_main": "🎮 **THE 5 AM CLUB O'YINLAR VA ARENA KATALOGI**\n\nO'zingizga ma'qul rejimni tanlang:\n\n⚔️ **1v1 Uyg'onish Dueli** — 50 coin tikib bellashish\n🤝 **Duo Combo** — Sherik bilan birga uyg'onib bonus olish\n🎲 **Random Matchmaking** — Tizimdan avtomatik begona sherik topish",
         "matchmaking_searching": "🎲 **RANDOM SHERIK QIDIRILMOQDA...**\n\nTizim sizga mos begona o'yinchini qidirmoqda. Sherik topilishi bilan bot xabar beradi!",
-        "matchmaking_found": "🎉 **SHERIK TOPILDI!**\n\nSizning yangi Duo sherigingiz: `{partner_name}`!\nEndi ikkangiz ham erta uyg'onsangiz +50 bonus tanga olasiz! 🚀"
+        "matchmaking_found": "🎉 **SHERIK TOPILDI!**\n\nSizning yangi Duo sherigingiz: `{partner_name}`!\nEndi ikkangiz ham erta uyg'onsangiz +50 bonus tanga olasiz! 🚀",
+        "duo_title": "🤝 **DUO COMBO SHERIKLIK TIZIMI**",
+        "duo_invite_prompt": "📌 **Sherik biriktirish uchun:** `/duo <sherik_id>` buyrug'ini yuboring!\nBirgalikda erta uyg'onib, har kuni **+50 bonus tanga** yuting! 🚀",
+        "setup_group": "⚙️ **Guruh uyg'onish vaqti oralig'ini tanlang:**",
+        "setup_user": "⚙️ **Shaxsiy uyg'onish vaqtingizni sozlang:**\nHozirgi vaqt: `{start}` — `{end}`",
+        "setup_updated": "✅ **Uyg'onish vaqti muvaffaqiyatli o'zgartirildi:** `{start}` — `{end}` 🌅",
+        "cert_congrats": "🏆 **TABRIKLAYMIZ! 21 KUNLIK MARATON YUKSAK ZAFARI!**\n\nSiz 21 kun uzluksiz soat 05:00 da uyg'onib, intizom maratonini muvaffaqiyatli yakunladingiz!\n\nSizga rasmiy **21-Day Discipline Certificate** hamda **👑 Elite 21** nishoni topshirildi!"
     },
     "ru": {
         "welcome": '👋 **Добро пожаловать в бот "The 5 AM Club", {name}!**\n\n«Владейте своим утром. Поднимите свою жизнь.»\n\n⚙️ Используйте меню ниже для навигации:',
-        "btn_checkin": "⚡ Соло Check-In",
+        "btn_checkin": "⚡ Solo Check-In",
         "btn_photo_checkin": "📸 Фото Check-In",
         "btn_games": "🎮 Игры и Дуэли",
         "btn_shop": "🛒 Магазин и Рынок",
@@ -126,9 +134,9 @@ TEXTS = {
         "btn_leaderboard": "🏆 Рейтинг",
         "btn_quote": "💡 Цитата Дня",
         "btn_setup": "⚙️ Настройки",
-        "btn_lang": "🌐 Язык / Language",
+        "btn_lang": "🌐 Til / Language",
         "btn_help": "📖 Правила",
-        "btn_admin": "👑 Панель Владельца",
+        "btn_admin": "👑 Owner Admin Panel",
         "checkin_btn_inline": "⚡ СДЕЛАТЬ CHECK-IN (Я ПРОСНУЛСЯ)",
         "already_checked_in": "⚠️ Вы уже отметились сегодня! До завтра! 🌅",
         "checkin_success": "⚡ **CHECK-IN УСПЕШЕН!**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` (Множитель: `{multiplier}X`)\n🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🏅 Ранг: {rank}",
@@ -148,7 +156,13 @@ TEXTS = {
         "shop_no_coins": "❌ **Недостаточно монет!** У вас `{coins}` монет.",
         "games_main": "🎮 **КАТАЛОГ ИГР И АРЕНА THE 5 AM CLUB**\n\nВыберите режим:\n\n⚔️ **Дуэль 1v1** — Ставка 50 монет на ранний подъем\n🤝 **Парный Комбо** — Совместный подъем для бонуса\n🎲 **Случайный подбор** — Автоматический поиск партнера",
         "matchmaking_searching": "🎲 **ПОИСК СЛУЧАЙНОГО ПАРТНЕРА...**\n\nСистема ищет игрока. Бот уведомит при подборе!",
-        "matchmaking_found": "🎉 **ПАРТНЕР НАЙДЕН!**\n\nВаш новый партнер: `{partner_name}`!\nПросыпайтесь вовремя вместе и получайте +50 монет! 🚀"
+        "matchmaking_found": "🎉 **ПАРТНЕР НАЙДЕН!**\n\nВаш новый партнер: `{partner_name}`!\nПросыпайтесь вовремя вместе и получайте +50 монет! 🚀",
+        "duo_title": "🤝 **ПАРНЫЙ РЕЖИМ DUO COMBO**",
+        "duo_invite_prompt": "📌 **Для привязки партнера:** отправьте команду `/duo <id_партнера>`!\nПросыпайтесь вовремя вместе и получайте **+50 бонусных монет** каждый день! 🚀",
+        "setup_group": "⚙️ **Выберите временное окно подъема для группы:**",
+        "setup_user": "⚙️ **Настройте ваше персональное время подъема:**\nТекущее время: `{start}` — `{end}`",
+        "setup_updated": "✅ **Время подъема успешно обновлено:** `{start}` — `{end}` 🌅",
+        "cert_congrats": "🏆 **ПОЗДРАВЛЯЕМ! ПОБЕДА В 21-ДНЕВНОМ МАРАФОНЕ!**\n\nВы просыпались в 5:00 утра 21 день подряд и успешно завершили марафон дисциплины!\n\nВам вручен официальный **21-Day Discipline Certificate** и знак отличия **👑 Elite 21**!"
     },
     "en": {
         "welcome": '👋 **Welcome to The 5 AM Club, {name}!**\n\n“Own your morning. Elevate your life.”\n\n⚙️ Use the menu below to navigate:',
@@ -161,7 +175,7 @@ TEXTS = {
         "btn_leaderboard": "🏆 Leaderboard",
         "btn_quote": "💡 Daily Quote",
         "btn_setup": "⚙️ Time Setup",
-        "btn_lang": "🌐 Language / Til",
+        "btn_lang": "🌐 Til / Language",
         "btn_help": "📖 Help & Rules",
         "btn_admin": "👑 Owner Admin Panel",
         "checkin_btn_inline": "⚡ CHECK-IN NOW (I'M AWAKE)",
@@ -183,7 +197,13 @@ TEXTS = {
         "shop_no_coins": "❌ **Insufficient coins!** You have `{coins}` coins.",
         "games_main": "🎮 **THE 5 AM CLUB GAMES & ARENA**\n\nSelect a game mode below:\n\n⚔️ **1v1 Wake-Up Duel** — Bet 50 coins on waking up early\n🤝 **Duo Combo** — Team up for daily bonus coins\n🎲 **Random Matchmaking** — Find a random player instantly",
         "matchmaking_searching": "🎲 **SEARCHING FOR RANDOM PARTNER...**\n\nThe system is matching you with another player. You will be notified!",
-        "matchmaking_found": "🎉 **PARTNER FOUND!**\n\nYour new Duo Partner: `{partner_name}`!\nWake up early together to earn +50 bonus coins! 🚀"
+        "matchmaking_found": "🎉 **PARTNER FOUND!**\n\nYour new Duo Partner: `{partner_name}`!\nWake up early together to earn +50 bonus coins! 🚀",
+        "duo_title": "🤝 **DUO COMBO PARTNER SYSTEM**",
+        "duo_invite_prompt": "📌 **To link a partner:** send `/duo <partner_id>` command!\nWake up early together and earn **+50 bonus coins** every single day! 🚀",
+        "setup_group": "⚙️ **Select the check-in time window for the group:**",
+        "setup_user": "⚙️ **Customize your personal morning check-in window:**\nCurrent window: `{start}` — `{end}`",
+        "setup_updated": "✅ **Morning check-in window successfully updated:** `{start}` — `{end}` 🌅",
+        "cert_congrats": "🏆 **CONGRATULATIONS! 21-DAY MARATHON VICTORY!**\n\nYou woke up at 5:00 AM for 21 consecutive days and mastered morning discipline!\n\nYou have been awarded the official **21-Day Discipline Certificate** and **👑 Elite 21** badge!"
     }
 }
 
@@ -196,7 +216,7 @@ DYNAMIC_QUIPS = {
         "Hatto budilnigingiz ham hayratda! Yashang! ⏰🔥"
     ],
     "ru": [
-        "Смотрите, кто проснулся раннее всех! Кофе гордится тобой! ☕🔥",
+        "Смотрите, кто проснулся раньше всех! Кофе гордится тобой! ☕🔥",
         "Проснулся раньше солнца! Настоящий режим льва! 🦁⚡",
         "Кровать пыталась удержать тебя, но дисциплина победила! ⚔️😎",
         "Поздравляем с утренней победой! Не останавливайся! 🚀",
@@ -312,370 +332,337 @@ def get_streak_multiplier(streak: int) -> float:
     elif streak >= 7: return 1.2
     else: return 1.0
 
-# ==================== DATABASE ENGINE ====================
+# ==================== SAFE DATABASE CONNECTION MANAGER ====================
+@contextmanager
+def get_db(row_factory: bool = True):
+    """
+    Context manager providing safe SQLite connections with WAL mode,
+    transaction rollback on error, busy timeout handling, and guaranteed cleanup.
+    """
+    conn = sqlite3.connect(DB_NAME, timeout=20.0, check_same_thread=False)
+    if row_factory:
+        conn.row_factory = sqlite3.Row
+    try:
+        conn.execute("PRAGMA journal_mode=WAL;")
+        conn.execute("PRAGMA busy_timeout=5000;")
+        yield conn
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        logging.error(f"Database transaction error: {e}")
+        raise
+    finally:
+        conn.close()
+
+# ==================== DATABASE INITIALIZATION & OPERATIONS ====================
 def init_sqlite_db():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            user_id INTEGER PRIMARY KEY,
-            username TEXT,
-            first_name TEXT,
-            streak INTEGER DEFAULT 0,
-            coins INTEGER DEFAULT 0,
-            freeze_count INTEGER DEFAULT 0,
-            photo_count INTEGER DEFAULT 0,
-            duo_partner_id INTEGER DEFAULT 0,
-            in_matchmaking INTEGER DEFAULT 0,
-            referred_by INTEGER DEFAULT 0,
-            referral_count INTEGER DEFAULT 0,
-            cert_issued INTEGER DEFAULT 0,
-            checkin_start TEXT DEFAULT '04:30',
-            checkin_end TEXT DEFAULT '06:00',
-            lang TEXT DEFAULT 'uz',
-            last_checkin_date TEXT,
-            status TEXT DEFAULT 'snoozed',
-            created_at TEXT
-        )
-    """)
+    with get_db(row_factory=False) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                user_id INTEGER PRIMARY KEY,
+                username TEXT,
+                first_name TEXT,
+                streak INTEGER DEFAULT 0,
+                coins INTEGER DEFAULT 0,
+                freeze_count INTEGER DEFAULT 0,
+                photo_count INTEGER DEFAULT 0,
+                duo_partner_id INTEGER DEFAULT 0,
+                in_matchmaking INTEGER DEFAULT 0,
+                referred_by INTEGER DEFAULT 0,
+                referral_count INTEGER DEFAULT 0,
+                cert_issued INTEGER DEFAULT 0,
+                checkin_start TEXT DEFAULT '04:30',
+                checkin_end TEXT DEFAULT '06:00',
+                lang TEXT DEFAULT 'uz',
+                last_checkin_date TEXT,
+                status TEXT DEFAULT 'snoozed',
+                created_at TEXT
+            )
+        """)
 
-    cursor.execute("PRAGMA table_info(users)")
-    columns = [col[1] for col in cursor.fetchall()]
-    if "lang" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN lang TEXT DEFAULT 'uz'")
-    if "photo_count" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN photo_count INTEGER DEFAULT 0")
-    if "freeze_count" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN freeze_count INTEGER DEFAULT 0")
-    if "duo_partner_id" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN duo_partner_id INTEGER DEFAULT 0")
-    if "in_matchmaking" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN in_matchmaking INTEGER DEFAULT 0")
-    if "referred_by" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN referred_by INTEGER DEFAULT 0")
-    if "referral_count" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN referral_count INTEGER DEFAULT 0")
-    if "cert_issued" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN cert_issued INTEGER DEFAULT 0")
+        cursor.execute("PRAGMA table_info(users)")
+        columns = [col[1] for col in cursor.fetchall()]
+        if "lang" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN lang TEXT DEFAULT 'uz'")
+        if "photo_count" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN photo_count INTEGER DEFAULT 0")
+        if "freeze_count" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN freeze_count INTEGER DEFAULT 0")
+        if "duo_partner_id" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN duo_partner_id INTEGER DEFAULT 0")
+        if "in_matchmaking" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN in_matchmaking INTEGER DEFAULT 0")
+        if "referred_by" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN referred_by INTEGER DEFAULT 0")
+        if "referral_count" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN referral_count INTEGER DEFAULT 0")
+        if "cert_issued" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN cert_issued INTEGER DEFAULT 0")
 
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS groups (
-            group_id INTEGER PRIMARY KEY,
-            title TEXT,
-            checkin_start TEXT DEFAULT '04:30',
-            checkin_end TEXT DEFAULT '06:00',
-            normal_coins INTEGER DEFAULT 10,
-            photo_coins INTEGER DEFAULT 25,
-            timezone TEXT DEFAULT 'Asia/Tashkent',
-            is_active INTEGER DEFAULT 1
-        )
-    """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS groups (
+                group_id INTEGER PRIMARY KEY,
+                title TEXT,
+                checkin_start TEXT DEFAULT '04:30',
+                checkin_end TEXT DEFAULT '06:00',
+                normal_coins INTEGER DEFAULT 10,
+                photo_coins INTEGER DEFAULT 25,
+                timezone TEXT DEFAULT 'Asia/Tashkent',
+                is_active INTEGER DEFAULT 1
+            )
+        """)
 
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS group_members (
-            group_id INTEGER,
-            user_id INTEGER,
-            status TEXT DEFAULT 'snoozed',
-            last_checkin_time TEXT,
-            streak INTEGER DEFAULT 0,
-            PRIMARY KEY (group_id, user_id)
-        )
-    """)
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS checkins (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            group_id INTEGER,
-            checkin_timestamp TEXT,
-            checkin_date TEXT,
-            coins_earned INTEGER
-        )
-    """)
-    conn.commit()
-    conn.close()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS group_members (
+                group_id INTEGER,
+                user_id INTEGER,
+                status TEXT DEFAULT 'snoozed',
+                last_checkin_time TEXT,
+                streak INTEGER DEFAULT 0,
+                PRIMARY KEY (group_id, user_id)
+            )
+        """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS checkins (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                group_id INTEGER,
+                checkin_timestamp TEXT,
+                checkin_date TEXT,
+                coins_earned INTEGER
+            )
+        """)
 
 def db_register_user(user_id: int, username: str, first_name: str, ref_by: int = 0):
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with get_db() as conn:
+        cursor = conn.cursor()
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
-    existing = cursor.fetchone()
+        cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
+        existing = cursor.fetchone()
 
-    if not existing:
-        initial_coins = 100 if ref_by and ref_by != user_id else 0
-        cursor.execute("""
-            INSERT INTO users (user_id, username, first_name, coins, referred_by, created_at)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (user_id, username or "", first_name or "Member", initial_coins, ref_by, now_str))
+        if not existing:
+            initial_coins = 100 if ref_by and ref_by != user_id else 0
+            cursor.execute("""
+                INSERT INTO users (user_id, username, first_name, coins, referred_by, created_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (user_id, username or "", first_name or "Member", initial_coins, ref_by, now_str))
 
-        if ref_by and ref_by != user_id:
-            cursor.execute("UPDATE users SET coins = coins + 100, referral_count = referral_count + 1 WHERE user_id = ?", (ref_by,))
-    else:
-        cursor.execute("""
-            UPDATE users SET username = ?, first_name = ? WHERE user_id = ?
-        """, (username or "", first_name or "Member", user_id))
-
-    conn.commit()
-    conn.close()
+            if ref_by and ref_by != user_id:
+                cursor.execute("UPDATE users SET coins = coins + 100, referral_count = referral_count + 1 WHERE user_id = ?", (ref_by,))
+        else:
+            cursor.execute("""
+                UPDATE users SET username = ?, first_name = ? WHERE user_id = ?
+            """, (username or "", first_name or "Member", user_id))
 
 def db_register_group(group_id: int, title: str):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO groups (group_id, title)
-        VALUES (?, ?)
-        ON CONFLICT(group_id) DO UPDATE SET title = excluded.title
-    """, (group_id, title or "5 AM Club Group"))
-    conn.commit()
-    conn.close()
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO groups (group_id, title)
+            VALUES (?, ?)
+            ON CONFLICT(group_id) DO UPDATE SET title = excluded.title
+        """, (group_id, title or "5 AM Club Group"))
 
 def db_link_group_member(group_id: int, user_id: int):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO group_members (group_id, user_id)
-        VALUES (?, ?)
-        ON CONFLICT(group_id, user_id) DO NOTHING
-    """, (group_id, user_id))
-    conn.commit()
-    conn.close()
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO group_members (group_id, user_id)
+            VALUES (?, ?)
+            ON CONFLICT(group_id, user_id) DO NOTHING
+        """, (group_id, user_id))
 
 def db_get_user(user_id: int):
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
-    row = cursor.fetchone()
-    conn.close()
-    return row
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
+        return cursor.fetchone()
 
 def db_get_group(group_id: int):
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM groups WHERE group_id = ?", (group_id,))
-    row = cursor.fetchone()
-    conn.close()
-    return row
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM groups WHERE group_id = ?", (group_id,))
+        return cursor.fetchone()
 
 def db_get_all_users():
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users")
-    rows = cursor.fetchall()
-    conn.close()
-    return rows
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users")
+        return cursor.fetchall()
 
 def db_get_active_groups():
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM groups WHERE is_active = 1")
-    rows = cursor.fetchall()
-    conn.close()
-    return rows
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM groups WHERE is_active = 1")
+        return cursor.fetchall()
 
 def db_update_user_lang(user_id: int, lang: str):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("UPDATE users SET lang = ? WHERE user_id = ?", (lang, user_id))
-    conn.commit()
-    conn.close()
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("UPDATE users SET lang = ? WHERE user_id = ?", (lang, user_id))
 
 def db_update_user_times(user_id: int, start_time: str, end_time: str):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("UPDATE users SET checkin_start = ?, checkin_end = ? WHERE user_id = ?", (start_time, end_time, user_id))
-    conn.commit()
-    conn.close()
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("UPDATE users SET checkin_start = ?, checkin_end = ? WHERE user_id = ?", (start_time, end_time, user_id))
 
 def db_update_group_times(group_id: int, start_time: str, end_time: str):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("UPDATE groups SET checkin_start = ?, checkin_end = ? WHERE group_id = ?", (start_time, end_time, group_id))
-    conn.commit()
-    conn.close()
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("UPDATE groups SET checkin_start = ?, checkin_end = ? WHERE group_id = ?", (start_time, end_time, group_id))
 
 def db_update_group_coins(group_id: int, normal_coins: int, photo_coins: int):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("UPDATE groups SET normal_coins = ?, photo_coins = ? WHERE group_id = ?", (normal_coins, photo_coins, group_id))
-    conn.commit()
-    conn.close()
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("UPDATE groups SET normal_coins = ?, photo_coins = ? WHERE group_id = ?", (normal_coins, photo_coins, group_id))
 
 def db_update_user_coins(user_id: int, coins_to_add: int):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("UPDATE users SET coins = coins + ? WHERE user_id = ?", (coins_to_add, user_id))
-    conn.commit()
-    conn.close()
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("UPDATE users SET coins = coins + ? WHERE user_id = ?", (coins_to_add, user_id))
 
 def db_update_user_streak(user_id: int, new_streak: int):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("UPDATE users SET streak = ? WHERE user_id = ?", (new_streak, user_id))
-    conn.commit()
-    conn.close()
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("UPDATE users SET streak = ? WHERE user_id = ?", (new_streak, user_id))
 
 def db_buy_streak_freeze(user_id: int) -> bool:
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-    cursor.execute("SELECT coins, freeze_count FROM users WHERE user_id = ?", (user_id,))
-    u = cursor.fetchone()
-    if not u or u["coins"] < 100:
-        conn.close()
-        return False
-    cursor.execute("UPDATE users SET coins = coins - 100, freeze_count = freeze_count + 1 WHERE user_id = ?", (user_id,))
-    conn.commit()
-    conn.close()
-    return True
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT coins, freeze_count FROM users WHERE user_id = ?", (user_id,))
+        u = cursor.fetchone()
+        if not u or u["coins"] < 100:
+            return False
+        cursor.execute("UPDATE users SET coins = coins - 100, freeze_count = freeze_count + 1 WHERE user_id = ?", (user_id,))
+        return True
 
 def db_set_duo_partner(user_id: int, partner_id: int):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("UPDATE users SET duo_partner_id = ?, in_matchmaking = 0 WHERE user_id = ?", (partner_id, user_id))
-    cursor.execute("UPDATE users SET duo_partner_id = ?, in_matchmaking = 0 WHERE user_id = ?", (user_id, partner_id))
-    conn.commit()
-    conn.close()
-
-def db_matchmaking_find_or_enqueue(user_id: int):
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT user_id, first_name FROM users WHERE in_matchmaking = 1 AND user_id != ?", (user_id,))
-    waiting_user = cursor.fetchone()
-
-    if waiting_user:
-        partner_id = waiting_user["user_id"]
-        partner_name = waiting_user["first_name"]
-
+    with get_db() as conn:
+        cursor = conn.cursor()
         cursor.execute("UPDATE users SET duo_partner_id = ?, in_matchmaking = 0 WHERE user_id = ?", (partner_id, user_id))
         cursor.execute("UPDATE users SET duo_partner_id = ?, in_matchmaking = 0 WHERE user_id = ?", (user_id, partner_id))
-        conn.commit()
-        conn.close()
-        return partner_id, partner_name
-    else:
-        cursor.execute("UPDATE users SET in_matchmaking = 1 WHERE user_id = ?", (user_id,))
-        conn.commit()
-        conn.close()
-        return None, None
+
+def db_matchmaking_find_or_enqueue(user_id: int):
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT user_id, first_name FROM users WHERE in_matchmaking = 1 AND user_id != ?", (user_id,))
+        waiting_user = cursor.fetchone()
+
+        if waiting_user:
+            partner_id = waiting_user["user_id"]
+            partner_name = waiting_user["first_name"]
+
+            cursor.execute("UPDATE users SET duo_partner_id = ?, in_matchmaking = 0 WHERE user_id = ?", (partner_id, user_id))
+            cursor.execute("UPDATE users SET duo_partner_id = ?, in_matchmaking = 0 WHERE user_id = ?", (user_id, partner_id))
+            return partner_id, partner_name
+        else:
+            cursor.execute("UPDATE users SET in_matchmaking = 1 WHERE user_id = ?", (user_id,))
+            return None, None
+
+def db_set_cert_issued(user_id: int):
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("UPDATE users SET cert_issued = 1 WHERE user_id = ?", (user_id,))
 
 def db_process_checkin(user_id: int, group_id: int = 0, is_photo: bool = False):
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
+    with get_db() as conn:
+        cursor = conn.cursor()
 
-    tz = pytz.timezone(TIMEZONE_STR)
-    now = datetime.now(tz)
-    today_str = now.strftime("%Y-%m-%d")
-    now_str = now.strftime("%Y-%m-%d %H:%M:%S")
-    time_str = now.strftime("%H:%M:%S")
+        tz = pytz.timezone(TIMEZONE_STR)
+        now = datetime.now(tz)
+        today_str = now.strftime("%Y-%m-%d")
+        now_str = now.strftime("%Y-%m-%d %H:%M:%S")
+        time_str = now.strftime("%H:%M:%S")
 
-    cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
-    user = cursor.fetchone()
-    if not user:
-        conn.close()
-        return None
+        cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
+        user = cursor.fetchone()
+        if not user:
+            return None
 
-    last_date = user["last_checkin_date"]
-    current_streak = user["streak"]
+        last_date = user["last_checkin_date"]
+        current_streak = user["streak"]
 
-    if last_date == today_str:
-        conn.close()
-        return "already"
+        if last_date == today_str:
+            return "already"
 
-    yesterday_str = (now - timedelta(days=1)).strftime("%Y-%m-%d")
-    if last_date == yesterday_str:
-        new_streak = current_streak + 1
-    else:
-        if user["freeze_count"] > 0:
+        yesterday_str = (now - timedelta(days=1)).strftime("%Y-%m-%d")
+        if last_date == yesterday_str:
             new_streak = current_streak + 1
-            cursor.execute("UPDATE users SET freeze_count = freeze_count - 1 WHERE user_id = ?", (user_id,))
         else:
-            new_streak = 1
+            if user["freeze_count"] > 0:
+                new_streak = current_streak + 1
+                cursor.execute("UPDATE users SET freeze_count = freeze_count - 1 WHERE user_id = ?", (user_id,))
+            else:
+                new_streak = 1
 
-    normal_reward, photo_reward = 10, 25
-    if group_id != 0:
-        cursor.execute("SELECT normal_coins, photo_coins FROM groups WHERE group_id = ?", (group_id,))
-        g_row = cursor.fetchone()
-        if g_row:
-            normal_reward = g_row["normal_coins"] if g_row["normal_coins"] else 10
-            photo_reward = g_row["photo_coins"] if g_row["photo_coins"] else 25
+        normal_reward, photo_reward = 10, 25
+        if group_id != 0:
+            cursor.execute("SELECT normal_coins, photo_coins FROM groups WHERE group_id = ?", (group_id,))
+            g_row = cursor.fetchone()
+            if g_row:
+                normal_reward = g_row["normal_coins"] if g_row["normal_coins"] else 10
+                photo_reward = g_row["photo_coins"] if g_row["photo_coins"] else 25
 
-    base_coins = photo_reward if is_photo else normal_reward
+        base_coins = photo_reward if is_photo else normal_reward
 
-    multiplier = get_streak_multiplier(new_streak)
-    coins_earned = int(round(base_coins * multiplier))
+        multiplier = get_streak_multiplier(new_streak)
+        coins_earned = int(round(base_coins * multiplier))
 
-    partner_id = user["duo_partner_id"]
-    if partner_id and partner_id != 0:
-        cursor.execute("SELECT last_checkin_date FROM users WHERE user_id = ?", (partner_id,))
-        p_row = cursor.fetchone()
-        if p_row and p_row["last_checkin_date"] == today_str:
-            coins_earned += 50
+        partner_id = user["duo_partner_id"]
+        if partner_id and partner_id != 0:
+            cursor.execute("SELECT last_checkin_date FROM users WHERE user_id = ?", (partner_id,))
+            p_row = cursor.fetchone()
+            if p_row and p_row["last_checkin_date"] == today_str:
+                coins_earned += 50
 
-    new_coins = user["coins"] + coins_earned
-    new_photo_count = user["photo_count"] + (1 if is_photo else 0)
+        new_coins = user["coins"] + coins_earned
+        new_photo_count = user["photo_count"] + (1 if is_photo else 0)
 
-    cursor.execute("""
-        UPDATE users 
-        SET streak = ?, coins = ?, photo_count = ?, last_checkin_date = ?, status = 'awake'
-        WHERE user_id = ?
-    """, (new_streak, new_coins, new_photo_count, today_str, user_id))
-
-    if group_id != 0:
         cursor.execute("""
-            INSERT INTO group_members (group_id, user_id, status, last_checkin_time, streak)
-            VALUES (?, ?, 'awake', ?, ?)
-            ON CONFLICT(group_id, user_id) DO UPDATE SET
-                status = 'awake',
-                last_checkin_time = excluded.last_checkin_time,
-                streak = excluded.streak
-        """, (group_id, user_id, time_str, new_streak))
+            UPDATE users 
+            SET streak = ?, coins = ?, photo_count = ?, last_checkin_date = ?, status = 'awake'
+            WHERE user_id = ?
+        """, (new_streak, new_coins, new_photo_count, today_str, user_id))
 
-    cursor.execute("""
-        INSERT INTO checkins (user_id, group_id, checkin_timestamp, checkin_date, coins_earned)
-        VALUES (?, ?, ?, ?, ?)
-    """, (user_id, group_id, now_str, today_str, coins_earned))
+        if group_id != 0:
+            cursor.execute("""
+                INSERT INTO group_members (group_id, user_id, status, last_checkin_time, streak)
+                VALUES (?, ?, 'awake', ?, ?)
+                ON CONFLICT(group_id, user_id) DO UPDATE SET
+                    status = 'awake',
+                    last_checkin_time = excluded.last_checkin_time,
+                    streak = excluded.streak
+            """, (group_id, user_id, time_str, new_streak))
 
-    conn.commit()
-    conn.close()
+        cursor.execute("""
+            INSERT INTO checkins (user_id, group_id, checkin_timestamp, checkin_date, coins_earned)
+            VALUES (?, ?, ?, ?, ?)
+        """, (user_id, group_id, now_str, today_str, coins_earned))
 
-    return {
-        "streak": new_streak,
-        "multiplier": multiplier,
-        "coins": new_coins,
-        "photo_count": new_photo_count,
-        "coins_earned": coins_earned,
-        "checkin_time": time_str
-    }
+        return {
+            "streak": new_streak,
+            "multiplier": multiplier,
+            "coins": new_coins,
+            "photo_count": new_photo_count,
+            "coins_earned": coins_earned,
+            "checkin_time": time_str
+        }
 
 def db_reset_group_snoozed(group_id: int):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("UPDATE group_members SET status = 'snoozed' WHERE group_id = ?", (group_id,))
-    conn.commit()
-    conn.close()
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("UPDATE group_members SET status = 'snoozed' WHERE group_id = ?", (group_id,))
 
 def db_get_group_attendance_report(group_id: int):
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT u.user_id, u.first_name, u.username, gm.status, gm.last_checkin_time, u.streak
-        FROM group_members gm
-        JOIN users u ON gm.user_id = u.user_id
-        WHERE gm.group_id = ?
-    """, (group_id,))
-    rows = cursor.fetchall()
-    conn.close()
-    return rows
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT u.user_id, u.first_name, u.username, gm.status, gm.last_checkin_time, u.streak
+            FROM group_members gm
+            JOIN users u ON gm.user_id = u.user_id
+            WHERE gm.group_id = ?
+        """, (group_id,))
+        return cursor.fetchall()
 
 def db_get_global_leaderboard(limit: int = 10):
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-    cursor.execute("SELECT first_name, username, streak, coins FROM users ORDER BY streak DESC, coins DESC LIMIT ?", (limit,))
-    rows = cursor.fetchall()
-    conn.close()
-    return rows
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT first_name, username, streak, coins FROM users ORDER BY streak DESC, coins DESC LIMIT ?", (limit,))
+        return cursor.fetchall()
 
 # ==================== GAMIFICATION HELPERS ====================
 def get_user_rank(streak: int, lang: str = "uz") -> str:
@@ -873,7 +860,7 @@ async def handle_duo_info_cb(callback: CallbackQuery):
     partner_id = user["duo_partner_id"] if user and "duo_partner_id" in user.keys() else 0
     partner_str = f"`{partner_id}`" if partner_id else "None"
 
-    msg = t["duo_title"] + f"\n\n🤝 **Sherigingiz:** {partner_str}\n\n" + t["duo_invite_prompt"]
+    msg = t["duo_title"] + f"\n\n🤝 **Sherigingiz / Partner:** {partner_str}\n\n" + t["duo_invite_prompt"]
     await callback.message.edit_text(msg, parse_mode=ParseMode.MARKDOWN)
 
 @router.callback_query(F.data == "game_1v1_info")
@@ -893,9 +880,12 @@ async def cmd_set_duo_partner(message: Message):
         await message.reply("ℹ️ **Foydalanish:** `/duo <sherik_user_id>`\n*Misol:* `/duo 6377617416`", parse_mode=ParseMode.MARKDOWN)
         return
 
-    partner_id = int(args[1])
-    db_set_duo_partner(user_id, partner_id)
-    await message.reply(f"🤝 **Juftlik biriktirildi!** Endi `{user_id}` va `{partner_id}` har kuni birga uyg'onsa **+50 bonus tanga** oladi!", parse_mode=ParseMode.MARKDOWN)
+    try:
+        partner_id = int(args[1])
+        db_set_duo_partner(user_id, partner_id)
+        await message.reply(f"🤝 **Juftlik biriktirildi!** Endi `{user_id}` va `{partner_id}` har kuni birga uyg'onsa **+50 bonus tanga** oladi!", parse_mode=ParseMode.MARKDOWN)
+    except Exception as e:
+        await message.reply("❌ Noto'g'ri user ID kiritildi.")
 
 # --- SHOP & MARKET HANDLERS ---
 @router.message(F.text.in_(["🛒 Do'kon & Bozor", "🛒 Магазин и Рынок", "🛒 Shop & Market"]))
@@ -1052,21 +1042,14 @@ async def handle_user_photo(message: Message):
             cert_bytes = generate_21day_certificate(user.first_name)
             if cert_bytes:
                 cert_file = BufferedInputFile(cert_bytes, filename="21day_certificate.jpg")
-                cert_caption = (
-                    "🏆 **TABRIKLAYMIZ! 21 KUNLIK MARATON YUKSAK ZAFARI!**\n\n"
-                    f"Siz 21 kun uzluksiz soat 05:00 da uyg'onib, intizom maratonini muvaffaqiyatli yakunladingiz!\n\n"
-                    f"Sizga rasmiy **21-Day Discipline Certificate** hamda **👑 Elite 21** nishoni topshirildi!"
-                )
+                cert_caption = t["cert_congrats"]
                 await message.answer_photo(photo=cert_file, caption=cert_caption, parse_mode=ParseMode.MARKDOWN)
-                conn = sqlite3.connect(DB_NAME)
-                conn.execute("UPDATE users SET cert_issued = 1 WHERE user_id = ?", (user.id,))
-                conn.commit()
-                conn.close()
+                db_set_cert_issued(user.id)
 
 @router.callback_query(F.data == "story_share_tip")
 async def handle_story_share_tip(callback: CallbackQuery):
     msg = (
-        "📲 **STORY'GA JOYLASH VA BOZORDA DO'STLARNI HAYRATDA QOLDIRISH:**\n\n"
+        "📲 **STORY'GA JOYLASH VA DO'STLARNI HAYRATDA QOLDIRISH:**\n\n"
         "1. Yuqoridagi **VERIFIED STAMP** urilgan rasmni saqlab oling (Save to Gallery).\n"
         "2. Telegram yoki Instagram Story'ingizga joylang!\n"
         "3. Do'stlaringizga intizomingizni ko'rsatib, bot havolangizni qoldiring! 🚀"
@@ -1208,9 +1191,12 @@ async def cmd_add_coins(message: Message):
     if len(args) != 3:
         await message.reply("⚠️ **Foydalanish:** `/addcoins <user_id> <tanga_soni>`", parse_mode=ParseMode.MARKDOWN)
         return
-    target_id, amount = int(args[1]), int(args[2])
-    db_update_user_coins(target_id, amount)
-    await message.reply(f"✅ User `{target_id}` ga `+{amount}` tanga berildi!", parse_mode=ParseMode.MARKDOWN)
+    try:
+        target_id, amount = int(args[1]), int(args[2])
+        db_update_user_coins(target_id, amount)
+        await message.reply(f"✅ User `{target_id}` ga `+{amount}` tanga berildi!", parse_mode=ParseMode.MARKDOWN)
+    except Exception:
+        await message.reply("❌ Noto'g'ri parametrlar kiritildi.")
 
 @router.message(Command("setstreak"))
 async def cmd_set_streak(message: Message):
@@ -1220,9 +1206,12 @@ async def cmd_set_streak(message: Message):
     if len(args) != 3:
         await message.reply("⚠️ **Foydalanish:** `/setstreak <user_id> <streak_kuni>`", parse_mode=ParseMode.MARKDOWN)
         return
-    target_id, streak_days = int(args[1]), int(args[2])
-    db_update_user_streak(target_id, streak_days)
-    await message.reply(f"✅ User `{target_id}` ning streak kuni `{streak_days}` ga o'zgartirildi!", parse_mode=ParseMode.MARKDOWN)
+    try:
+        target_id, streak_days = int(args[1]), int(args[2])
+        db_update_user_streak(target_id, streak_days)
+        await message.reply(f"✅ User `{target_id}` ning streak kuni `{streak_days}` ga o'zgartirildi!", parse_mode=ParseMode.MARKDOWN)
+    except Exception:
+        await message.reply("❌ Noto'g'ri parametrlar kiritildi.")
 
 # --- SOLO CHECK-IN HANDLER ---
 @router.message(F.text.in_(["⚡ Solo Check-In", "⚡ Соло Check-In"]))
@@ -1420,21 +1409,67 @@ async def scheduler_loop(bot: Bot):
             logging.error(f"Scheduler error: {e}")
         await asyncio.sleep(25)
 
-# ==================== RENDER WEBAPP SERVER (SERVES HTML, CSS, JS) ====================
+# ==================== RENDER WEBAPP SERVER (SERVES HTML, CSS, JS & API) ====================
 async def serve_index(req):
     if os.path.exists("index.html"):
         return web.FileResponse("index.html")
     return web.Response(text="The 5 AM Club WebApp is loading...")
 
+async def serve_styles(req):
+    if os.path.exists("styles.css"):
+        return web.FileResponse("styles.css")
+    return web.Response(text="/* styles */", content_type="text/css")
+
+async def serve_app_js(req):
+    if os.path.exists("app.js"):
+        return web.FileResponse("app.js")
+    return web.Response(text="// app.js", content_type="application/javascript")
+
 async def web_ping(req):
-    return web.Response(text="Bot is active 24/7!")
+    return web.Response(text="Bot is active 24/7!", content_type="text/plain")
+
+async def api_user_stats(req):
+    user_id_str = req.match_info.get("user_id", "")
+    try:
+        user_id = int(user_id_str)
+        user = db_get_user(user_id)
+        if user:
+            return web.json_response({
+                "status": "ok",
+                "user": {
+                    "id": user["user_id"],
+                    "name": user["first_name"],
+                    "username": user["username"],
+                    "streak": user["streak"],
+                    "coins": user["coins"],
+                    "photo_count": user["photo_count"],
+                    "freeze_count": user["freeze_count"],
+                    "ref_count": user["referral_count"],
+                    "lang": user["lang"]
+                }
+            })
+    except Exception as e:
+        logging.error(f"API user error: {e}")
+    return web.json_response({"status": "error", "message": "User not found"}, status=404)
+
+async def api_leaderboard(req):
+    try:
+        lb = db_get_global_leaderboard(10)
+        data = [{"name": r["first_name"], "username": r["username"], "streak": r["streak"], "coins": r["coins"]} for r in lb]
+        return web.json_response({"status": "ok", "leaderboard": data})
+    except Exception as e:
+        return web.json_response({"status": "error", "message": str(e)}, status=500)
 
 async def start_dummy_web_server():
     app = web.Application()
     app.router.add_get('/', serve_index)
+    app.router.add_get('/index.html', serve_index)
+    app.router.add_get('/styles.css', serve_styles)
+    app.router.add_get('/app.js', serve_app_js)
     app.router.add_get('/health', web_ping)
-    # Serve static files (styles.css, app.js, images)
-    app.router.add_static('/', path='.', name='static')
+    app.router.add_get('/api/user/{user_id}', api_user_stats)
+    app.router.add_get('/api/leaderboard', api_leaderboard)
+
     runner = web.AppRunner(app)
     await runner.setup()
     site = web.TCPSite(runner, "0.0.0.0", int(os.getenv("PORT", 10000)))
