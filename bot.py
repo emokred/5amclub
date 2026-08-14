@@ -1954,7 +1954,7 @@ async def start_lang_cb(callback: CallbackQuery):
     await callback.answer()
 
     t = TEXTS.get(lang, TEXTS["uz"])
-    await callback.message.answer(t["lang_updated"], reply_markup=get_main_catalog_reply_keyboard(lang), parse_mode=ParseMode.MARKDOWN)
+    await callback.message.answer(t["lang_updated"], reply_markup=get_main_reply_keyboard(user_id), parse_mode=ParseMode.MARKDOWN)
 
     wiz_msg = (
         f"👋 **\"{t['welcome']}\"**\n\n"
