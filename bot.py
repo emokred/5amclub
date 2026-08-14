@@ -378,138 +378,171 @@ REALMS = {
 TEXTS = {
     "uz": {
         "welcome": """👋 **"The 5 AM Club" botiga xush kelibsiz, {name}!**\n\n“Ertalabki vaqtingizga egalik qiling. Hayotingizni yuksaltiring.”\n\n⚙️ 4 ta asosiy katalog bo'limlaridan foydalaning:""",
-        "hub_solo": "🌅 Solo Rejim",
-        "hub_multiverse": "🎭 Multiverse Roleplay",
-        "hub_arena": "🎮 Interaktiv Arena",
-        "hub_settings": "⚙️ Sozlamalar & Yordam",
-        "btn_admin": "👑 Owner Admin Panel",
-        "checkin_btn_inline": "⚡ CHECK-IN QILISH (MEN UYG'ONDIM)",
-        "already_checked_in": "⚠️ Siz bugun allaqachon check-in qildingiz! Ertagacha! 🌅",
-        "not_in_window": "⚠️ Hozir check-in vaqti emas! Uyg'onish vaqti: {start} - {end} 🌅",
-        "photo_too_dark": "❌ Rasm qorong'u yoki talabga javob bermaydi! Yorug'roq va aniq rasm yuboring! 📸",
-        "solo_menu_title": "⚡ **SOLO CHECK-IN & SHAXSIY REJIM**\n\nIntizomingizni boshqarish uchun bo'limni tanlang:",
-        "multiverse_menu_title": "🎭 **MULTIVERSE ROLEPLAY PARK**\n\nO'zingizga yoqqan koinot (realm) atmosfarasini tanlang. Roleplay yoqilganda barcha xabarlar va unvonlar koinot ruhiga kiradi!",
-        "arena_menu_title": "🎮 **INTERAKTIV ARENA & DUYELLAR**\n\nBoshqa o'yinchilar bilan bellashing, duo sherik biriktiring va haftalik turnirda g'olib bo'ling!",
-        "settings_menu_title": "⚙️ **SOZLAMALAR & BOSHGARUV**\n\nVaqt, eslatma, foto strictness va til sozlamalarini boshqaring:",
-        "group_checkin_popup": "⚡ CHECK-IN MUVAFFAQIYATLI!\n🔥 Streak: {streak} kun | 🪙 +{coins} Tanga | 🌟 +{xp} XP",
-        "checkin_success": "⚡ **CHECK-IN MUVAFFAQIYATLI!**\n\n{quip}\n\n🔥 Streak: `{streak} kun` (Koeffitsiyent: `{multiplier}X`)\n🎯 Maqsad: `{streak}/{goal} kun`\n🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🌟 XP: `+{xp_earned}` (Jami: `{xp}` XP | Level `{level}`)\n⚡ Stamina: `100/100 🟢`\n🏅 Unvon: {rank}",
-        "photo_mission_prompt": "📸 **KUNLIK FOTO TOPSHIRIQ:**\n\n{mission}\n\n📌 **Shart:** Rasm yuboring! Bot **VERIFIED STAMP** muhrini bosadi! 🚀",
-        "photo_success": "📸 **FOTO CHECK-IN VERIFIED! (+{coins_earned} COIN, +{xp_earned} XP)**\n\n{quip}\n\n🔥 Streak: `{streak} kun` (Koeffitsiyent: `{multiplier}X`)\n🎯 Maqsad: `{streak}/{goal} kun`\n🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🌟 XP: `+{xp_earned}` (Jami: `{xp}` XP | Level `{level}`)\n⚡ Stamina: `100/100 🟢`\n🏅 Unvon: {rank}",
-        "profile_title": "👤 **FOYDALANUVCHI PROFILI & RPG STATS**\n\n🏷 Ism: {name}\n🛡 Level: `{level}` — **{level_title}**\n🌟 XP: `{xp} / {next_level_xp} XP` ({progress_pct}%)\n⚡ Stamina: `{stamina}/100` {stamina_badge}\n🔥 Streak: `{streak} Kun` | 🎯 Maqsad: `{streak}/{goal} Kun`\n🪙 Tangalar: `{coins}`\n⚔️ Turnir Ballari: `{tourney_pts} pts`\n👥 Taklif qilinganlar: `{ref_count} kishi`\n🛡 Streak Freeze: `{freeze_count} ta`\n🎭 Multiverse: `{universe_name}` (RP: `{rp_status}`)\n🌐 Til: `{lang_str}`\n⏰ Shaxsiy vaqt: `{start}` — `{end}`\n\n🏆 **TROPHY CABINET (NISHONLAR):**\n{badges}\n\n📈 **XP PROGRESSI:**\n{xp_bar}\n\n📈 **UNVON PROGRESSI:**\n{progress_bar}",
-        "ref_text": "👥 **DO'STLARNI TAKLIF QILISH**\n\nSizning shaxsiy havolangiz:\n`{ref_link}`\n\n📌 Har bir taklif qilgan do'stingiz uchun sizga ham, do'stingizga ham **+100 tanga** beriladi!\nJami taklif qilinganlar: `{ref_count} kishi`",
-        "leaderboard_title": "🏆 **THE 5 AM CLUB REYTING JADVALI** 🏆\n\n",
-        "leaderboard_empty": "🏆 Reyting jadvali hozircha bo'sh.",
-        "quote_title": "💡 **KUN HIKMATI**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — QOIDALAR**\n\n1. **Ertalabki Check-In**: Uyg'onish vaqti oralig'ida check-in qiling.\n2. **🎭 Multiverse Roleplay**: 7 ta koinotdan birini tanlab, motivatsiya muhitiga kiring.\n3. **⚡ RPG XP & Leveling**: Har bir uyg'onish XP beradi va yangi darajalarni ochadi.\n4. **🌙 21:30 Uyqu Protokoli**: Har kuni 21:30 da uxlashga yotib +20 XP va 100% Stamina oling.\n5. **⚔️ Haftalik Turnir**: Top-3 sohiblariga 1000 coin sovrin jamg'armasi!\n6. **🏆 Kunlik Maqsad Maraton**: 21, 30, 100 yoki 365 kunlik maqsadingizga erishing!",
-        "lang_select": "🌐 **Iltimos, tilni tanlang:**",
-        "lang_updated": "✅ **Bot tili O'zbek tiliga o'zgartirildi!**",
-        "shop_main": "🛒 **THE 5 AM CLUB MARKETPLACE**\n\nSizning tangalaringiz: 🪙 `{coins} tanga`\n\n1. 🛡 **Streak Freeze (Qalqon)** — `100 tanga`\n*(Uxlab qolganda Streakni saqlaydi)*",
-        "shop_buy_freeze_ok": "🎉 **Muvaffaqiyatli sotib olindi!** Sizda 1 ta 🛡 **Streak Freeze** bor!",
-        "shop_no_coins": "❌ **Tangalaringiz yetarli emas!** Sizda `{coins}` tanga bor.",
-        "games_main": "🎮 **O'YINLAR VA ARENA KATALOGI**\n\n⚔️ **1v1 Uyg'onish Dueli** — 50 coin tikib bellashish (-20 Stamina)\n🤝 **Duo Combo** — Sherik bilan birga uyg'onib bonus olish\n🎲 **Random Matchmaking** — Avtomatik begona sherik topish",
-        "matchmaking_searching": "🎲 **RANDOM SHERIK QIDIRILMOQDA...**\n\nTizim sizga mos begona o'yinchini qidirmoqda...",
-        "matchmaking_found": "🎉 **SHERIK TOPILDI!**\n\nSizning yangi Duo sherigingiz: `{partner_name}`!\nEndi erta uyg'onsangiz +50 bonus tanga olasiz! 🚀",
-        "duo_title": "🤝 **DUO COMBO SHERIKLIK TIZIMI**",
-        "duo_invite_prompt": "📌 Sherik biriktirish uchun: `/duo <sherik_id>` buyrug'ini yuboring!\nBirgalikda erta uyg'onib, har kuni **+50 bonus tanga** yuting! 🚀",
-        "setup_group": "⚙️ **Guruh uyg'onish vaqti oralig'ini tanlang:**",
-        "setup_user": "⚙️ **Shaxsiy uyg'onish vaqtingizni sozlang:**\nHozirgi vaqt: `{start}` — `{end}`",
-        "setup_updated": "✅ **Uyg'onish vaqti yangilandi:** `{start}` — `{end}` 🌅",
-        "cert_congrats": "🏆 **TABRIKLAYMIZ! MARATON YUKSAK ZAFARI!**\n\nSiz 21 kun uzluksiz soat 05:00 da uyg'onib, maratonni yakunladingiz!\nSizga rasmiy **21-Day Discipline Certificate** va **👑 Elite 21** nishoni berildi!",
-        "bedtime_btn": "😴 Men Uxlashga Yotdim (+20 XP)",
-        "bedtime_reminder": "🌙 **THE 5 AM CLUB: UXLASH PROTOKOLI (21:30)**\n\n🛌 *“Ertalabki vaqtingizga egalik qilish uchun uyqungizni asrang!”* – Robin Sharma\n\n✨ Ekranlarni o'chiring va 7.5 soatlik shifobaxsh uyquga tayyorlaning.\n\n👇 *Uxlashdan oldin quyidagi tugmani bosib +20 XP va 100% Stamina oling:*",
-        "bedtime_success": "😴 **XAYRLI TUN, CHAMPION! (+20 XP)**\n\n⚡ Staminangiz 100% tiklanmoqda. Ertalab soat 05:00 da kutamiz!",
-        "tournament_head": "⚔️ **5 AM HAFTALIK TOURNAMENT (SEZON #{season})** 🏆\n\n⏳ Tugash vaqti: `{end_date}` (Yakshanba 23:59)\n💰 Mukofot jamg'armasi: `1,000 Coin + 👑 Champion Badges`\n\n",
-        "tournament_empty": "⚔️ Turnirda hali qatnashchilar yo'q."
+        "hub_solo": """🌅 Solo Rejim""",
+        "hub_multiverse": """🎭 Multiverse Roleplay""",
+        "hub_arena": """🎮 Interaktiv Arena""",
+        "hub_settings": """⚙️ Sozlamalar & Yordam""",
+        "btn_admin": """👑 Owner Admin Panel""",
+        "checkin_btn_inline": """⚡ CHECK-IN QILISH (MEN UYG'ONDIM)""",
+        "already_checked_in": """⚠️ Siz bugun allaqachon check-in qildingiz! Ertagacha! 🌅""",
+        "not_in_window": """⚠️ Hozir check-in vaqti emas! Uyg'onish vaqti: {start} - {end} 🌅""",
+        "photo_too_dark": """❌ Rasm qorong'u yoki talabga javob bermaydi! Yorug'roq va aniq rasm yuboring! 📸""",
+        "solo_menu_title": """⚡ **SOLO CHECK-IN & SHAXSIY REJIM**\n\nIntizomingizni boshqarish uchun bo'limni tanlang:""",
+        "multiverse_menu_title": """🎭 **MULTIVERSE ROLEPLAY PARK**\n\nO'zingizga yoqqan koinot (realm) atmosfarasini tanlang. Roleplay yoqilganda barcha xabarlar va unvonlar koinot ruhiga kiradi!""",
+        "arena_menu_title": """🎮 **INTERAKTIV ARENA & DUYELLAR**\n\nBoshqa o'yinchilar bilan bellashing, duo sherik biriktiring va haftalik turnirda g'olib bo'ling!""",
+        "settings_menu_title": """⚙️ **SOZLAMALAR & BOSHGARUV**\n\nVaqt, eslatma, foto strictness va til sozlamalarini boshqaring:""",
+        "group_checkin_popup": """⚡ CHECK-IN MUVAFFAQIYATLI!\n🔥 Streak: {streak} kun | 🪙 +{coins} Tanga | 🌟 +{xp} XP""",
+        "checkin_success": """⚡ **CHECK-IN MUVAFFAQIYATLI!**\n\n{quip}\n\n🔥 Streak: `{streak} kun` (Koeffitsiyent: `{multiplier}X`)\n🎯 Maqsad: `{streak}/{goal} kun`\n🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🌟 XP: `+{xp_earned}` (Jami: `{xp}` XP | Level `{level}`)\n⚡ Stamina: `100/100 🟢`\n🏅 Unvon: {rank}""",
+        "photo_mission_prompt": """📸 **KUNLIK FOTO TOPSHIRIQ:**\n\n{mission}\n\n📌 **Shart:** Rasm yuboring! Bot **VERIFIED STAMP** muhrini bosadi! 🚀""",
+        "photo_success": """📸 **FOTO CHECK-IN VERIFIED! (+{coins_earned} COIN, +{xp_earned} XP)**\n\n{quip}\n\n🔥 Streak: `{streak} kun` (Koeffitsiyent: `{multiplier}X`)\n🎯 Maqsad: `{streak}/{goal} kun`\n🪙 Tangalar: `+{coins_earned}` (Jami: `{coins}`)\n🌟 XP: `+{xp_earned}` (Jami: `{xp}` XP | Level `{level}`)\n⚡ Stamina: `100/100 🟢`\n🏅 Unvon: {rank}""",
+        "profile_title": """👤 **FOYDALANUVCHI PROFILI & RPG STATS**\n\n🏷 Ism: {name}\n🛡 Level: `{level}` — **{level_title}**\n🌟 XP: `{xp} / {next_level_xp} XP` ({progress_pct}%)\n⚡ Stamina: `{stamina}/100` {stamina_badge}\n🔥 Streak: `{streak} Kun` | 🎯 Maqsad: `{streak}/{goal} Kun`\n🪙 Tangalar: `{coins}`\n⚔️ Turnir Ballari: `{tourney_pts} pts`\n👥 Taklif qilinganlar: `{ref_count} kishi`\n🛡 Streak Freeze: `{freeze_count} ta`\n🎭 Multiverse: `{universe_name}` (RP: `{rp_status}`)\n🌐 Til: `{lang_str}`\n⏰ Shaxsiy vaqt: `{start}` — `{end}`\n\n🏆 **TROPHY CABINET (NISHONLAR):**\n{badges}\n\n📈 **XP PROGRESSI:**\n{xp_bar}\n\n📈 **UNVON PROGRESSI:**\n{progress_bar}""",
+        "ref_text": """👥 **DO'STLARNI TAKLIF QILISH**\n\nSizning shaxsiy havolangiz:\n`{ref_link}`\n\n📌 Har bir taklif qilgan do'stingiz uchun sizga ham, do'stingizga ham **+100 tanga** beriladi!\nJami taklif qilinganlar: `{ref_count} kishi`""",
+        "leaderboard_title": """🏆 **THE 5 AM CLUB REYTING JADVALI** 🏆\n\n""",
+        "leaderboard_empty": """🏆 Reyting jadvali hozircha bo'sh.""",
+        "quote_title": """💡 **KUN HIKMATI**\n\n{quote}""",
+        "help_text": """📖 **THE 5 AM CLUB — QOIDALAR**\n\n1. **Ertalabki Check-In**: Uyg'onish vaqti oralig'ida check-in qiling.\n2. **🎭 Multiverse Roleplay**: 7 ta koinotdan birini tanlab, motivatsiya muhitiga kiring.\n3. **⚡ RPG XP & Leveling**: Har bir uyg'onish XP beradi va yangi darajalarni ochadi.\n4. **🌙 21:30 Uyqu Protokoli**: Har kuni 21:30 da uxlashga yotib +20 XP va 100% Stamina oling.\n5. **⚔️ Haftalik Turnir**: Top-3 sohiblariga 1000 coin sovrin jamg'armasi!\n6. **🏆 Kunlik Maqsad Maraton**: 21, 30, 100 yoki 365 kunlik maqsadingizga erishing!""",
+        "lang_select": """🌐 **Iltimos, tilni tanlang:**""",
+        "lang_updated": """✅ **Bot tili O'zbek tiliga o'zgartirildi!**""",
+        "shop_main": """🛒 **THE 5 AM CLUB MARKETPLACE**\n\nSizning tangalaringiz: 🪙 `{coins} tanga`\n\n1. 🛡 **Streak Freeze (Qalqon)** — `100 tanga`\n*(Uxlab qolganda Streakni saqlaydi)*""",
+        "shop_buy_freeze_ok": """🎉 **Muvaffaqiyatli sotib olindi!** Sizda 1 ta 🛡 **Streak Freeze** bor!""",
+        "shop_no_coins": """❌ **Tangalaringiz yetarli emas!** Sizda `{coins}` tanga bor.""",
+        "games_main": """🎮 **O'YINLAR VA ARENA KATALOGI**\n\n⚔️ **1v1 Uyg'onish Dueli** — 50 coin tikib bellashish (-20 Stamina)\n🤝 **Duo Combo** — Sherik bilan birga uyg'onib bonus olish\n🎲 **Random Matchmaking** — Avtomatik begona sherik topish""",
+        "matchmaking_searching": """🎲 **RANDOM SHERIK QIDIRILMOQDA...**\n\nTizim sizga mos begona o'yinchini qidirmoqda...""",
+        "matchmaking_found": """🎉 **SHERIK TOPILDI!**\n\nSizning yangi Duo sherigingiz: `{partner_name}`!\nEndi erta uyg'onsangiz +50 bonus tanga olasiz! 🚀""",
+        "duo_title": """🤝 **DUO COMBO SHERIKLIK TIZIMI**""",
+        "duo_invite_prompt": """📌 Sherik biriktirish uchun: `/duo <sherik_id>` buyrug'ini yuboring!\nBirgalikda erta uyg'onib, har kuni **+50 bonus tanga** yuting! 🚀""",
+        "setup_group": """⚙️ **Guruh uyg'onish vaqti oralig'ini tanlang:**""",
+        "setup_user": """⚙️ **Shaxsiy uyg'onish vaqtingizni sozlang:**\nHozirgi vaqt: `{start}` — `{end}`""",
+        "setup_updated": """✅ **Uyg'onish vaqti yangilandi:** `{start}` — `{end}` 🌅""",
+        "cert_congrats": """🏆 **TABRIKLAYMIZ! MARATON YUKSAK ZAFARI!**\n\nSiz 21 kun uzluksiz soat 05:00 da uyg'onib, maratonni yakunladingiz!\nSizga rasmiy **21-Day Discipline Certificate** va **👑 Elite 21** nishoni berildi!""",
+        "bedtime_btn": """😴 Men Uxlashga Yotdim (+20 XP)""",
+        "bedtime_reminder": """🌙 **THE 5 AM CLUB: UXLASH PROTOKOLI (21:30)**\n\n🛌 *“Ertalabki vaqtingizga egalik qilish uchun uyqungizni asrang!”* – Robin Sharma\n\n✨ Ekranlarni o'chiring va 7.5 soatlik shifobaxsh uyquga tayyorlaning.\n\n👇 *Uxlashdan oldin quyidagi tugmani bosib +20 XP va 100% Stamina oling:*""",
+        "bedtime_success": """😴 **XAYRLI TUN, CHAMPION! (+20 XP)**\n\n⚡ Staminangiz 100% tiklanmoqda. Ertalab soat 05:00 da kutamiz!""",
+        "tournament_head": """⚔️ **5 AM HAFTALIK TOURNAMENT (SEZON #{season})** 🏆\n\n⏳ Tugash vaqti: `{end_date}` (Yakshanba 23:59)\n💰 Mukofot jamg'armasi: `1,000 Coin + 👑 Champion Badges`\n\n""",
+        "tournament_empty": """⚔️ Turnirda hali qatnashchilar yo'q.""",
+        "spin_btn": """🎰 Omad g'ildiragini aylantirish""",
+        "spin_already": """⚠️ Siz bugun omad g'ildiragini aylantirib bo'ldingiz! Ertagacha! 🎰""",
+        "spin_success": """🎰 **OMAD G'ILDIRAGI NATIV NESHONA!**\n\n🎉 Siz yutib oldingiz: **{reward_label}**!\nIntizomingiz sari davom eting! 🚀""",
+        "squad_main": """🛡️ **5 AM DISCIPLINE SQUAD (KLAN)**\n\nSizning klainingiz: **{name}** `[{tag}]` (ID: `{squad_id}`)\n👑 Klan yetakchisi: `{leader_id}`\n👥 A'zolar soni: `{member_count}` ta\n🔥 Jami klan streaki: `{total_streak} kun`\n🌟 Jami XP: `{total_xp} XP`""",
+        "squad_not_in": """🛡️ **Siz hali hech qanday klanga a'zo emassiz.**\n\nYangi klan yaratish uchun: `/squad_create <nomi> <tag>`\nKlanga qo'shilish uchun: `/squad_join <squad_id>`""",
+        "squad_already": """⚠️ Siz allaqachon klanga a'zosiz! Dastlab joriy klandan chiqing.""",
+        "squad_created": """🎉 **Klan muvaffaqiyatli yaratildi!**\n\n🛡️ Klan: **{name}** `[{tag}]` (ID: `{squad_id}`)\nEndi do'stlaringizni taklif qiling!""",
+        "squad_joined": """🎉 **Klanga muvaffaqiyatli qo'shildingiz!**\n\n🛡️ Siz endi **{name}** `[{tag}]` klanining a'zosiz!""",
+        "squad_not_found": """❌ Bunday ID ga ega klan topilmadi!""",
+        "squad_leaderboard_title": """🛡️ **TOP-10 KLANLAR REYTINGI (5 AM CLANS)** 🛡️\n\n""",
+        "badge_unlocked": """🎖️ **YANGI NISHON OCHILDI!**\n\nSiz **{badge_name}** nishonini qo'lga kiritdingiz! ({badge_desc}) 🚀"""
     },
     "ru": {
         "welcome": """👋 **Добро пожаловать в бот "The 5 AM Club", {name}!**\n\n«Владейте своим утром. Поднимите свою жизнь.»\n\n⚙️ Используйте 4 главных каталога ниже:""",
-        "hub_solo": "🌅 Соло Режим",
-        "hub_multiverse": "🎭 Мультивселенная",
-        "hub_arena": "🎮 Интерактивная Арена",
-        "hub_settings": "⚙️ Настройки и Помощь",
-        "btn_admin": "👑 Owner Admin Panel",
-        "checkin_btn_inline": "⚡ СДЕЛАТЬ CHECK-IN (Я ПРОСНУЛСЯ)",
-        "already_checked_in": "⚠️ Вы уже отметились сегодня! До завтра! 🌅",
-        "not_in_window": "⚠️ Сейчас не время для check-in! Время подъема: {start} - {end} 🌅",
-        "photo_too_dark": "❌ Фото слишком темное! Отправьте более четкое фото! 📸",
-        "solo_menu_title": "⚡ **СОЛО CHECK-IN И ЛИЧНЫЙ РЕЖИМ**\n\nВыберите действие для управления вашей дисциплиной:",
-        "multiverse_menu_title": "🎭 **ПАРК МУЛЬТИВСЕЛЕННЫХ ROLEPLAY**\n\nВыберите атмосферу вселенной. При включенном Roleplay все сообщения принимают дух выбранного мира!",
-        "arena_menu_title": "🎮 **ИНТЕРАКТИВНАЯ АРЕНА И ДУЭЛИ**\n\nСоревнуйтесь с другими игроками, привязывайте напарников и выигрывайте турниры!",
-        "settings_menu_title": "⚙️ **НАСТРОЙКИ И УПРАВЛЕНИЕ**\n\nУправляйте временем, напоминаниями, строгостью фото и языком:",
-        "group_checkin_popup": "⚡ CHECK-IN УСПЕШЕН!\n🔥 Стрик: {streak} дн. | 🪙 +{coins} Монет | 🌟 +{xp} XP",
-        "checkin_success": "⚡ **CHECK-IN УСПЕШЕН!**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` (Множитель: `{multiplier}X`)\n🎯 Цель: `{streak}/{goal} дней`\n🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🌟 XP: `+{xp_earned}` (Всего: `{xp}` XP | Level `{level}`)\n⚡ Энергия: `100/100 🟢`\n🏅 Ранг: {rank}",
-        "photo_mission_prompt": "📸 **ЕЖЕДНЕВНОЕ ФОТО-ЗАДАНИЕ:**\n\n{mission}\n\n📌 **Условие:** Отправьте фото! Бот поставит печать **VERIFIED STAMP**! 🚀",
-        "photo_success": "📸 **ФОТО CHECK-IN ПОДТВЕРЖДЕН! (+{coins_earned} МОНЕТ, +{xp_earned} XP)**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` (Множитель: `{multiplier}X`)\n🎯 Цель: `{streak}/{goal} дней`\n🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🌟 XP: `+{xp_earned}` (Всего: `{xp}` XP | Level `{level}`)\n⚡ Энергия: `100/100 🟢`\n🏅 Ранг: {rank}",
-        "profile_title": "👤 **ПРОФИЛЬ УЧАСТНИКА & RPG СТАТИСТИКА**\n\n🏷 Имя: {name}\n🛡 Уровень: `{level}` — **{level_title}**\n🌟 XP: `{xp} / {next_level_xp} XP` ({progress_pct}%)\n⚡ Энергия: `{stamina}/100` {stamina_badge}\n🔥 Стрик: `{streak} Дней` | 🎯 Цель: `{streak}/{goal} Дней`\n🪙 Монеты: `{coins}`\n⚔️ Турнирные Очки: `{tourney_pts} pts`\n👥 Приглашено: `{ref_count} чел`\n🛡 Защита Стрика: `{freeze_count} шт`\n🎭 Вселенная: `{universe_name}` (RP: `{rp_status}`)\n🌐 Язык: `{lang_str}`\n⏰ Время: `{start}` — `{end}`\n\n🏆 **ВИТРИНА НАГРАД:**\n{badges}\n\n📈 **ПРОГРЕСС УРОВНЯ:**\n{xp_bar}\n\n📈 **ПРОГРЕСС РАНГА:**\n{progress_bar}",
-        "ref_text": "👥 **ПРИГЛАШАЙТЕ ДРУЗЕЙ**\n\nВаша ссылка:\n`{ref_link}`\n\n📌 За каждого друга вам и другу начисляется **+100 монет**!\nПриглашено: `{ref_count} чел`",
-        "leaderboard_title": "🏆 **ТАБЛИЦА ЛИДЕРОВ THE 5 AM CLUB** 🏆\n\n",
-        "leaderboard_empty": "🏆 Таблица лидеров пока пуста.",
-        "quote_title": "💡 **МУДРОСТЬ ДНЯ**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — ПРАВИЛА**\n\n1. **Утренний Check-In**: Отмечайтесь строго в заданное время.\n2. **🎭 Roleplay**: Выберите одну из 7 вселенных.\n3. **⚡ RPG XP & Уровни**: Каждый подъем дает опыт!\n4. **🌙 21:30 Протокол Сна**: Ложитесь вовремя и получайте +20 XP.\n5. **⚔️ Недельный Турнир**: Еженедельный призовой фонд 1000 монет!\n6. **🏆 Цель**: Достигните 21, 30, 100 или 365 дней!",
-        "lang_select": "🌐 **Выберите удобный язык:**",
-        "lang_updated": "✅ **Язык бота изменен на Русский!**",
-        "shop_main": "🛒 **МАГАЗИН THE 5 AM CLUB**\n\nВаши монеты: 🪙 `{coins} монет`\n\n1. 🛡 **Streak Freeze** — `100 монет`\n*(Сохраняет Стрик при пропуске 1 дня)*",
-        "shop_buy_freeze_ok": "🎉 **Успешно куплено!** У вас есть 1 🛡 **Streak Freeze**!",
-        "shop_no_coins": "❌ **Недостаточно монет!** У вас `{coins}` монет.",
-        "games_main": "🎮 **ИГРЫ И АРЕНА THE 5 AM CLUB**\n\n⚔️ **Дуэль 1v1** — Ставка 50 монет (-20 Stamina)\n🤝 **Парный Комбо** — Совместный подъем для бонуса\n🎲 **Случайный подбор** — Автоматический поиск партнера",
-        "matchmaking_searching": "🎲 **ПОИСК СЛУЧАЙНОГО ПАРТНЕРА...**",
-        "matchmaking_found": "🎉 **ПАРТНЕР НАЙДЕН!**\n\nВаш партнер: `{partner_name}`!\nПросыпайтесь вместе и получайте +50 монет! 🚀",
-        "duo_title": "🤝 **ПАРНЫЙ РЕЖИМ DUO COMBO**",
-        "duo_invite_prompt": "📌 Отправьте `/duo <id_партнера>`!\nПросыпайтесь вместе и получайте **+50 монет** ежедневно! 🚀",
-        "setup_group": "⚙️ **Выберите временное окно подъема для группы:**",
-        "setup_user": "⚙️ **Настройте персональное время подъема:**\nТекущее время: `{start}` — `{end}`",
-        "setup_updated": "✅ **Время подъема обновлено:** `{start}` — `{end}` 🌅",
-        "cert_congrats": "🏆 **ПОЗДРАВЛЯЕМ С ПОБЕДОЙ В МАРАФОНЕ!**\n\nВы просыпались 21 день подряд в 5:00 утра!\nВам вручен **21-Day Discipline Certificate** и знак **👑 Elite 21**!",
-        "bedtime_btn": "😴 Я Ложусь Спать (+20 XP)",
-        "bedtime_reminder": "🌙 **THE 5 AM CLUB: ПРОТОКОЛ СНА (21:30)**\n\n🛌 *«Чтобы владеть своим утром, защищайте свой сон!»* – Робин Шарма\n\n👇 *Нажмите кнопку перед сном для +20 XP и 100% энергии:*",
-        "bedtime_success": "😴 **СПОКОЙНОЙ НОЧИ, ЧЕМПИОН! (+20 XP)**\n\n⚡ Энергия восстанавливается на 100% for завтрашнего утра.",
-        "tournament_head": "⚔️ **5 AM ЕЖЕНЕДЕЛЬНЫЙ ТУРНИР (СЕЗОН #{season})** 🏆\n\n⏳ Финал: `{end_date}`\n💰 Призовой фонд: `1,000 Монет + 👑 Значки Чемпиона`\n\n",
-        "tournament_empty": "⚔️ В турнире пока нет участников."
+        "hub_solo": """🌅 Соло Режим""",
+        "hub_multiverse": """🎭 Мультивселенная""",
+        "hub_arena": """🎮 Интерактивная Арена""",
+        "hub_settings": """⚙️ Настройки и Помощь""",
+        "btn_admin": """👑 Owner Admin Panel""",
+        "checkin_btn_inline": """⚡ СДЕЛАТЬ CHECK-IN (Я ПРОСНУЛСЯ)""",
+        "already_checked_in": """⚠️ Вы уже отметились сегодня! До завтра! 🌅""",
+        "not_in_window": """⚠️ Сейчас не время для check-in! Время подъема: {start} - {end} 🌅""",
+        "photo_too_dark": """❌ Фото слишком темное! Отправьте более четкое фото! 📸""",
+        "solo_menu_title": """⚡ **СОЛО CHECK-IN И ЛИЧНЫЙ РЕЖИМ**\n\nВыберите действие для управления вашей дисциплиной:""",
+        "multiverse_menu_title": """🎭 **ПАРК МУЛЬТИВСЕЛЕННЫХ ROLEPLAY**\n\nВыберите атмосферу вселенной. При включенном Roleplay все сообщения принимают дух выбранного мира!""",
+        "arena_menu_title": """🎮 **ИНТЕРАКТИВНАЯ АРЕНА И ДУЭЛИ**\n\nСоревнуйтесь с другими игроками, привязывайте напарников и выигрывайте турниры!""",
+        "settings_menu_title": """⚙️ **НАСТРОЙКИ И УПРАВЛЕНИЕ**\n\nУправляйте временем, напоминаниями, строгостью фото и языком:""",
+        "group_checkin_popup": """⚡ CHECK-IN УСПЕШЕН!\n🔥 Стрик: {streak} дн. | 🪙 +{coins} Монет | 🌟 +{xp} XP""",
+        "checkin_success": """⚡ **CHECK-IN УСПЕШЕН!**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` (Множитель: `{multiplier}X`)\n🎯 Цель: `{streak}/{goal} дней`\n🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🌟 XP: `+{xp_earned}` (Всего: `{xp}` XP | Level `{level}`)\n⚡ Энергия: `100/100 🟢`\n🏅 Ранг: {rank}""",
+        "photo_mission_prompt": """📸 **ЕЖЕДНЕВНОЕ ФОТО-ЗАДАНИЕ:**\n\n{mission}\n\n📌 **Условие:** Отправьте фото! Бот поставит печать **VERIFIED STAMP**! 🚀""",
+        "photo_success": """📸 **ФОТО CHECK-IN ПОДТВЕРЖДЕН! (+{coins_earned} МОНЕТ, +{xp_earned} XP)**\n\n{quip}\n\n🔥 Стрик: `{streak} дней` (Множитель: `{multiplier}X`)\n🎯 Цель: `{streak}/{goal} дней`\n🪙 Монеты: `+{coins_earned}` (Всего: `{coins}`)\n🌟 XP: `+{xp_earned}` (Всего: `{xp}` XP | Level `{level}`)\n⚡ Энергия: `100/100 🟢`\n🏅 Ранг: {rank}""",
+        "profile_title": """👤 **ПРОФИЛЬ УЧАСТНИКА & RPG СТАТИСТИКА**\n\n🏷 Имя: {name}\n🛡 Уровень: `{level}` — **{level_title}**\n🌟 XP: `{xp} / {next_level_xp} XP` ({progress_pct}%)\n⚡ Энергия: `{stamina}/100` {stamina_badge}\n🔥 Стрик: `{streak} Дней` | 🎯 Цель: `{streak}/{goal} Дней`\n🪙 Монеты: `{coins}`\n⚔️ Турнирные Очки: `{tourney_pts} pts`\n👥 Приглашено: `{ref_count} чел`\n🛡 Защита Стрика: `{freeze_count} шт`\n🎭 Вселенная: `{universe_name}` (RP: `{rp_status}`)\n🌐 Язык: `{lang_str}`\n⏰ Время: `{start}` — `{end}`\n\n🏆 **ВИТРИНА НАГРАД:**\n{badges}\n\n📈 **ПРОГРЕСС УРОВНЯ:**\n{xp_bar}\n\n📈 **ПРОГРЕСС РАНГА:**\n{progress_bar}""",
+        "ref_text": """👥 **ПРИГЛАШАЙТЕ ДРУЗЕЙ**\n\nВаша ссылка:\n`{ref_link}`\n\n📌 За каждого друга вам и другу начисляется **+100 монет**!\nПриглашено: `{ref_count} чел`""",
+        "leaderboard_title": """🏆 **ТАБЛИЦА ЛИДЕРОВ THE 5 AM CLUB** 🏆\n\n""",
+        "leaderboard_empty": """🏆 Таблица лидеров пока пуста.""",
+        "quote_title": """💡 **МУДРОСТЬ ДНЯ**\n\n{quote}""",
+        "help_text": """📖 **THE 5 AM CLUB — ПРАВИЛА**\n\n1. **Утренний Check-In**: Отмечайтесь строго в заданное время.\n2. **🎭 Roleplay**: Выберите одну из 7 вселенных.\n3. **⚡ RPG XP & Уровни**: Каждый подъем дает опыт!\n4. **🌙 21:30 Протокол Сна**: Ложитесь вовремя и получайте +20 XP.\n5. **⚔️ Недельный Турнир**: Еженедельный призовой фонд 1000 монет!\n6. **🏆 Цель**: Достигните 21, 30, 100 или 365 дней!""",
+        "lang_select": """🌐 **Выберите удобный язык:**""",
+        "lang_updated": """✅ **Язык бота изменен на Русский!**""",
+        "shop_main": """🛒 **МАГАЗИН THE 5 AM CLUB**\n\nВаши монеты: 🪙 `{coins} монет`\n\n1. 🛡 **Streak Freeze** — `100 монет`\n*(Сохраняет Стрик при пропуске 1 дня)*""",
+        "shop_buy_freeze_ok": """🎉 **Успешно куплено!** У вас есть 1 🛡 **Streak Freeze**!""",
+        "shop_no_coins": """❌ **Недостаточно монет!** У вас `{coins}` монет.""",
+        "games_main": """🎮 **ИГРЫ И АРЕНА THE 5 AM CLUB**\n\n⚔️ **Дуэль 1v1** — Ставка 50 монет (-20 Stamina)\n🤝 **Парный Комбо** — Совместный подъем для бонуса\n🎲 **Случайный подбор** — Автоматический поиск партнера""",
+        "matchmaking_searching": """🎲 **ПОИСК СЛУЧАЙНОГО ПАРТНЕРА...**""",
+        "matchmaking_found": """🎉 **ПАРТНЕР НАЙДЕН!**\n\nВаш партнер: `{partner_name}`!\nПросыпайтесь вместе и получайте +50 монет! 🚀""",
+        "duo_title": """🤝 **ПАРНЫЙ РЕЖИМ DUO COMBO**""",
+        "duo_invite_prompt": """📌 Отправьте `/duo <id_партнера>`!\nПросыпайтесь вместе и получайте **+50 монет** ежедневно! 🚀""",
+        "setup_group": """⚙️ **Выберите временное окно подъема для группы:**""",
+        "setup_user": """⚙️ **Настройте персональное время подъема:**\nТекущее время: `{start}` — `{end}`""",
+        "setup_updated": """✅ **Время подъема обновлено:** `{start}` — `{end}` 🌅""",
+        "cert_congrats": """🏆 **ПОЗДРАВЛЯЕМ С ПОБЕДОЙ В МАРАФОНЕ!**\n\nВы просыпались 21 день подряд в 5:00 утра!\nВам вручен **21-Day Discipline Certificate** и знак **👑 Elite 21**!""",
+        "bedtime_btn": """😴 Я Ложусь Спать (+20 XP)""",
+        "bedtime_reminder": """🌙 **THE 5 AM CLUB: ПРОТОКОЛ СНА (21:30)**\n\n🛌 *«Чтобы владеть своим утром, защищайте свой сон!»* – Робин Шарма\n\n👇 *Нажмите кнопку перед сном для +20 XP и 100% энергии:*""",
+        "bedtime_success": """😴 **СПОКОЙНОЙ НОЧИ, ЧЕМПИОН! (+20 XP)**\n\n⚡ Энергия восстанавливается на 100% for завтрашнего утра.""",
+        "tournament_head": """⚔️ **5 AM ЕЖЕНЕДЕЛЬНЫЙ ТУРНИР (СЕЗОН #{season})** 🏆\n\n⏳ Финал: `{end_date}`\n💰 Призовой фонд: `1,000 Монет + 👑 Значки Чемпиона`\n\n""",
+        "tournament_empty": """⚔️ В турнире пока нет участников.""",
+        "spin_btn": """🎰 Крутить Колесо Удачи""",
+        "spin_already": """⚠️ Вы уже вращали колесо удачи сегодня! До завтра! 🎰""",
+        "spin_success": """🎰 **ВРАЩЕНИЕ КОЛЕСА УДАЧИ!**\n\n🎉 Вы выиграли: **{reward_label}**!\nПродолжайте путь к дисциплине! 🚀""",
+        "squad_main": """🛡️ **5 AM КЛАН ДИСЦИПЛИНЫ (SQUAD)**\n\nВаш клан: **{name}** `[{tag}]` (ID: `{squad_id}`)\n👑 Лидер клана: `{leader_id}`\n👥 Участников: `{member_count}` чел\n🔥 Общий стрик клана: `{total_streak} дней`\n🌟 Всего XP: `{total_xp} XP`""",
+        "squad_not_in": """🛡️ **Вы пока не состоите ни в одном клане.**\n\nСоздать клан: `/squad_create <название> <тег>`\nВступить в клан: `/squad_join <squad_id>`""",
+        "squad_already": """⚠️ Вы уже состоите в клане! Сначала покиньте текущий клан.""",
+        "squad_created": """🎉 **Клан успешно создан!**\n\n🛡️ Клан: **{name}** `[{tag}]` (ID: `{squad_id}`)\nПриглашайте соратников!""",
+        "squad_joined": """🎉 **Вы успешно вступили в клан!**\n\n🛡️ Теперь вы участник клана **{name}** `[{tag}]` !""",
+        "squad_not_found": """❌ Клан с таким ID не найден!""",
+        "squad_leaderboard_title": """🛡️ **ТОП-10 КЛАНОВ ДИСЦИПЛИНЫ (5 AM CLANS)** 🛡️\n\n""",
+        "badge_unlocked": """🎖️ **НОВЫЙ ЗНАЧОК РАЗБЛОКИРОВАН!**\n\nВы получили значок **{badge_name}**! ({badge_desc}) 🚀"""
     },
     "en": {
         "welcome": """👋 **Welcome to The 5 AM Club, {name}!**\n\n“Own your morning. Elevate your life.”\n\n⚙️ Use the 4 main catalog hubs below:""",
-        "hub_solo": "🌅 Solo Mode",
-        "hub_multiverse": "🎭 Multiverse Roleplay",
-        "hub_arena": "🎮 Interactive Arena",
-        "hub_settings": "⚙️ Settings & Help",
-        "btn_admin": "👑 Owner Admin Panel",
-        "checkin_btn_inline": "⚡ CHECK-IN NOW (I'M AWAKE)",
-        "already_checked_in": "⚠️ You already checked in today! See you tomorrow! 🌅",
-        "not_in_window": "⚠️ It's not check-in time right now! Wake-up window: {start} - {end} 🌅",
-        "photo_too_dark": "❌ Image is too dark! Send a brighter photo! 📸",
-        "solo_menu_title": "⚡ **SOLO CHECK-IN & PERSONAL MODE**\n\nSelect an option to manage your morning discipline:",
-        "multiverse_menu_title": "🎭 **MULTIVERSE ROLEPLAY PARK**\n\nSelect your favorite universe realm. When Roleplay is enabled, all quips and titles match the active universe!",
-        "arena_menu_title": "🎮 **INTERACTIVE ARENA & DUELS**\n\nChallenge other players, pair up with a duo partner, and win weekly tournaments!",
-        "settings_menu_title": "⚙️ **SETTINGS & CONTROL PANEL**\n\nManage wake-up window, reminders, photo strictness, and language:",
-        "group_checkin_popup": "⚡ CHECK-IN SUCCESSFUL!\n🔥 Streak: {streak} days | 🪙 +{coins} Coins | 🌟 +{xp} XP",
-        "checkin_success": "⚡ **CHECK-IN SUCCESSFUL!**\n\n{quip}\n\n🔥 Streak: `{streak} days` (Multiplier: `{multiplier}X`)\n🎯 Target: `{streak}/{goal} days`\n🪙 Coins: `+{coins_earned}` (Total: `{coins}`)\n🌟 XP: `+{xp_earned}` (Total: `{xp}` XP | Level `{level}`)\n⚡ Stamina: `100/100 🟢`\n🏅 Rank: {rank}",
-        "photo_mission_prompt": "📸 **DAILY PHOTO MISSION:**\n\n{mission}\n\n📌 **Condition:** Send a photo! The bot will apply an official **VERIFIED STAMP**! 🚀",
-        "photo_success": "📸 **PHOTO CHECK-IN VERIFIED! (+{coins_earned} COINS, +{xp_earned} XP)**\n\n{quip}\n\n🔥 Streak: `{streak} days` (Multiplier: `{multiplier}X`)\n🎯 Target: `{streak}/{goal} days`\n🪙 Coins: `+{coins_earned}` (Total: `{coins}`)\n🌟 XP: `+{xp_earned}` (Total: `{xp}` XP | Level `{level}`)\n⚡ Stamina: `100/100 🟢`\n🏅 Rank: {rank}",
-        "profile_title": "👤 **MEMBER PROFILE & RPG STATS**\n\n🏷 Name: {name}\n🛡 Level: `{level}` — **{level_title}**\n🌟 XP: `{xp} / {next_level_xp} XP` ({progress_pct}%)\n⚡ Stamina: `{stamina}/100` {stamina_badge}\n🔥 Streak: `{streak} Days` | 🎯 Target: `{streak}/{goal} Days`\n🪙 Coins: `{coins}`\n⚔️ Tournament Points: `{tourney_pts} pts`\n👥 Invited Friends: `{ref_count}`\n🛡 Streak Freezes: `{freeze_count}`\n🎭 Multiverse: `{universe_name}` (RP: `{rp_status}`)\n🌐 Language: `{lang_str}`\n⏰ Window: `{start}` — `{end}`\n\n🏆 **TROPHY CABINET:**\n{badges}\n\n📈 **XP PROGRESSION:**\n{xp_bar}\n\n📈 **RANK PROGRESSION:**\n{progress_bar}",
-        "ref_text": "👥 **INVITE FRIENDS & EARN COINS**\n\nYour referral link:\n`{ref_link}`\n\n📌 Earn **+100 coins** for both you and your friend for every invite!\nTotal Invited: `{ref_count}` friends",
-        "leaderboard_title": "🏆 **THE 5 AM CLUB LEADERBOARD** 🏆\n\n",
-        "leaderboard_empty": "🏆 Leaderboard is currently empty.",
-        "quote_title": "💡 **DAILY MORNING WISDOM**\n\n{quote}",
-        "help_text": "📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n1. **Morning Check-In**: Check in strictly within your window.\n2. **🎭 Multiverse Roleplay**: Choose 1 of 7 universe realms.\n3. **⚡ RPG XP & Leveling**: Gain XP on wakeups and level up!\n4. **🌙 21:30 Bedtime Protocol**: Protect your sleep for +20 XP.\n5. **⚔️ Weekly Tournament**: Compete for 1,000 coin prize pool!\n6. **🏆 Target Goal**: Master 21, 30, 100, or 365 days!",
-        "lang_select": "🌐 **Please select your language:**",
-        "lang_updated": "✅ **Bot language updated to English!**",
-        "shop_main": "🛒 **THE 5 AM CLUB MARKETPLACE**\n\nYour Balance: 🪙 `{coins} coins`\n\n1. 🛡 **Streak Freeze Shield** — `100 coins`\n*(Protects streak if you miss 1 day)*",
-        "shop_buy_freeze_ok": "🎉 **Purchase Successful!** You have 1 🛡 **Streak Freeze** shield!",
-        "shop_no_coins": "❌ **Insufficient coins!** You have `{coins}` coins.",
-        "games_main": "🎮 **THE 5 AM CLUB GAMES & ARENA**\n\n⚔️ **1v1 Wake-Up Duel** — Bet 50 coins (-20 Stamina)\n🤝 **Duo Combo** — Team up for daily bonus coins\n🎲 **Random Matchmaking** — Find a random player instantly",
-        "matchmaking_searching": "🎲 **SEARCHING FOR RANDOM PARTNER...**",
-        "matchmaking_found": "🎉 **PARTNER FOUND!**\n\nYour new Duo Partner: `{partner_name}`!\nWake up early together for +50 bonus coins! 🚀",
-        "duo_title": "🤝 **DUO COMBO PARTNER SYSTEM**",
-        "duo_invite_prompt": "📌 Send `/duo <partner_id>` command!\nWake up early together and earn **+50 bonus coins** every single day! 🚀",
-        "setup_group": "⚙️ **Select the check-in time window for the group:**",
-        "setup_user": "⚙️ **Customize your personal wake-up window:**\nCurrent window: `{start}` — `{end}`",
-        "setup_updated": "✅ **Morning check-in window updated:** `{start}` — `{end}` 🌅",
-        "cert_congrats": "🏆 **CONGRATULATIONS ON YOUR MARATHON VICTORY!**\n\nYou woke up at 5:00 AM for 21 consecutive days!\nAwarded official **21-Day Discipline Certificate** and **👑 Elite 21** badge!",
-        "bedtime_btn": "😴 I'm Going to Sleep (+20 XP)",
-        "bedtime_reminder": "🌙 **THE 5 AM CLUB: BEDTIME PROTOCOL (21:30)**\n\n🛌 *“To own your morning, protect your sleep!”* – Robin Sharma\n\n👇 *Tap below before sleeping to claim +20 XP and 100% Stamina boost:*",
-        "bedtime_success": "😴 **GOOD NIGHT, CHAMPION! (+20 XP)**\n\n⚡ Your stamina is recharging to 100% for tomorrow morning.",
-        "tournament_head": "⚔️ **5 AM WEEKLY TOURNAMENT (SEASON #{season})** 🏆\n\n⏳ Ends on: `{end_date}`\n💰 Prize Pool: `1,000 Coins + 👑 Champion Badges`\n\n",
-        "tournament_empty": "⚔️ No participants in current weekly tournament yet."
+        "hub_solo": """🌅 Solo Mode""",
+        "hub_multiverse": """🎭 Multiverse Roleplay""",
+        "hub_arena": """🎮 Interactive Arena""",
+        "hub_settings": """⚙️ Settings & Help""",
+        "btn_admin": """👑 Owner Admin Panel""",
+        "checkin_btn_inline": """⚡ CHECK-IN NOW (I'M AWAKE)""",
+        "already_checked_in": """⚠️ You already checked in today! See you tomorrow! 🌅""",
+        "not_in_window": """⚠️ It's not check-in time right now! Wake-up window: {start} - {end} 🌅""",
+        "photo_too_dark": """❌ Image is too dark! Send a brighter photo! 📸""",
+        "solo_menu_title": """⚡ **SOLO CHECK-IN & PERSONAL MODE**\n\nSelect an option to manage your morning discipline:""",
+        "multiverse_menu_title": """🎭 **MULTIVERSE ROLEPLAY PARK**\n\nSelect your favorite universe realm. When Roleplay is enabled, all quips and titles match the active universe!""",
+        "arena_menu_title": """🎮 **INTERACTIVE ARENA & DUELS**\n\nChallenge other players, pair up with a duo partner, and win weekly tournaments!""",
+        "settings_menu_title": """⚙️ **SETTINGS & CONTROL PANEL**\n\nManage wake-up window, reminders, photo strictness, and language:""",
+        "group_checkin_popup": """⚡ CHECK-IN SUCCESSFUL!\n🔥 Streak: {streak} days | 🪙 +{coins} Coins | 🌟 +{xp} XP""",
+        "checkin_success": """⚡ **CHECK-IN SUCCESSFUL!**\n\n{quip}\n\n🔥 Streak: `{streak} days` (Multiplier: `{multiplier}X`)\n🎯 Target: `{streak}/{goal} days`\n🪙 Coins: `+{coins_earned}` (Total: `{coins}`)\n🌟 XP: `+{xp_earned}` (Total: `{xp}` XP | Level `{level}`)\n⚡ Stamina: `100/100 🟢`\n🏅 Rank: {rank}""",
+        "photo_mission_prompt": """📸 **DAILY PHOTO MISSION:**\n\n{mission}\n\n📌 **Condition:** Send a photo! The bot will apply an official **VERIFIED STAMP**! 🚀""",
+        "photo_success": """📸 **PHOTO CHECK-IN VERIFIED! (+{coins_earned} COINS, +{xp_earned} XP)**\n\n{quip}\n\n🔥 Streak: `{streak} days` (Multiplier: `{multiplier}X`)\n🎯 Target: `{streak}/{goal} days`\n🪙 Coins: `+{coins_earned}` (Total: `{coins}`)\n🌟 XP: `+{xp_earned}` (Total: `{xp}` XP | Level `{level}`)\n⚡ Stamina: `100/100 🟢`\n🏅 Rank: {rank}""",
+        "profile_title": """👤 **MEMBER PROFILE & RPG STATS**\n\n🏷 Name: {name}\n🛡 Level: `{level}` — **{level_title}**\n🌟 XP: `{xp} / {next_level_xp} XP` ({progress_pct}%)\n⚡ Stamina: `{stamina}/100` {stamina_badge}\n🔥 Streak: `{streak} Days` | 🎯 Target: `{streak}/{goal} Days`\n🪙 Coins: `{coins}`\n⚔️ Tournament Points: `{tourney_pts} pts`\n👥 Invited Friends: `{ref_count}`\n🛡 Streak Freezes: `{freeze_count}`\n🎭 Multiverse: `{universe_name}` (RP: `{rp_status}`)\n🌐 Language: `{lang_str}`\n⏰ Window: `{start}` — `{end}`\n\n🏆 **TROPHY CABINET:**\n{badges}\n\n📈 **XP PROGRESSION:**\n{xp_bar}\n\n📈 **RANK PROGRESSION:**\n{progress_bar}""",
+        "ref_text": """👥 **INVITE FRIENDS & EARN COINS**\n\nYour referral link:\n`{ref_link}`\n\n📌 Earn **+100 coins** for both you and your friend for every invite!\nTotal Invited: `{ref_count}` friends""",
+        "leaderboard_title": """🏆 **THE 5 AM CLUB LEADERBOARD** 🏆\n\n""",
+        "leaderboard_empty": """🏆 Leaderboard is currently empty.""",
+        "quote_title": """💡 **DAILY MORNING WISDOM**\n\n{quote}""",
+        "help_text": """📖 **THE 5 AM CLUB — RULES & GUIDELINES**\n\n1. **Morning Check-In**: Check in strictly within your window.\n2. **🎭 Multiverse Roleplay**: Choose 1 of 7 universe realms.\n3. **⚡ RPG XP & Leveling**: Gain XP on wakeups and level up!\n4. **🌙 21:30 Bedtime Protocol**: Protect your sleep for +20 XP.\n5. **⚔️ Weekly Tournament**: Compete for 1,000 coin prize pool!\n6. **🏆 Target Goal**: Master 21, 30, 100, or 365 days!""",
+        "lang_select": """🌐 **Please select your language:**""",
+        "lang_updated": """✅ **Bot language updated to English!**""",
+        "shop_main": """🛒 **THE 5 AM CLUB MARKETPLACE**\n\nYour Balance: 🪙 `{coins} coins`\n\n1. 🛡 **Streak Freeze Shield** — `100 coins`\n*(Protects streak if you miss 1 day)*""",
+        "shop_buy_freeze_ok": """🎉 **Purchase Successful!** You have 1 🛡 **Streak Freeze** shield!""",
+        "shop_no_coins": """❌ **Insufficient coins!** You have `{coins}` coins.""",
+        "games_main": """🎮 **THE 5 AM CLUB GAMES & ARENA**\n\n⚔️ **1v1 Wake-Up Duel** — Bet 50 coins (-20 Stamina)\n🤝 **Duo Combo** — Team up for daily bonus coins\n🎲 **Random Matchmaking** — Find a random player instantly""",
+        "matchmaking_searching": """🎲 **SEARCHING FOR RANDOM PARTNER...**""",
+        "matchmaking_found": """🎉 **PARTNER FOUND!**\n\nYour new Duo Partner: `{partner_name}`!\nWake up early together for +50 bonus coins! 🚀""",
+        "duo_title": """🤝 **DUO COMBO PARTNER SYSTEM**""",
+        "duo_invite_prompt": """📌 Send `/duo <partner_id>` command!\nWake up early together and earn **+50 bonus coins** every single day! 🚀""",
+        "setup_group": """⚙️ **Select the check-in time window for the group:**""",
+        "setup_user": """⚙️ **Customize your personal wake-up window:**\nCurrent window: `{start}` — `{end}`""",
+        "setup_updated": """✅ **Morning check-in window updated:** `{start}` — `{end}` 🌅""",
+        "cert_congrats": """🏆 **CONGRATULATIONS ON YOUR MARATHON VICTORY!**\n\nYou woke up at 5:00 AM for 21 consecutive days!\nAwarded official **21-Day Discipline Certificate** and **👑 Elite 21** badge!""",
+        "bedtime_btn": """😴 I'm Going to Sleep (+20 XP)""",
+        "bedtime_reminder": """🌙 **THE 5 AM CLUB: BEDTIME PROTOCOL (21:30)**\n\n🛌 *“To own your morning, protect your sleep!”* – Robin Sharma\n\n👇 *Tap below before sleeping to claim +20 XP and 100% Stamina boost:*""",
+        "bedtime_success": """😴 **GOOD NIGHT, CHAMPION! (+20 XP)**\n\n⚡ Your stamina is recharging to 100% for tomorrow morning.""",
+        "tournament_head": """⚔️ **5 AM WEEKLY TOURNAMENT (SEASON #{season})** 🏆\n\n⏳ Ends on: `{end_date}`\n💰 Prize Pool: `1,000 Coins + 👑 Champion Badges`\n\n""",
+        "tournament_empty": """⚔️ No participants in current weekly tournament yet.""",
+        "spin_btn": """🎰 Spin Daily Wheel of Fortune""",
+        "spin_already": """⚠️ You have already spun the wheel of fortune today! See you tomorrow! 🎰""",
+        "spin_success": """🎰 **WHEEL OF FORTUNE SPIN RESULT!**\n\n🎉 You won: **{reward_label}**!\nKeep elevating your discipline! 🚀""",
+        "squad_main": """🛡️ **5 AM DISCIPLINE SQUAD (CLAN)**\n\nYour squad: **{name}** `[{tag}]` (ID: `{squad_id}`)\n👑 Leader: `{leader_id}`\n👥 Members: `{member_count}`\n🔥 Total Squad Streak: `{total_streak} days`\n🌟 Total Squad XP: `{total_xp} XP`""",
+        "squad_not_in": """🛡️ **You are not currently in any squad.**\n\nCreate a squad: `/squad_create <name> <tag>`\nJoin a squad: `/squad_join <squad_id>`""",
+        "squad_already": """⚠️ You are already in a squad! Leave your current squad first.""",
+        "squad_created": """🎉 **Squad successfully created!**\n\n🛡️ Squad: **{name}** `[{tag}]` (ID: `{squad_id}`)\nNow invite your fellow warriors!""",
+        "squad_joined": """🎉 **Successfully joined squad!**\n\n🛡️ You are now a member of **{name}** `[{tag}]` !""",
+        "squad_not_found": """❌ No squad found with that ID!""",
+        "squad_leaderboard_title": """🛡️ **TOP-10 DISCIPLINE SQUADS (5 AM CLANS)** 🛡️\n\n""",
+        "badge_unlocked": """🎖️ **NEW BADGE UNLOCKED!**\n\nYou earned the **{badge_name}** badge! ({badge_desc}) 🚀"""
     }
 }
 
@@ -756,6 +789,142 @@ def get_streak_multiplier(streak: int) -> float:
     elif streak >= 7: return 1.2
     else: return 1.0
 
+
+# ==================== 12 BADGES VAULT SYSTEM ====================
+BADGES_VAULT = {
+    "streak_7": {
+        "icon": "⚡",
+        "key": "streak_7",
+        "name": {"uz": "⚡ Early Bird", "ru": "⚡ Ранняя Пташка", "en": "⚡ Early Bird"},
+        "desc": {"uz": "7 kunlik uzluksiz streak", "ru": "7 дней подряд check-in", "en": "7-day check-in streak"}
+    },
+    "streak_21": {
+        "icon": "👑",
+        "key": "streak_21",
+        "name": {"uz": "👑 Elite 21", "ru": "👑 Элита 21", "en": "👑 Elite 21"},
+        "desc": {"uz": "21 kunlik intizom maratoni", "ru": "21 день утреннего марафона", "en": "21-day discipline streak"}
+    },
+    "streak_66": {
+        "icon": "🛡️",
+        "key": "streak_66",
+        "name": {"uz": "🛡️ Odat Ustasi", "ru": "🛡️ Мастер Привычки", "en": "🛡️ Habit Master"},
+        "desc": {"uz": "66 kunlik shakllangan odat", "ru": "66 дней сформированной привычки", "en": "66-day habit lock"}
+    },
+    "streak_100": {
+        "icon": "💎",
+        "key": "streak_100",
+        "name": {"uz": "💎 Asr Afsonasi", "ru": "💎 Легенда Века", "en": "💎 Century Legend"},
+        "desc": {"uz": "100 kunlik buyuk afsonaviy streak", "ru": "100 дней легендарного стрика", "en": "100-day legendary streak"}
+    },
+    "coins_500": {
+        "icon": "💰",
+        "key": "coins_500",
+        "name": {"uz": "💰 Tanga Yig'uvchi", "ru": "💰 Собиратель Монет", "en": "💰 Coin Collector"},
+        "desc": {"uz": "500 coin jamg'arish", "ru": "Накопить 500 монет", "en": "Accumulate 500 coins"}
+    },
+    "coins_2000": {
+        "icon": "🏦",
+        "key": "coins_2000",
+        "name": {"uz": "🏦 Xazina Ustasi", "ru": "🏦 Мастер Сокровищница", "en": "🏦 Vault Master"},
+        "desc": {"uz": "2000 coin jamg'arish", "ru": "Накопить 2000 монет", "en": "Accumulate 2000 coins"}
+    },
+    "duels_1": {
+        "icon": "⚔️",
+        "key": "duels_1",
+        "name": {"uz": "⚔️ Birinchi Qon", "ru": "⚔️ Первая Кровь", "en": "⚔️ First Blood"},
+        "desc": {"uz": "1-duelda g'alaba qozonish", "ru": "Победа в 1 дуэли", "en": "Win 1 duel"}
+    },
+    "duels_5": {
+        "icon": "🗡️",
+        "key": "duels_5",
+        "name": {"uz": "🗡️ Arena Gladiator", "ru": "🗡️ Гладиатор Арены", "en": "🗡️ Arena Gladiator"},
+        "desc": {"uz": "5 ta duel g'alabasi", "ru": "5 побед на арене", "en": "Win 5 duels"}
+    },
+    "bedtime_7": {
+        "icon": "🌙",
+        "key": "bedtime_7",
+        "name": {"uz": "🌙 Uyqu Himoyachisi", "ru": "🌙 Хранитель Сна", "en": "🌙 Sleep Guardian"},
+        "desc": {"uz": "7 marta 21:30 uyqu protokoli", "ru": "7 раз протокол сна 21:30", "en": "7 bedtime protocol check-ins"}
+    },
+    "bedtime_21": {
+        "icon": "🛌",
+        "key": "bedtime_21",
+        "name": {"uz": "🛌 Tinch Titan", "ru": "🛌 Отдохнувший Титан", "en": "🛌 Rested Titan"},
+        "desc": {"uz": "21 marta 21:30 uyqu protokoli", "ru": "21 раз протокол сна", "en": "21 bedtime protocol check-ins"}
+    },
+    "ref_3": {
+        "icon": "👥",
+        "key": "ref_3",
+        "name": {"uz": "👥 Jamiyat Yetakchisi", "ru": "👥 Лидер Сообщества", "en": "👥 Community Leader"},
+        "desc": {"uz": "3 ta do'stni taklif qilish", "ru": "Пригласить 3 друзей", "en": "Invite 3 friends"}
+    },
+    "ref_10": {
+        "icon": "🌐",
+        "key": "ref_10",
+        "name": {"uz": "🌐 Imperiya Bunyodkori", "ru": "🌐 Строитель Империи", "en": "🌐 Empire Builder"},
+        "desc": {"uz": "10 ta do'stni taklif qilish", "ru": "Пригласить 10 друзей", "en": "Invite 10 friends"}
+    }
+}
+
+def db_check_and_unlock_badges(user_id: int) -> list:
+    newly_unlocked = []
+    user = db_get_user(user_id)
+    if not user:
+        return newly_unlocked
+
+    u_dict = dict(user)
+    streak = u_dict.get("streak") or 0
+    coins = u_dict.get("coins") or 0
+    duels_won = u_dict.get("duels_won") or 0
+    bedtime_count = u_dict.get("bedtime_count") or 0
+    ref_count = u_dict.get("referral_count") or 0
+
+    eligible = []
+    if streak >= 7: eligible.append("streak_7")
+    if streak >= 21: eligible.append("streak_21")
+    if streak >= 66: eligible.append("streak_66")
+    if streak >= 100: eligible.append("streak_100")
+
+    if coins >= 500: eligible.append("coins_500")
+    if coins >= 2000: eligible.append("coins_2000")
+
+    if duels_won >= 1: eligible.append("duels_1")
+    if duels_won >= 5: eligible.append("duels_5")
+
+    if bedtime_count >= 7: eligible.append("bedtime_7")
+    if bedtime_count >= 21: eligible.append("bedtime_21")
+
+    if ref_count >= 3: eligible.append("ref_3")
+    if ref_count >= 10: eligible.append("ref_10")
+
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT badge_key FROM user_badges WHERE user_id = ?", (user_id,))
+        existing_keys = set(row[0] for row in cursor.fetchall())
+
+        for b_key in eligible:
+            if b_key not in existing_keys and b_key in BADGES_VAULT:
+                cursor.execute("INSERT OR IGNORE INTO user_badges (user_id, badge_key, unlocked_at) VALUES (?, ?, ?)",
+                               (user_id, b_key, now_str))
+                newly_unlocked.append(BADGES_VAULT[b_key])
+
+    return newly_unlocked
+
+def db_get_user_badges(user_id: int, lang: str = "uz") -> list:
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT badge_key FROM user_badges WHERE user_id = ?", (user_id,))
+        rows = cursor.fetchall()
+        result = []
+        for r in rows:
+            b_key = r["badge_key"]
+            if b_key in BADGES_VAULT:
+                b_data = BADGES_VAULT[b_key]
+                result.append(f"{b_data['icon']} {b_data['name'].get(lang, b_data['name']['uz'])}")
+        return result
+
 # ==================== SAFE DATABASE CONNECTION MANAGER ====================
 @contextmanager
 def get_db(row_factory: bool = True):
@@ -816,6 +985,9 @@ def init_sqlite_db():
         cursor.execute("PRAGMA table_info(users)")
         columns = [col[1] for col in cursor.fetchall()]
         if "lang" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN lang TEXT DEFAULT 'uz'")
+        if "last_spin_date" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN last_spin_date TEXT")
+        if "duels_won" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN duels_won INTEGER DEFAULT 0")
+        if "bedtime_count" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN bedtime_count INTEGER DEFAULT 0")
         if "photo_count" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN photo_count INTEGER DEFAULT 0")
         if "freeze_count" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN freeze_count INTEGER DEFAULT 0")
         if "duo_partner_id" not in columns: cursor.execute("ALTER TABLE users ADD COLUMN duo_partner_id INTEGER DEFAULT 0")
@@ -885,6 +1057,33 @@ def init_sqlite_db():
                 last_checkin_time TEXT,
                 streak INTEGER DEFAULT 0,
                 PRIMARY KEY (group_id, user_id)
+            )
+        """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS squads (
+                squad_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT UNIQUE,
+                tag TEXT,
+                leader_id INTEGER,
+                created_at TEXT
+            )
+        """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS squad_members (
+                squad_id INTEGER,
+                user_id INTEGER PRIMARY KEY,
+                joined_at TEXT
+            )
+        """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS user_badges (
+                user_id INTEGER,
+                badge_key TEXT,
+                unlocked_at TEXT,
+                PRIMARY KEY (user_id, badge_key)
             )
         """)
 
@@ -1073,6 +1272,165 @@ def db_set_cert_issued(user_id: int):
         cursor = conn.cursor()
         cursor.execute("UPDATE users SET cert_issued = 1 WHERE user_id = ?", (user_id,))
 
+
+# ==================== DAILY SPIN & SQUADS DB OPERATIONS ====================
+def db_process_spin(user_id: int) -> dict:
+    tz = pytz.timezone(TIMEZONE_STR)
+    today_str = datetime.now(tz).strftime("%Y-%m-%d")
+
+    user = db_get_user(user_id)
+    if not user:
+        return {"status": "error", "message": "User not found"}
+
+    if user["last_spin_date"] == today_str:
+        return {"status": "already", "message": "Already spun today"}
+
+    rewards = [
+        {"type": "coins", "val": 10, "label": "🪙 +10 Coins", "weight": 25},
+        {"type": "coins", "val": 25, "label": "🪙 +25 Coins", "weight": 20},
+        {"type": "coins", "val": 50, "label": "🪙 +50 Coins", "weight": 15},
+        {"type": "coins", "val": 100, "label": "🪙 +100 Coins", "weight": 5},
+        {"type": "xp", "val": 20, "label": "🌟 +20 XP", "weight": 15},
+        {"type": "xp", "val": 50, "label": "🌟 +50 XP", "weight": 10},
+        {"type": "xp", "val": 100, "label": "🌟 +100 XP", "weight": 5},
+        {"type": "freeze", "val": 1, "label": "🛡️ +1 Streak Freeze Shield", "weight": 5},
+    ]
+
+    weights = [r["weight"] for r in rewards]
+    chosen = random.choices(rewards, weights=weights, k=1)[0]
+
+    with get_db() as conn:
+        cursor = conn.cursor()
+        coins_add = chosen["val"] if chosen["type"] == "coins" else 0
+        xp_add = chosen["val"] if chosen["type"] == "xp" else 0
+        freeze_add = chosen["val"] if chosen["type"] == "freeze" else 0
+
+        new_coins = user["coins"] + coins_add
+        new_xp = (user["xp"] or 0) + xp_add
+        new_freeze = (user["freeze_count"] or 0) + freeze_add
+        rpg_data = calculate_rpg_level(new_xp, user["lang"] or "uz")
+        new_level = rpg_data["level"]
+
+        cursor.execute("""
+            UPDATE users
+            SET last_spin_date = ?, coins = ?, xp = ?, level = ?, freeze_count = ?
+            WHERE user_id = ?
+        """, (today_str, new_coins, new_xp, new_level, new_freeze, user_id))
+
+        if xp_add > 0:
+            db_add_tournament_points(user_id, user["first_name"], user["username"], xp_add // 2)
+
+    db_check_and_unlock_badges(user_id)
+
+    return {
+        "status": "ok",
+        "reward": chosen,
+        "coins": new_coins,
+        "xp": new_xp,
+        "level": new_level,
+        "freeze_count": new_freeze
+    }
+
+def db_create_squad(leader_id: int, name: str, tag: str) -> tuple:
+    name = name.strip()
+    tag = tag.strip().upper()
+    if not name or not tag:
+        return False, "invalid_input", 0
+
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT squad_id FROM squad_members WHERE user_id = ?", (leader_id,))
+        if cursor.fetchone():
+            return False, "already_in_squad", 0
+
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        try:
+            cursor.execute("""
+                INSERT INTO squads (name, tag, leader_id, created_at)
+                VALUES (?, ?, ?, ?)
+            """, (name, tag, leader_id, now_str))
+            squad_id = cursor.lastrowid
+
+            cursor.execute("""
+                INSERT INTO squad_members (squad_id, user_id, joined_at)
+                VALUES (?, ?, ?)
+            """, (squad_id, leader_id, now_str))
+            return True, "created", squad_id
+        except sqlite3.IntegrityError:
+            return False, "name_taken", 0
+
+def db_join_squad(user_id: int, squad_id: int) -> tuple:
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT squad_id FROM squads WHERE squad_id = ?", (squad_id,))
+        if not cursor.fetchone():
+            return False, "not_found"
+
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        cursor.execute("""
+            INSERT INTO squad_members (squad_id, user_id, joined_at)
+            VALUES (?, ?, ?)
+            ON CONFLICT(user_id) DO UPDATE SET
+                squad_id = excluded.squad_id,
+                joined_at = excluded.joined_at
+        """, (squad_id, user_id, now_str))
+        return True, "joined"
+
+def db_get_user_squad(user_id: int):
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT s.squad_id, s.name, s.tag, s.leader_id, s.created_at
+            FROM squad_members sm
+            JOIN squads s ON sm.squad_id = s.squad_id
+            WHERE sm.user_id = ?
+        """, (user_id,))
+        return cursor.fetchone()
+
+def db_get_squad_info(squad_id: int):
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM squads WHERE squad_id = ?", (squad_id,))
+        squad = cursor.fetchone()
+        if not squad:
+            return None
+
+        cursor.execute("""
+            SELECT u.user_id, u.first_name, u.username, u.streak, u.coins, u.xp
+            FROM squad_members sm
+            JOIN users u ON sm.user_id = u.user_id
+            WHERE sm.squad_id = ?
+            ORDER BY u.streak DESC
+        """, (squad_id,))
+        members = cursor.fetchall()
+        total_streak = sum(m["streak"] for m in members) if members else 0
+        total_xp = sum((m["xp"] or 0) for m in members) if members else 0
+
+        return {
+            "squad": squad,
+            "members": members,
+            "member_count": len(members),
+            "total_streak": total_streak,
+            "total_xp": total_xp
+        }
+
+def db_get_squad_leaderboard(limit: int = 10):
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT s.squad_id, s.name, s.tag, s.leader_id,
+                   COUNT(sm.user_id) as member_count,
+                   COALESCE(SUM(u.streak), 0) as total_streak,
+                   COALESCE(SUM(u.xp), 0) as total_xp
+            FROM squads s
+            LEFT JOIN squad_members sm ON s.squad_id = sm.squad_id
+            LEFT JOIN users u ON sm.user_id = u.user_id
+            GROUP BY s.squad_id
+            ORDER BY total_streak DESC, total_xp DESC
+            LIMIT ?
+        """, (limit,))
+        return cursor.fetchall()
+
 # ==================== TOURNAMENT ENGINE ====================
 def db_get_or_create_active_season():
     with get_db() as conn:
@@ -1189,11 +1547,12 @@ def db_record_bedtime(user_id: int) -> tuple[bool, str]:
 
         cursor.execute("""
             UPDATE users
-            SET xp = ?, level = ?, stamina = 100, last_stamina_update = ?, last_bedtime_date = ?
+            SET xp = ?, level = ?, stamina = 100, last_stamina_update = ?, last_bedtime_date = ?, bedtime_count = bedtime_count + 1
             WHERE user_id = ?
         """, (new_xp, new_level, now_str, today_str, user_id))
 
         db_add_tournament_points(user_id, user["first_name"], user["username"], 25, is_photo=False)
+        db_check_and_unlock_badges(user_id)
         return True, "ok"
 
 # ==================== MAIN CHECKIN PIPELINE ====================
@@ -1285,6 +1644,7 @@ def db_process_checkin(user_id: int, group_id: int = 0, is_photo: bool = False):
         roleplay_enabled = user["roleplay_enabled"] if "roleplay_enabled" in user.keys() else 0
         active_universe = user["active_universe"] if "active_universe" in user.keys() and user["active_universe"] else "marvel"
 
+        db_check_and_unlock_badges(user_id)
         return {
             "streak": new_streak,
             "goal": target_goal,
@@ -1393,9 +1753,13 @@ def get_main_reply_keyboard(user_id: int) -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
 
 def get_solo_hub_inline_keyboard(lang: str = "uz") -> InlineKeyboardMarkup:
+    t = TEXTS.get(lang, TEXTS["uz"])
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="⚡ Hozir Check-In Qilish", callback_data="solo_do_checkin")],
         [InlineKeyboardButton(text="📸 Foto Check-In Yuborish", callback_data="solo_photo_checkin")],
+        [InlineKeyboardButton(text="💡 Kun Hikmati (Random Quote)", callback_data="solo_random_quote")],
+        [InlineKeyboardButton(text=t["spin_btn"], callback_data="spin_wheel")],
+        [InlineKeyboardButton(text="🛡️ Klan / Squad Info", callback_data="squad_info_cb")],
         [InlineKeyboardButton(text="📊 Shaxsiy Statistika & Maqsad", callback_data="solo_my_stats")],
         [InlineKeyboardButton(text="🎯 Kunlik Maqsadni Sozlash (21/30/100/365)", callback_data="solo_target_goal_menu")],
         [InlineKeyboardButton(text="🌙 21:30 Uyqu Protokoli", callback_data="solo_bedtime")],
@@ -1469,6 +1833,15 @@ def get_language_inline_keyboard() -> InlineKeyboardMarkup:
             InlineKeyboardButton(text="🇺🇿 O'zbekcha", callback_data="set_lang_uz"),
             InlineKeyboardButton(text="🇷🇺 Русский", callback_data="set_lang_ru"),
             InlineKeyboardButton(text="🇬🇧 English", callback_data="set_lang_en")
+        ]
+    ])
+
+def get_start_language_inline_keyboard() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="🇺🇿 O'zbekcha", callback_data="start_lang_uz"),
+            InlineKeyboardButton(text="🇷🇺 Русский", callback_data="start_lang_ru"),
+            InlineKeyboardButton(text="🇬🇧 English", callback_data="start_lang_en")
         ]
     ])
 
@@ -1567,13 +1940,28 @@ async def cmd_start(message: Message):
         )
         await message.reply(msg, reply_markup=get_group_wizard_step1_kb(), parse_mode=ParseMode.MARKDOWN)
     else:
-        wiz_msg = (
-            f"👋 **\"The 5 AM Club\" ga xush kelibsiz, {html.escape(user.first_name)}!**\n\n"
-            "“Ertalabki vaqtingizga egalik qiling. Hayotingizni yuksaltiring.” – Robin Sharma\n\n"
-            "📌 **4 Bosqichli Solo Onboarding Wizard:**\n"
-            "Keling, ertalabki uyg'onish vaqtingiz, kunlik intizomiy maqsad hamda Multiverse rejimlarini sozlaymiz!"
+        lang_msg = (
+            f"👋 **\"The 5 AM Club\" botiga xush kelibsiz, {html.escape(user.first_name)}!**\n\n"
+            "🌐 **1-QADAM: Muloqot tilini tanlang / Choose language / Выберите язык:**"
         )
-        await message.answer(wiz_msg, reply_markup=get_solo_wizard_step1_kb(), parse_mode=ParseMode.MARKDOWN)
+        await message.answer(lang_msg, reply_markup=get_start_language_inline_keyboard(), parse_mode=ParseMode.MARKDOWN)
+
+@router.callback_query(F.data.startswith("start_lang_"))
+async def start_lang_cb(callback: CallbackQuery):
+    user_id = callback.from_user.id
+    lang = callback.data.replace("start_lang_", "")
+    db_update_user_lang(user_id, lang)
+    await callback.answer()
+
+    t = TEXTS.get(lang, TEXTS["uz"])
+    await callback.message.answer(t["lang_updated"], reply_markup=get_main_catalog_reply_keyboard(lang), parse_mode=ParseMode.MARKDOWN)
+
+    wiz_msg = (
+        f"👋 **\"{t['welcome']}\"**\n\n"
+        "📌 **4 Bosqichli Solo Onboarding Wizard (2/4):**\n"
+        "Keling, ertalabki uyg'onish vaqtingiz, kunlik intizomiy maqsad hamda Multiverse rejimlarini sozlaymiz!"
+    )
+    await callback.message.answer(wiz_msg, reply_markup=get_solo_wizard_step1_kb(), parse_mode=ParseMode.MARKDOWN)
 
 # --- SOLO ONBOARDING WIZARD CALLBACKS ---
 @router.callback_query(F.data == "sw_step_2")
@@ -1832,6 +2220,39 @@ async def handle_set_strictness_cb(callback: CallbackQuery):
     db_update_user_setting(user_id, "photo_strictness", val)
     await callback.answer(f"✅ Foto strictness '{val.upper()}' deb belgilandi!", show_alert=True)
 
+@router.callback_query(F.data.in_(["solo_random_quote", "get_random_quote"]))
+async def handle_solo_random_quote_cb(callback: CallbackQuery):
+    user_id = callback.from_user.id
+    lang = get_user_language(user_id)
+    u = db_get_user(user_id)
+    active_universe = u["active_universe"] if u and "active_universe" in u.keys() and u["active_universe"] else "marvel"
+    quote_text = await fetch_motivational_quote(user_id=user_id, lang=lang, active_universe=active_universe)
+    await callback.answer("💡 Yangi Kun Hikmati!")
+    await callback.message.answer(f"💡 **KUN HIKMATI:**\n\n{quote_text}", parse_mode=ParseMode.MARKDOWN)
+
+@router.callback_query(F.data == "solo_bedtime")
+async def handle_solo_bedtime_cb(callback: CallbackQuery):
+    user_id = callback.from_user.id
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+    await callback.answer()
+    await callback.message.answer(
+        t["bedtime_reminder"],
+        reply_markup=get_bedtime_inline_keyboard(lang),
+        parse_mode=ParseMode.MARKDOWN
+    )
+
+@router.callback_query(F.data.in_(["bedtime_sleep_now", "bedtime_sleep"]))
+async def handle_bedtime_sleep_now_cb(callback: CallbackQuery):
+    user_id = callback.from_user.id
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+    success, reason = db_record_bedtime(user_id)
+    if success:
+        await callback.answer(t["bedtime_success"], show_alert=True)
+    else:
+        await callback.answer("⚠️ Bugun allaqachon uxlash protokoli bajarildi! Ertagacha! 🌙", show_alert=True)
+
 @router.callback_query(F.data == "solo_target_goal_menu")
 async def handle_target_goal_menu_cb(callback: CallbackQuery):
     await callback.answer()
@@ -1937,14 +2358,8 @@ async def handle_solo_my_stats_callback(callback: CallbackQuery):
     universe_val = user["active_universe"] if "active_universe" in user.keys() and user["active_universe"] else "marvel"
     universe_name = REALMS.get(universe_val, REALMS["marvel"])["name"]
 
-    badges = []
-    if streak >= 7: badges.append("⚡ Early Bird")
-    if streak >= 21: badges.append("👑 Elite 21")
-    if streak >= 30: badges.append("👑 5 AM Legend")
-    if photo_count >= 5: badges.append("📸 Photo Master")
-    if freeze_count > 0: badges.append("🛡 Shielded")
-    if ref_count >= 5: badges.append("👥 Master Ambassador")
-    badges_str = " | ".join(badges) if badges else "Boshlang'ich nishonlar"
+    user_badges_list = db_get_user_badges(user_id, lang=lang)
+    badges_str = " | ".join(user_badges_list) if user_badges_list else "Boshlang'ich nishonlar"
 
     profile_text = t["profile_title"].format(
         name=html.escape(user['first_name']),
@@ -2134,6 +2549,173 @@ async def handle_1v1_info_cb(callback: CallbackQuery):
         "📌 **Chaqirish uchun:** `/duel <do'stingizning_user_id>` yuboring!"
     )
     await callback.message.edit_text(msg, parse_mode=ParseMode.MARKDOWN)
+
+# --- GROUP CONFIG CATALOG (/gconfig) & GAMES CATALOG (/games) ---
+def get_group_config_inline_keyboard(group_id: int) -> InlineKeyboardMarkup:
+    g = db_get_group(group_id)
+    rp_on = g["roleplay_enabled"] if g and "roleplay_enabled" in g.keys() else 1
+    arena_on = g["interactive_enabled"] if g and "interactive_enabled" in g.keys() else 1
+    curr_realm = g["active_universe"] if g and "active_universe" in g.keys() and g["active_universe"] else "marvel"
+    opt_mode = g["opt_in_mode"] if g and "opt_in_mode" in g.keys() and g["opt_in_mode"] else "auto"
+
+    rp_btn_text = "🎭 Multiverse Roleplay: [ ✅ YOQILGAN ]" if rp_on else "🎭 Multiverse Roleplay: [ ❌ O'CHIRILGAN ]"
+    arena_btn_text = "🎮 Interaktiv Rejim: [ ✅ YOQILGAN ]" if arena_on else "🎮 Interaktiv Rejim: [ ❌ O'CHIRILGAN ]"
+    opt_btn_text = f"👥 Opt-In Rejimi: [ {opt_mode.upper()} ]"
+    realm_btn_text = f"🌌 Realm: [{curr_realm.upper()}]"
+
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=rp_btn_text, callback_data="gcfg_toggle_rp")],
+        [InlineKeyboardButton(text=arena_btn_text, callback_data="gcfg_toggle_arena")],
+        [InlineKeyboardButton(text=opt_btn_text, callback_data="gcfg_toggle_opt")],
+        [InlineKeyboardButton(text=realm_btn_text, callback_data="gcfg_realm_menu")],
+        [InlineKeyboardButton(text="⏰ Uyg'onish Vaqtini Sozlash", callback_data="gcfg_time_menu")],
+        [InlineKeyboardButton(text="🔄 Yangilash / Status Check", callback_data="gcfg_refresh")]
+    ])
+
+def get_group_realm_select_inline_keyboard() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🛡️ Marvel Avengers", callback_data="gcfg_setrealm_marvel"), InlineKeyboardButton(text="⚔️ Medieval Samurai", callback_data="gcfg_setrealm_samurai")],
+        [InlineKeyboardButton(text="🏰 Feudal Knights", callback_data="gcfg_setrealm_feudal"), InlineKeyboardButton(text="🎩 Italian Mafia", callback_data="gcfg_setrealm_mafia")],
+        [InlineKeyboardButton(text="🦾 Cyberpunk 2077", callback_data="gcfg_setrealm_cyberpunk"), InlineKeyboardButton(text="⚡ Greek Olympus", callback_data="gcfg_setrealm_olympus")],
+        [InlineKeyboardButton(text="🚀 Space Sci-Fi", callback_data="gcfg_setrealm_scifi")]
+    ])
+
+def get_group_games_inline_keyboard() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="⚔️ 1v1 Uyg'onish Dueli", callback_data="ggame_1v1_info")],
+        [InlineKeyboardButton(text="🤝 Duo Combo Sheriklik", callback_data="ggame_duo_info")],
+        [InlineKeyboardButton(text="🎲 Random Matchmaking Sherik", callback_data="game_matchmaking")],
+        [InlineKeyboardButton(text="🏆 Haftalik Turnir Reytingi", callback_data="arena_tournament")],
+        [InlineKeyboardButton(text="📊 Global Reyting Jadvali", callback_data="arena_leaderboard")]
+    ])
+
+@router.message(Command("gconfig"))
+async def cmd_gconfig(message: Message):
+    group_id = message.chat.id
+    if message.chat.type not in [ChatType.GROUP, ChatType.SUPERGROUP]:
+        await message.reply("ℹ️ Ushbu buyruq faqat guruhlar ichida ishlaydi!")
+        return
+
+    g = db_get_group(group_id)
+    start_t = g["checkin_start"] if g and "checkin_start" in g.keys() else "04:30"
+    end_t = g["checkin_end"] if g and "checkin_end" in g.keys() else "06:00"
+    rp_on = "✅ YOQILGAN" if (g and g.get("roleplay_enabled")) else "❌ O'CHIRILGAN"
+    arena_on = "✅ YOQILGAN" if (g and g.get("interactive_enabled")) else "❌ O'CHIRILGAN"
+    realm = g.get("active_universe", "marvel").upper() if g else "MARVEL"
+    opt = g.get("opt_in_mode", "auto").upper() if g else "AUTO"
+
+    text = (
+        "⚙️ **THE 5 AM CLUB GURUH BOSH QARUV KATALOGI**\n\n"
+        f"⏰ **Uyg'onish vaqti:** `{start_t}` - `{end_t}`\n"
+        f"🎭 **Roleplay Rejimi:** `{rp_on}`\n"
+        f"🌌 **Faol Realm:** `{realm}`\n"
+        f"🎮 **Interaktiv Rejim:** `{arena_on}`\n"
+        f"👥 **Opt-In Rejimi:** `{opt}`\n\n"
+        "👇 *Tugmalar orqali guruh sozlamalarini darhol o'zgartirishingiz mumkin:*"
+    )
+    await message.reply(text, reply_markup=get_group_config_inline_keyboard(group_id), parse_mode=ParseMode.MARKDOWN)
+
+@router.message(Command("games"))
+async def cmd_group_games(message: Message):
+    text = (
+        "🎮 **GURUH INTERAKTIV O'YINLAR VA DUELLAR KATALOGI**\n\n"
+        "Guruh a'zolari bilan duellarda bellashing, juftlik hosil qiling va haftalik turnirda ball to'plang!\n\n"
+        "👇 *Quyidagi o'yin va rejimni tanlang:*"
+    )
+    await message.reply(text, reply_markup=get_group_games_inline_keyboard(), parse_mode=ParseMode.MARKDOWN)
+
+@router.callback_query(F.data == "gcfg_toggle_rp")
+async def gcfg_toggle_rp_cb(callback: CallbackQuery):
+    group_id = callback.message.chat.id
+    member = await callback.bot.get_chat_member(group_id, callback.from_user.id)
+    if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] and callback.from_user.id != SUPER_ADMIN_ID:
+        await callback.answer("⛔ Bu amaldan faqat guruh adminlari foydalana oladi!", show_alert=True)
+        return
+    g = db_get_group(group_id)
+    curr = g["roleplay_enabled"] if g and "roleplay_enabled" in g.keys() else 1
+    new_val = 0 if curr == 1 else 1
+    db_update_group_setting(group_id, "roleplay_enabled", new_val)
+    status_str = "YOQILDI" if new_val == 1 else "O'CHIRILDI"
+    await callback.answer(f"✅ Guruh Roleplay rejimi {status_str}!", show_alert=True)
+    await callback.message.edit_reply_markup(reply_markup=get_group_config_inline_keyboard(group_id))
+
+@router.callback_query(F.data == "gcfg_toggle_arena")
+async def gcfg_toggle_arena_cb(callback: CallbackQuery):
+    group_id = callback.message.chat.id
+    member = await callback.bot.get_chat_member(group_id, callback.from_user.id)
+    if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] and callback.from_user.id != SUPER_ADMIN_ID:
+        await callback.answer("⛔ Bu amaldan faqat guruh adminlari foydalana oladi!", show_alert=True)
+        return
+    g = db_get_group(group_id)
+    curr = g["interactive_enabled"] if g and "interactive_enabled" in g.keys() else 1
+    new_val = 0 if curr == 1 else 1
+    db_update_group_setting(group_id, "interactive_enabled", new_val)
+    status_str = "YOQILDI" if new_val == 1 else "O'CHIRILDI"
+    await callback.answer(f"✅ Guruh Interaktiv rejimi {status_str}!", show_alert=True)
+    await callback.message.edit_reply_markup(reply_markup=get_group_config_inline_keyboard(group_id))
+
+@router.callback_query(F.data == "gcfg_toggle_opt")
+async def gcfg_toggle_opt_cb(callback: CallbackQuery):
+    group_id = callback.message.chat.id
+    member = await callback.bot.get_chat_member(group_id, callback.from_user.id)
+    if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] and callback.from_user.id != SUPER_ADMIN_ID:
+        await callback.answer("⛔ Bu amaldan faqat guruh adminlari foydalana oladi!", show_alert=True)
+        return
+    g = db_get_group(group_id)
+    curr = g["opt_in_mode"] if g and "opt_in_mode" in g.keys() else "auto"
+    new_val = "manual" if curr == "auto" else "auto"
+    db_update_group_setting(group_id, "opt_in_mode", new_val)
+    await callback.answer(f"✅ Guruh Opt-In rejimi '{new_val.upper()}' qilindi!", show_alert=True)
+    await callback.message.edit_reply_markup(reply_markup=get_group_config_inline_keyboard(group_id))
+
+@router.callback_query(F.data == "gcfg_realm_menu")
+async def gcfg_realm_menu_cb(callback: CallbackQuery):
+    await callback.answer()
+    await callback.message.answer("🌌 **Guruh uchun Multiverse Realm tanlang:**", reply_markup=get_group_realm_select_inline_keyboard(), parse_mode=ParseMode.MARKDOWN)
+
+@router.callback_query(F.data.startswith("gcfg_setrealm_"))
+async def gcfg_setrealm_cb(callback: CallbackQuery):
+    group_id = callback.message.chat.id
+    member = await callback.bot.get_chat_member(group_id, callback.from_user.id)
+    if member.status not in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] and callback.from_user.id != SUPER_ADMIN_ID:
+        await callback.answer("⛔ Bu amaldan faqat guruh adminlari foydalana oladi!", show_alert=True)
+        return
+    realm_key = callback.data.replace("gcfg_setrealm_", "")
+    db_update_group_setting(group_id, "active_universe", realm_key)
+    db_update_group_setting(group_id, "roleplay_enabled", 1)
+    await callback.answer(f"🎉 Guruh uchun Realm '{realm_key.upper()}' saqlandi!", show_alert=True)
+
+@router.callback_query(F.data == "gcfg_time_menu")
+async def gcfg_time_menu_cb(callback: CallbackQuery):
+    await callback.answer()
+    await callback.message.answer("⏰ **Guruh uyg'onish vaqti oralig'ini tanlang:**", reply_markup=get_group_wizard_step3_kb(), parse_mode=ParseMode.MARKDOWN)
+
+@router.callback_query(F.data == "gcfg_refresh")
+async def gcfg_refresh_cb(callback: CallbackQuery):
+    group_id = callback.message.chat.id
+    await callback.answer("🔄 Yangilandi!")
+    await callback.message.edit_reply_markup(reply_markup=get_group_config_inline_keyboard(group_id))
+
+@router.callback_query(F.data == "ggame_1v1_info")
+async def ggame_1v1_info_cb(callback: CallbackQuery):
+    await callback.answer()
+    msg = (
+        "⚔️ **GURUH 1v1 UYG'ONISH DUELI**\n\n"
+        "Har qanday guruh a'zosiga duel e'lon qilishingiz mumkin! (-20 Stamina)\n"
+        "Kim ertalab birinchi foto check-in qilsa, **100 tangalik bank** va **+75 Turnir Balli**ni yutadi!\n\n"
+        "📌 **Boshlash uchun:** guruhda `/duel @username` yoki `/duel <user_id>` yozing!"
+    )
+    await callback.message.answer(msg, parse_mode=ParseMode.MARKDOWN)
+
+@router.callback_query(F.data == "ggame_duo_info")
+async def ggame_duo_info_cb(callback: CallbackQuery):
+    await callback.answer()
+    msg = (
+        "🤝 **GURUH DUO COMBO SHERIKLIK**\n\n"
+        "Guruhdoshingiz bilan birgalikda uyg'onish va **+50 Bonus Tanga** hamda **+25 XP** olish uchun sherik biriktiring!\n\n"
+        "📌 **Birlashish uchun:** guruhda `/duo <sherigingiz_user_id>` yuboring!"
+    )
+    await callback.message.answer(msg, parse_mode=ParseMode.MARKDOWN)
 
 @router.message(Command("duo"))
 async def cmd_set_duo_partner(message: Message):
@@ -2412,6 +2994,136 @@ async def cmd_set_streak(message: Message):
     except Exception:
         await message.reply("❌ Noto'g'ri parametrlar kiritildi.")
 
+
+# ==================== SPIN & SQUAD TELEGRAM HANDLERS ====================
+@router.callback_query(F.data == "spin_wheel")
+@router.message(Command("spin"))
+@router.message(Command("luck"))
+@router.message(Command("wheel"))
+async def handle_spin_command(event):
+    user_id = event.from_user.id
+    db_register_user(user_id, event.from_user.username, event.from_user.first_name)
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
+    res = db_process_spin(user_id)
+
+    if res["status"] == "already":
+        msg = t["spin_already"]
+        if isinstance(event, CallbackQuery):
+            await event.answer(msg, show_alert=True)
+        else:
+            await event.reply(msg, parse_mode=ParseMode.MARKDOWN)
+    elif res["status"] == "ok":
+        reward = res["reward"]
+        msg = t["spin_success"].format(reward_label=reward["label"])
+        if isinstance(event, CallbackQuery):
+            await event.answer("🎰 Spin!", show_alert=False)
+            await event.message.answer(msg, parse_mode=ParseMode.MARKDOWN)
+        else:
+            await event.reply(msg, parse_mode=ParseMode.MARKDOWN)
+    else:
+        err_msg = "❌ Error processing spin."
+        if isinstance(event, CallbackQuery): await event.answer(err_msg, show_alert=True)
+        else: await event.reply(err_msg)
+
+@router.callback_query(F.data == "squad_info_cb")
+@router.message(Command("squad"))
+@router.message(Command("squad_info"))
+async def handle_squad_info_cmd(event):
+    user_id = event.from_user.id
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
+    sq = db_get_user_squad(user_id)
+    if not sq:
+        msg = t["squad_not_in"]
+        if isinstance(event, CallbackQuery):
+            await event.answer()
+            await event.message.answer(msg, parse_mode=ParseMode.MARKDOWN)
+        else:
+            await event.reply(msg, parse_mode=ParseMode.MARKDOWN)
+        return
+
+    info = db_get_squad_info(sq["squad_id"])
+    msg = t["squad_main"].format(
+        name=info["squad"]["name"],
+        tag=info["squad"]["tag"],
+        squad_id=info["squad"]["squad_id"],
+        leader_id=info["squad"]["leader_id"],
+        member_count=info["member_count"],
+        total_streak=info["total_streak"],
+        total_xp=info["total_xp"]
+    )
+    if isinstance(event, CallbackQuery):
+        await event.answer()
+        await event.message.answer(msg, parse_mode=ParseMode.MARKDOWN)
+    else:
+        await event.reply(msg, parse_mode=ParseMode.MARKDOWN)
+
+@router.message(Command("squad_create"))
+async def handle_squad_create_cmd(message: Message):
+    user_id = message.from_user.id
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+    args = message.text.split(maxsplit=2)
+
+    if len(args) < 3:
+        await message.reply("ℹ️ **Foydalanish:** `/squad_create <squad_nomi> <TAG>`\n*Misol:* `/squad_create Lions 5AM`", parse_mode=ParseMode.MARKDOWN)
+        return
+
+    s_name, s_tag = args[1], args[2]
+    ok, status, squad_id = db_create_squad(user_id, s_name, s_tag)
+    if ok:
+        await message.reply(t["squad_created"].format(name=s_name, tag=s_tag.upper(), squad_id=squad_id), parse_mode=ParseMode.MARKDOWN)
+    elif status == "already_in_squad":
+        await message.reply(t["squad_already"], parse_mode=ParseMode.MARKDOWN)
+    elif status == "name_taken":
+        await message.reply("❌ Bu klan nomi allaqachon band! Boshqa nom tanlang.", parse_mode=ParseMode.MARKDOWN)
+    else:
+        await message.reply("❌ Noto'g'ri parametrlar kiritildi.", parse_mode=ParseMode.MARKDOWN)
+
+@router.message(Command("squad_join"))
+async def handle_squad_join_cmd(message: Message):
+    user_id = message.from_user.id
+    lang = get_user_language(user_id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+    args = message.text.split()
+
+    if len(args) < 2:
+        await message.reply("ℹ️ **Foydalanish:** `/squad_join <squad_id>`\n*Misol:* `/squad_join 1`", parse_mode=ParseMode.MARKDOWN)
+        return
+
+    try:
+        sq_id = int(args[1])
+        ok, status = db_join_squad(user_id, sq_id)
+        if ok:
+            sq_info = db_get_squad_info(sq_id)
+            name = sq_info["squad"]["name"] if sq_info else ""
+            tag = sq_info["squad"]["tag"] if sq_info else ""
+            await message.reply(t["squad_joined"].format(name=name, tag=tag), parse_mode=ParseMode.MARKDOWN)
+        else:
+            await message.reply(t["squad_not_found"], parse_mode=ParseMode.MARKDOWN)
+    except ValueError:
+        await message.reply("❌ Squad ID raqam bo'lishi kerak.")
+
+@router.message(Command("squad_leaderboard"))
+async def handle_squad_leaderboard_cmd(message: Message):
+    lang = get_user_language(message.from_user.id)
+    t = TEXTS.get(lang, TEXTS["uz"])
+
+    top_squads = db_get_squad_leaderboard(10)
+    text = t["squad_leaderboard_title"]
+
+    if not top_squads:
+        text += "🛡️ Hozircha klanlar yaratilmagan."
+    else:
+        for idx, sq in enumerate(top_squads, 1):
+            medal = "👑 🥇" if idx == 1 else ("🥈" if idx == 2 else ("🥉" if idx == 3 else f"#{idx}"))
+            text += f"`{medal}` **{html.escape(sq['name'])}** `[{sq['tag']}]` (ID: `{sq['squad_id']}`) — 🔥 `{sq['total_streak']}d` | 👥 `{sq['member_count']} a'zo` | 🌟 `{sq['total_xp']} XP`\n"
+
+    await message.reply(text, parse_mode=ParseMode.MARKDOWN)
+
 # --- PROFILE & LEADERBOARD & QUOTE & HELP HANDLERS ---
 @router.message(Command("profile"))
 @router.message(Command("myprofile"))
@@ -2446,14 +3158,8 @@ async def handle_my_profile(message: Message):
     universe_val = user["active_universe"] if "active_universe" in user.keys() and user["active_universe"] else "marvel"
     universe_name = REALMS.get(universe_val, REALMS["marvel"])["name"]
 
-    badges = []
-    if streak >= 7: badges.append("⚡ Early Bird")
-    if streak >= 21: badges.append("👑 Elite 21")
-    if streak >= 30: badges.append("👑 5 AM Legend")
-    if photo_count >= 5: badges.append("📸 Photo Master")
-    if freeze_count > 0: badges.append("🛡 Shielded")
-    if ref_count >= 5: badges.append("👥 Master Ambassador")
-    badges_str = " | ".join(badges) if badges else "Boshlang'ich nishonlar"
+    user_badges_list = db_get_user_badges(user_id, lang=lang)
+    badges_str = " | ".join(user_badges_list) if user_badges_list else "Boshlang'ich nishonlar"
 
     profile_text = t["profile_title"].format(
         name=html.escape(user['first_name']),
@@ -2869,6 +3575,74 @@ async def api_leaderboard(req):
     except Exception as e:
         return web.json_response({"status": "error", "message": str(e)}, status=500)
 
+
+async def api_action_spin(req):
+    try:
+        body = await req.json()
+        init_data = body.get("initData", "")
+        valid, auth_result = verify_telegram_init_data(init_data)
+        if not valid or not auth_result:
+            return web.json_response({"status": "error", "message": "Unauthorized"}, status=401)
+
+        user_id = auth_result.get("user", {}).get("id")
+        res = db_process_spin(user_id)
+        if res["status"] == "already":
+            return web.json_response({"status": "already", "message": "Already spun today"})
+        elif res["status"] == "ok":
+            return web.json_response({
+                "status": "ok",
+                "reward": res["reward"],
+                "user": {
+                    "coins": res["coins"],
+                    "xp": res["xp"],
+                    "level": res["level"],
+                    "freeze_count": res["freeze_count"]
+                }
+            })
+        else:
+            return web.json_response({"status": "error", "message": res.get("message", "Spin failed")}, status=400)
+    except Exception as e:
+        return web.json_response({"status": "error", "message": str(e)}, status=500)
+
+async def api_squads(req):
+    try:
+        top_squads = db_get_squad_leaderboard(20)
+        data = [{
+            "rank": idx + 1,
+            "squad_id": sq["squad_id"],
+            "name": sq["name"],
+            "tag": sq["tag"],
+            "leader_id": sq["leader_id"],
+            "member_count": sq["member_count"],
+            "total_streak": sq["total_streak"],
+            "total_xp": sq["total_xp"]
+        } for idx, sq in enumerate(top_squads)]
+
+        return web.json_response({"status": "ok", "squads": data})
+    except Exception as e:
+        return web.json_response({"status": "error", "message": str(e)}, status=500)
+
+async def api_action_squad_join(req):
+    try:
+        body = await req.json()
+        init_data = body.get("initData", "")
+        valid, auth_result = verify_telegram_init_data(init_data)
+        if not valid or not auth_result:
+            return web.json_response({"status": "error", "message": "Unauthorized"}, status=401)
+
+        user_id = auth_result.get("user", {}).get("id")
+        squad_id = body.get("squad_id")
+        if not squad_id:
+            return web.json_response({"status": "error", "message": "squad_id is required"}, status=400)
+
+        ok, status = db_join_squad(user_id, int(squad_id))
+        if ok:
+            return web.json_response({"status": "ok", "message": "Joined squad successfully", "squad_id": int(squad_id)})
+        else:
+            return web.json_response({"status": "error", "message": "Squad not found"}, status=404)
+    except Exception as e:
+        return web.json_response({"status": "error", "message": str(e)}, status=500)
+
 async def start_dummy_web_server():
     app = web.Application()
     app.router.add_get('/', serve_index)
@@ -2881,6 +3655,9 @@ async def start_dummy_web_server():
     app.router.add_get('/api/user/{user_id}', api_user_stats)
     app.router.add_get('/api/tournament', api_tournament)
     app.router.add_get('/api/leaderboard', api_leaderboard)
+    app.router.add_post('/api/action/spin', api_action_spin)
+    app.router.add_get('/api/squads', api_squads)
+    app.router.add_post('/api/action/squad/join', api_action_squad_join)
 
     runner = web.AppRunner(app)
     await runner.setup()
@@ -2890,15 +3667,12 @@ async def start_dummy_web_server():
 # ==================== MAIN ENTRY POINT ====================
 async def set_bot_commands(bot: Bot):
     group_commands = [
-        BotCommand(command="setup", description="⚙️ Guruh vaqtini va wizardni sozlash (Admin)"),
-        BotCommand(command="gconfig", description="📋 Guruh boshqaruv paneli (Admin)"),
-        BotCommand(command="settime", description="⏰ Vaqtni sozlash (/settime 04:30 06:00)"),
-        BotCommand(command="setcoins", description="🪙 Tangalarni sozlash (/setcoins 10 25)"),
-        BotCommand(command="tournament", description="⚔️ Haftalik guruh turniri"),
-        BotCommand(command="leaderboard", description="🏆 Guruh va global reyting"),
-        BotCommand(command="profile", description="📊 Shaxsiy profil va RPG stats"),
-        BotCommand(command="shop", description="🛒 5 AM Do'koni"),
-        BotCommand(command="help", description="📖 Guruh qoidalari"),
+        BotCommand(command="gconfig", description="⚙️ Guruh Sozlamalari & Multiverse Katalogi"),
+        BotCommand(command="games", description="🎮 Interaktiv O'yinlar (1v1 Duellar & Duo)"),
+        BotCommand(command="setup", description="🛠️ Guruhni O'rnatish Wizard (Admin)"),
+        BotCommand(command="tournament", description="🏆 Haftalik Turnir & Reyting"),
+        BotCommand(command="profile", description="📊 Shaxsiy va Guruh Stats"),
+        BotCommand(command="help", description="📖 Guruh Qo'llanmasi"),
     ]
     private_commands = [
         BotCommand(command="start", description="🚀 Botni boshlash / Wizard"),
@@ -2913,6 +3687,11 @@ async def set_bot_commands(bot: Bot):
         BotCommand(command="setup", description="⚙️ Uyg'onish vaqtini sozlash"),
         BotCommand(command="ref", description="👥 Do'stlarni taklif qilish"),
         BotCommand(command="duo", description="🤝 Sherik biriktirish"),
+        BotCommand(command="spin", description="🎰 Omad g'ildiragini aylantirish"),
+        BotCommand(command="squad", description="🛡️ Klan / Squad ma'lumotlari"),
+        BotCommand(command="squad_create", description="🛡️ Yangi klan yaratish (/squad_create <nom> <tag>)"),
+        BotCommand(command="squad_join", description="🛡️ Klanga qo'shilish (/squad_join <squad_id>)"),
+        BotCommand(command="squad_leaderboard", description="🛡️ Klanlar reyting jadvali"),
         BotCommand(command="lang", description="🌐 Tilni tanlash / Language"),
         BotCommand(command="help", description="📖 Bot qoidalari"),
     ]
@@ -2934,7 +3713,20 @@ async def main():
     asyncio.create_task(scheduler_loop(bot))
 
     await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
+    while True:
+        try:
+            await dp.start_polling(bot)
+            break
+        except TelegramConflictError:
+            logging.warning("Telegram conflict detected (another instance running). Waiting 5 seconds before retrying...")
+            await asyncio.sleep(5)
+        except Exception as e:
+            if "Conflict" in str(e):
+                logging.warning("Telegram conflict detected. Waiting 5 seconds before retrying...")
+                await asyncio.sleep(5)
+            else:
+                logging.error(f"Polling error: {e}")
+                await asyncio.sleep(3)
 
 if __name__ == "__main__":
     asyncio.run(main())
