@@ -86,7 +86,17 @@ const I18N = {
         toastBedtimeOk: "😴 Xayrli tun! +20 XP berildi va Staminangiz 100% tiklandi!",
         toastNoStamina: "⚡ Staminangiz yetarli emas! Kamida 20 Stamina kerak.",
         textDownloadCert: "Yuklab Olish (HD PNG)",
-        textShareStory: "Story'ga Joylash"
+        textShareStory: "Story'ga Joylash",
+        badgeMultiverse: "🌌 MULTIVERSE REALM",
+        titleMultiverse: "Multiverse Realm & Engine",
+        descMultiverse: "Tanlangan olamga mos ravishda Mini App dizayni, unvonlar va audio effektlar o'zgaradi!",
+        labelRoleplayToggle: "🎭 Roleplay Mode",
+        descRoleplayToggle: "RPG hikoya unvonlari, olam quiplari & lore",
+        labelInteractiveToggle: "🎮 Interactive Arena Mode",
+        descInteractiveToggle: "Jonli audio synth FX, zarralar & arena vizuallari",
+        badgeMatrixGoal: "🎯 TARGET GOAL MATRIX",
+        titleTargetMatrix: "Target Goal Matrix Tracker",
+        descTargetMatrix: "Intizom maqsadini tanlang va kunlik uyg'onish natijangizni real vaqtda kuzatib boring!"
     },
     ru: {
         rankNovice: "🌅 Рассветный Новичок",
@@ -172,7 +182,17 @@ const I18N = {
         toastBedtimeOk: "😴 Спокойной ночи! +20 XP начислено, энергия 100%!",
         toastNoStamina: "⚡ Недостаточно энергии! Требуется минимум 20 Stamina.",
         textDownloadCert: "Скачать (HD PNG)",
-        textShareStory: "В Сторис"
+        textShareStory: "В Сторис",
+        badgeMultiverse: "🌌 МУЛЬТИВСЕЛЕННАЯ",
+        titleMultiverse: "Мультивселенная & Движок",
+        descMultiverse: "В зависимости от выбранного мира меняются дизайн, звания и аудиоэффекты!",
+        labelRoleplayToggle: "🎭 Режим Roleplay",
+        descRoleplayToggle: "RPG титулы, сюжетная история и лор миров",
+        labelInteractiveToggle: "🎮 Интерактивная Арена",
+        descInteractiveToggle: "Живые синтез-аудио FX, частицы и арена-визуал",
+        badgeMatrixGoal: "🎯 МАТРИЦА ЦЕЛЕЙ",
+        titleTargetMatrix: "Трекер Матрицы Целей",
+        descTargetMatrix: "Выберите целевой марафон дисциплины и отслеживайте прогресс подъема!"
     },
     en: {
         rankNovice: "🌅 Dawn Novice",
@@ -258,7 +278,85 @@ const I18N = {
         toastBedtimeOk: "😴 Good night! +20 XP awarded and Stamina refilled to 100%!",
         toastNoStamina: "⚡ Insufficient stamina! You need at least 20 Stamina.",
         textDownloadCert: "Download (HD PNG)",
-        textShareStory: "Share on Story"
+        textShareStory: "Share on Story",
+        badgeMultiverse: "🌌 MULTIVERSE REALM",
+        titleMultiverse: "Multiverse Realm & Engine",
+        descMultiverse: "Themes, titles, and audio effects adapt dynamic UI to your chosen universe!",
+        labelRoleplayToggle: "🎭 Roleplay Mode",
+        descRoleplayToggle: "RPG lore titles, universe quips & story narration",
+        labelInteractiveToggle: "🎮 Interactive Arena Mode",
+        descInteractiveToggle: "Live audio synth FX, particle glow & arena visual engine",
+        badgeMatrixGoal: "🎯 TARGET GOAL MATRIX",
+        titleTargetMatrix: "Target Goal Matrix Tracker",
+        descTargetMatrix: "Choose your discipline target goal and track daily wake-up progress in real time!"
+    }
+};
+
+const MULTIVERSE_REALM_TITLES = {
+    marvel: {
+        badge: "🦸 Quantum Avengers",
+        quip: "Avengers Assemble at 5 AM! Quantum energy surges through your veins! ⚡",
+        ranks: {
+            uz: [[1, "🦸 Kvant Shogird"], [5, "⚡ Qasaskor Jangchi"], [10, "🛡️ Vibranium Titan"], [20, "👑 Koinot Himoyachisi"]],
+            ru: [[1, "🦸 Квантовый Ученик"], [5, "⚡ Воин-Мститель"], [10, "🛡️ Вибраниумовый Титан"], [20, "👑 Защитник Вселенной"]],
+            en: [[1, "🦸 Quantum Initiate"], [5, "⚡ Avenger Warrior"], [10, "🛡️ Vibranium Titan"], [20, "👑 Universe Defender"]]
+        }
+    },
+    samurai: {
+        badge: "🗡️ Bushido Sunrise",
+        quip: "The blade of discipline cuts down morning sleepiness! Bushido Way activated! ⚔️",
+        ranks: {
+            uz: [[1, "🗡️ Ronin Shogird"], [5, "⚔️ Bushido Jangchisi"], [10, "🏯 Katana Master"], [20, "👑 Shogun Afsonasi"]],
+            ru: [[1, "🗡️ Ученик-Ронин"], [5, "⚔️ Воин Бусидо"], [10, "🏯 Мастер Катаны"], [20, "👑 Легендарный Сёгун"]],
+            en: [[1, "🗡️ Ronin Initiate"], [5, "⚔️ Bushido Warrior"], [10, "🏯 Katana Master"], [20, "👑 Legendary Shogun"]]
+        }
+    },
+    feudal: {
+        badge: "🏯 Shogun Era",
+        quip: "By order of the Emperor! The dawn belongs to the honorable Shogun Clan! 🏯",
+        ranks: {
+            uz: [[1, "🏯 Saroy Posboni"], [5, "🥷 Shinobi Sobiq"], [10, "🏯 Imperiya Masteri"], [20, "👑 Buyuk Shogun"]],
+            ru: [[1, "🏯 Страж Дворца"], [5, "🥷 Мастер-Шиноби"], [10, "🏯 Имперский Мастер"], [20, "👑 Великий Сёгун"]],
+            en: [[1, "🏯 Palace Guard"], [5, "🥷 Shinobi Master"], [10, "🏯 Imperial Master"], [20, "👑 Grand Shogun"]]
+        }
+    },
+    mafia: {
+        badge: "🎩 Don's Syndicate",
+        quip: "An offer the pillow couldn't refuse! Welcome to the Dawn Syndicate! 🎩",
+        ranks: {
+            uz: [[1, "🎩 Sindikat A'zosi"], [5, "🔫 Caporegime"], [10, "💼 Consigliere"], [20, "👑 Godfather 5 AM"]],
+            ru: [[1, "🎩 Член Синдиката"], [5, "🔫 Капореджиме"], [10, "💼 Консильери"], [20, "👑 Дон 5 AM"]],
+            en: [[1, "🎩 Syndicate Associate"], [5, "🔫 Caporegime"], [10, "💼 Consigliere"], [20, "👑 Godfather 5 AM"]]
+        }
+    },
+    cyberpunk: {
+        badge: "⚡ Neon 2077",
+        quip: "Neural wake-up sequence complete! Cybernetic upgrades active! ⚡",
+        ranks: {
+            uz: [[1, "⚡ Neon Shogird"], [5, "🔌 Netrunner"], [10, "🦾 Cyber Samurai"], [20, "👑 Cyberpunk Afsonasi"]],
+            ru: [[1, "⚡ Неоновый Ученик"], [5, "🔌 Нетраннер"], [10, "🦾 Кибер-Самурай"], [20, "👑 Легенда 2077"]],
+            en: [[1, "⚡ Neon Initiate"], [5, "🔌 Netrunner"], [10, "🦾 Cyber Samurai"], [20, "👑 Legend of 2077"]]
+        }
+    },
+    olympus: {
+        badge: "🏛️ Zeus Dawn",
+        quip: "Zeus strikes sleep with golden lightning! Mount Olympus honors your awakening! 🏛️",
+        ranks: {
+            uz: [[1, "🏛️ Olimpiya Qahramoni"], [5, "⚡ Zevs Yashini"], [10, "⚔️ Sparta Jangchisi"], [20, "👑 Xudolar Qiroli"]],
+            ru: [[1, "🏛️ Герой Олимпа"], [5, "⚡ Молния Зевса"], [10, "⚔️ Спартанский Воин"], [20, "👑 Владыка Олимпа"]],
+            en: [[1, "🏛️ Olympus Hero"], [5, "⚡ Zeus Lightning"], [10, "⚔️ Spartan Warrior"], [20, "👑 Sovereign of Olympus"]]
+        }
+    },
+    scifi: {
+        badge: "🚀 Galactic Fleet",
+        quip: "Hyperdrive engaged! Galactic Fleet launched before dawn! 🚀",
+        ranks: {
+            uz: [[1, "🚀 Koinot Kadeti"], [5, "🛸 Plazma Uchuvchisi"], [10, "🪐 Galaktika Komandiri"], [20, "👑 Koinot Floti Qiroli"]],
+            ru: [[1, "🚀 Звездный Кадет"], [5, "🛸 Плазменный Пилот"], [10, "🪐 Галактический Командир"], [20, "👑 Повелитель Галактики"]],
+            en: [[1, "🚀 Star Cadet"], [5, "🛸 Plasma Pilot"], [10, "🪐 Galactic Commander"], [20, "👑 Sovereign of Galaxy"]]
+        }
+    }
+};
     }
 };
 
@@ -307,7 +405,11 @@ const defaultState = {
         tourneyPoints: 350,
         badges: ["Early Bird", "Photo Master"],
         checkedInToday: false,
-        bedtimeRecordedToday: false
+        bedtimeRecordedToday: false,
+        active_universe: "marvel",
+        roleplay_enabled: true,
+        interactive_enabled: true,
+        target_goal: "21"
     },
     soundEnabled: true,
     lang: "uz"
@@ -317,7 +419,13 @@ let state = (() => {
     try {
         const saved = localStorage.getItem("5amclub_state_v2");
         if (saved) {
-            return JSON.parse(saved);
+            const parsed = JSON.parse(saved);
+            if (!parsed.user) parsed.user = {};
+            if (!parsed.user.active_universe) parsed.user.active_universe = "marvel";
+            if (parsed.user.roleplay_enabled === undefined) parsed.user.roleplay_enabled = true;
+            if (parsed.user.interactive_enabled === undefined) parsed.user.interactive_enabled = true;
+            if (!parsed.user.target_goal) parsed.user.target_goal = "21";
+            return parsed;
         }
     } catch (e) {
         console.warn("Storage read error", e);
@@ -407,6 +515,13 @@ class SoundEffects {
         this.playTone(220, "sawtooth", 0.08, 0, 0.15);
         this.playTone(330, "sawtooth", 0.15, 0.06, 0.18);
     }
+
+    realmSwitch() {
+        if (state.user && !state.user.interactive_enabled) return;
+        this.playTone(523.25, "sawtooth", 0.06, 0, 0.15);
+        this.playTone(659.25, "sawtooth", 0.08, 0.05, 0.18);
+        this.playTone(783.99, "sawtooth", 0.12, 0.11, 0.2);
+    }
 }
 const sfx = new SoundEffects();
 
@@ -457,6 +572,170 @@ function getRankTitle(streak, lang) {
     return t.rankNovice;
 }
 
+// ==================== MULTIVERSE DYNAMIC UI ENGINE & TARGET GOAL MATRIX ====================
+function applyMultiverseTheme(realm) {
+    const validRealms = ["marvel", "samurai", "feudal", "mafia", "cyberpunk", "olympus", "scifi"];
+    if (!validRealms.includes(realm)) realm = "marvel";
+
+    state.user.active_universe = realm;
+
+    validRealms.forEach(r => document.body.classList.remove(`theme-${r}`));
+    document.body.classList.add(`theme-${realm}`);
+
+    document.querySelectorAll(".realm-card").forEach(card => {
+        if (card.getAttribute("data-realm") === realm) {
+            card.classList.add("active");
+        } else {
+            card.classList.remove("active");
+        }
+    });
+
+    updateMultiverseRoleplayHUD();
+}
+
+function updateMultiverseRoleplayHUD() {
+    const realm = state.user.active_universe || "marvel";
+    const realmData = MULTIVERSE_REALM_TITLES[realm] || MULTIVERSE_REALM_TITLES.marvel;
+    const userRankEl = document.getElementById("user-rank");
+
+    if (userRankEl) {
+        if (state.user.roleplay_enabled) {
+            const lang = state.lang || "uz";
+            const ranksList = realmData.ranks[lang] || realmData.ranks.uz;
+            let activeTitle = ranksList[0][1];
+            const lvl = state.user.level || 1;
+            for (const [minLvl, title] of ranksList) {
+                if (lvl >= minLvl) activeTitle = title;
+            }
+            userRankEl.textContent = activeTitle;
+        } else {
+            userRankEl.textContent = getRankTitle(state.user.streak, state.lang);
+        }
+    }
+}
+
+function initMultiverseEngine() {
+    const roleplayCheckbox = document.getElementById("roleplay-toggle-checkbox");
+    const interactiveCheckbox = document.getElementById("interactive-toggle-checkbox");
+
+    if (roleplayCheckbox) {
+        roleplayCheckbox.checked = state.user.roleplay_enabled !== false;
+        roleplayCheckbox.addEventListener("change", (e) => {
+            state.user.roleplay_enabled = e.target.checked;
+            saveState();
+            updateUI();
+            syncMultiverseStateWithBackend();
+            showToast(state.user.roleplay_enabled ? "🎭 Roleplay Mode Enabled!" : "🎭 Roleplay Mode Disabled");
+        });
+    }
+
+    if (interactiveCheckbox) {
+        interactiveCheckbox.checked = state.user.interactive_enabled !== false;
+        interactiveCheckbox.addEventListener("change", (e) => {
+            state.user.interactive_enabled = e.target.checked;
+            saveState();
+            syncMultiverseStateWithBackend();
+            showToast(state.user.interactive_enabled ? "🎮 Interactive Arena FX Enabled!" : "🎮 Interactive Arena FX Muted");
+        });
+    }
+
+    const realmCards = document.querySelectorAll(".realm-card");
+    realmCards.forEach(card => {
+        card.addEventListener("click", () => {
+            const targetRealm = card.getAttribute("data-realm");
+            if (!targetRealm) return;
+            sfx.realmSwitch();
+            applyMultiverseTheme(targetRealm);
+            saveState();
+            syncMultiverseStateWithBackend();
+            
+            const realmName = targetRealm.toUpperCase();
+            showToast(`🌌 Multiverse Realm Switched: ${realmName}!`);
+            triggerHapticFeedback("medium");
+        });
+    });
+}
+
+function initTargetGoalMatrix() {
+    const goalBtns = document.querySelectorAll(".goal-btn");
+    goalBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const target = btn.getAttribute("data-goal");
+            if (!target) return;
+            sfx.click();
+            state.user.target_goal = String(target);
+            saveState();
+            renderTargetGoalMatrix();
+            syncMultiverseStateWithBackend();
+            showToast(`🎯 Target Goal set to ${target} Days!`);
+            triggerHapticFeedback("light");
+        });
+    });
+}
+
+function renderTargetGoalMatrix() {
+    const currentGoal = parseInt(state.user.target_goal || "21", 10);
+    const streak = state.user.streak || 0;
+
+    document.querySelectorAll(".goal-btn").forEach(btn => {
+        const g = parseInt(btn.getAttribute("data-goal"), 10);
+        if (g === currentGoal) {
+            btn.classList.add("active");
+        } else {
+            btn.classList.remove("active");
+        }
+    });
+
+    const ratioText = document.getElementById("matrix-ratio-text");
+    const percentageText = document.getElementById("matrix-percentage-text");
+    const progressFill = document.getElementById("matrix-progress-fill");
+    const daysLeftText = document.getElementById("matrix-days-left-text");
+    const milestoneBadge = document.getElementById("matrix-milestone-badge");
+
+    const pct = Math.min(100, Math.round((streak / currentGoal) * 100));
+    const daysLeft = Math.max(0, currentGoal - streak);
+
+    if (ratioText) ratioText.textContent = `${streak} / ${currentGoal} Days`;
+    if (percentageText) percentageText.textContent = `${pct}% Completed`;
+    if (progressFill) progressFill.style.width = `${pct}%`;
+
+    const lang = state.lang || "uz";
+    const daysLeftLabel = {
+        uz: `⏳ ${daysLeft} kun qoldi`,
+        ru: `⏳ Осталось ${daysLeft} дн.`,
+        en: `⏳ ${daysLeft} day(s) left`
+    };
+    if (daysLeftText) daysLeftText.textContent = daysLeftLabel[lang] || daysLeftLabel.uz;
+
+    let milestone = "🏆 Standard Goal";
+    if (currentGoal === 7) milestone = "⚡ 7-Day Sprint";
+    else if (currentGoal === 21) milestone = "🏆 21-Day Gold Cert";
+    else if (currentGoal === 66) milestone = "🌌 66-Day Transformation";
+    else if (currentGoal === 100) milestone = "👑 100-Day Centurion Legend";
+
+    if (milestoneBadge) milestoneBadge.textContent = milestone;
+}
+
+async function syncMultiverseStateWithBackend() {
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData) {
+        try {
+            await fetch("/api/auth/validate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    initData: window.Telegram.WebApp.initData,
+                    active_universe: state.user.active_universe,
+                    roleplay_enabled: state.user.roleplay_enabled,
+                    interactive_enabled: state.user.interactive_enabled,
+                    target_goal: state.user.target_goal
+                })
+            });
+        } catch (e) {
+            console.warn("Backend sync warning:", e);
+        }
+    }
+}
+
 // ==================== INITIALIZATION ====================
 document.addEventListener("DOMContentLoaded", () => {
     initTelegramWebApp();
@@ -464,6 +743,10 @@ document.addEventListener("DOMContentLoaded", () => {
     initLanguage();
     initTabs();
     initLiveCountdown();
+    initMultiverseEngine();
+    initTargetGoalMatrix();
+    applyMultiverseTheme(state.user.active_universe || "marvel");
+    renderTargetGoalMatrix();
     renderCalendar();
     renderInventory();
     renderLeaderboard();
@@ -515,6 +798,14 @@ async function initTelegramWebApp() {
                         state.user.refCount = data.user.ref_count || 0;
                         state.user.tourneyPoints = data.user.tournament_points || 0;
                         if (data.user.lang) state.lang = data.user.lang;
+
+                        if (data.user.active_universe) state.user.active_universe = data.user.active_universe;
+                        if (data.user.roleplay_enabled !== undefined) state.user.roleplay_enabled = data.user.roleplay_enabled;
+                        if (data.user.interactive_enabled !== undefined) state.user.interactive_enabled = data.user.interactive_enabled;
+                        if (data.user.target_goal) state.user.target_goal = String(data.user.target_goal);
+                        
+                        applyMultiverseTheme(state.user.active_universe);
+                        renderTargetGoalMatrix();
                         updateUI();
                     }
                 }
@@ -664,6 +955,18 @@ function applyLanguage() {
     setElementText("text-btn-matchmaking", t.matchBtn);
     setElementText("text-download-cert", t.textDownloadCert);
     setElementText("text-share-story", t.textShareStory);
+
+    // Multiverse & Matrix Tracker Labels
+    setElementText("badge-multiverse", t.badgeMultiverse);
+    setElementText("title-multiverse", t.titleMultiverse);
+    setElementText("desc-multiverse", t.descMultiverse);
+    setElementText("label-roleplay-toggle", t.labelRoleplayToggle);
+    setElementText("desc-roleplay-toggle", t.descRoleplayToggle);
+    setElementText("label-interactive-toggle", t.labelInteractiveToggle);
+    setElementText("desc-interactive-toggle", t.descInteractiveToggle);
+    setElementText("badge-matrix-goal", t.badgeMatrixGoal);
+    setElementText("title-target-matrix", t.titleTargetMatrix);
+    setElementText("desc-target-matrix", t.descTargetMatrix);
 }
 
 function setElementText(id, text) {
@@ -713,6 +1016,10 @@ function updateUI() {
         if (vitalityBadge) vitalityBadge.style.display = "none";
         if (staminaStatus) staminaStatus.textContent = `${stamina}% Fatigued 🔴`;
     }
+
+    // Update Target Goal Matrix & Roleplay HUD
+    if (typeof renderTargetGoalMatrix === "function") renderTargetGoalMatrix();
+    if (typeof updateMultiverseRoleplayHUD === "function") updateMultiverseRoleplayHUD();
 
     // Update 21-Day Challenge progress bar
     const progressFill = document.getElementById("cert-progress-fill");
