@@ -1,5 +1,5 @@
 // ==================== THE 5 AM CLUB MINI APP ====================
-// Senior Full-Stack Engineering Edition: Multi-Language, Audio FX, Confetti, Dynamic Time & LocalStorage
+// Senior Full-Stack Engineering Edition: Multi-Language, Audio FX, Smart Photo Verification, Inventory & Leaderboard
 
 const I18N = {
     uz: {
@@ -10,9 +10,13 @@ const I18N = {
         rankLegend: "👑 5 AM Afsonasi",
         tabDashboard: "Bosh sahifa",
         tabCalendar: "Taqvim",
+        tabInventory: "Xaridorlik",
         tabMarket: "Bozor",
         tabArena: "Arena",
         tabRanks: "Reyting",
+        labelStreak: "Kun",
+        labelCoins: "Tanga",
+        labelMultiplier: "Koeff",
         windowBadge: "● JONLI OYNA",
         windowTitle: "Ertalabki Check-In Oynasi",
         hoursLabel: "Soat",
@@ -21,7 +25,7 @@ const I18N = {
         btnCheckin: "SOLO CHECK-IN (+10 TANGA)",
         photoTitle: "Kunlik Foto Topshiriq",
         photoBadge: "📸 FOTO TOPSHIRIQ",
-        missionText: "☕ <b>Topshiriq:</b> Tonggi kofe, choy yoki toza suv stakaningiz rasmini oling!",
+        missionText: "☕ <b>Topshiriq:</b> Bugungi tonggi kofe, choy yoki toza suv stakaningiz rasmini yuboring!",
         uploadBtn: "📷 Foto Isbot Yuborish (+25 Tanga)",
         verifiedStamp: "✅ VERIFIED 5 AM CLUB",
         wisdomQuote: "“Ertalabki vaqtingizga egalik qiling. Hayotingizni yuksaltiring. G'alabalar tong otmasdan yaratiladi.”",
@@ -30,17 +34,43 @@ const I18N = {
         calendarSub: "Yashil kataklar muvaffaqiyatli 5 AM uyg'onishlarini bildiradi!",
         habitTitle: "🏆 21 Kunlik Odat Maratoni",
         habitSub: "Oltin Sertifikatni ochish uchun 21 kunlik streakka erishing!",
+        inventoryBadge: "🎒 INVENTORY",
+        inventoryHeader: "Mening Xaridorligim & Buyumlar",
+        labelInvFreezes: "Streak Qalqoni",
+        labelInvPhotos: "Tasdiqlangan Foto",
+        labelInvBoost: "Coin Koeffitsiyent",
+        labelInvRefs: "Taklif Qilinganlar",
+        titleOwnedItems: "📦 Faol Buyumlar & Sertifikatlar",
+        itemFreezeTitle: "Streak Freeze Qalqoni",
+        itemFreezeDesc: "Uxlab qolganda streakni 0 ga tushishdan avtomatik 1 kun saqlaydi.",
+        itemCertTitle: "21-Day Gold Certificate",
+        itemCertDesc: "21 kun ertalab soat 5:00 da uyg'onganingiz uchun beriladigan rasmiy mukofot.",
+        titleBadgesCabinet: "🏅 Trophy Cabinet (Nishonlar)",
+        btnViewCert: "Ochish 📜",
+        btnUseShield: "Ko'rish",
         shopTitle: "🛒 5 AM Bozori",
+        labelBalance: "Hisob:",
+        shopItem1Title: "Streak Freeze",
+        shopItem1Desc: "Uxlab qolganda streakni saqlab qoluvchi maxsus qalqon.",
+        shopItem2Title: "Lion Riser Nishoni",
+        shopItem2Desc: "Profilingizda aks etuvchi eksklyuziv oltin arslon nishoni.",
+        shopItem3Title: "Speed Demon Unvoni",
+        shopItem3Desc: "Guruhdagi eng chaqqon va erta uyg'onuvchilar uchun unvon.",
+        shopItem4Title: "VIP Mastermind Kirish",
+        shopItem4Desc: "Maxsus 5 AM Mastermind yopiq guruhiga taklifnoma.",
+        btnBuy: "Sotib olish",
         arenaTitle: "⚔️ 1v1 Uyg'onish Dueli",
-        arenaSub: "50 tanga tikib, erta uyg'onish bo'yicha do'stingiz bilan bellashing!",
+        arenaSub: "50 tanga tikib, erta uyg'onish bo'yicha do'stingiz yoki random o'yinchi bilan bellashing!",
         matchBtn: "🎲 Tasodifiy Raqib Qidirish",
         matchSearching: "⌛ Raqib qidirilmoqda...",
         matchFound: "⚔️ Raqib topildi! Duel faol!",
         duoTitle: "🤝 Duo Combo Sherik",
         duoSub: "Sherik bilan birgalikda uyg'onib, har kuni +50 bonus tanga oling!",
+        labelPartner: "Hozirgi Sherik:",
         ranksTitle: "🏆 Global Shon-Sharaf Zali",
         toastCheckinOk: "⚡ Solo Check-In muvaffaqiyatli! +{coins} Tanga! 🔥",
         toastPhotoOk: "📸 Foto tasdiqlandi! +{coins} Tanga! 🚀",
+        toastPhotoRejected: "❌ Rasm juda qorong'u yoki talabga javob bermaydi! Iltimos, yorug'roq rasm yuboring! 📸",
         toastBought: "🎉 {item} sotib olindi ({price} Tanga)!",
         toastNoCoins: "❌ Tangalar yetarli emas! Sizga {price} tanga kerak."
     },
@@ -52,9 +82,13 @@ const I18N = {
         rankLegend: "👑 Легенда 5 AM",
         tabDashboard: "Главная",
         tabCalendar: "Календарь",
+        tabInventory: "Инвентарь",
         tabMarket: "Рынок",
         tabArena: "Арена",
         tabRanks: "Рейтинг",
+        labelStreak: "Дней",
+        labelCoins: "Монет",
+        labelMultiplier: "Множ",
         windowBadge: "● ЖИВОЕ ОКНО",
         windowTitle: "Окно Утреннего Подъема",
         hoursLabel: "Часы",
@@ -72,7 +106,31 @@ const I18N = {
         calendarSub: "Зеленые плитки отражают подтвержденные подъемы в 5:00 утра!",
         habitTitle: "🏆 21-Дневный Марафон Привычки",
         habitSub: "Достигните 21 дня для получения Золотого Сертификата!",
+        inventoryBadge: "🎒 ИНВЕНТАРЬ",
+        inventoryHeader: "Мой Инвентарь & Награды",
+        labelInvFreezes: "Защита Стрика",
+        labelInvPhotos: "Фото-Подтверждений",
+        labelInvBoost: "Множитель Монет",
+        labelInvRefs: "Приглашено Друзей",
+        titleOwnedItems: "📦 Активные Предметы & Сертификаты",
+        itemFreezeTitle: "Streak Freeze (Защита)",
+        itemFreezeDesc: "Автоматически спасает стрик от сброса при пропуске 1 дня.",
+        itemCertTitle: "21-Day Gold Certificate",
+        itemCertDesc: "Официальный сертификат за 21 день непрерывного подъема в 5:00 утра.",
+        titleBadgesCabinet: "🏅 Витрина Наград (Значки)",
+        btnViewCert: "Открыть 📜",
+        btnUseShield: "Смотреть",
         shopTitle: "🛒 Рынок 5 AM",
+        labelBalance: "Баланс:",
+        shopItem1Title: "Streak Freeze",
+        shopItem1Desc: "Защитный щит для сохранения стрика при пропуске дня.",
+        shopItem2Title: "Значок Lion Riser",
+        shopItem2Desc: "Эксклюзивный золотой значок льва в вашем профиле.",
+        shopItem3Title: "Титул Speed Demon",
+        shopItem3Desc: "Особый титул для самых быстрых участников клуба.",
+        shopItem4Title: "Вход в VIP Mastermind",
+        shopItem4Desc: "Доступ в закрытую элитную группу 5 AM Mastermind.",
+        btnBuy: "Купить",
         arenaTitle: "⚔️ Дуэль 1v1 на Подъем",
         arenaSub: "Поставьте 50 монет и соревнуйтесь в раннем подъеме!",
         matchBtn: "🎲 Найти Случайного Соперника",
@@ -80,9 +138,11 @@ const I18N = {
         matchFound: "⚔️ Соперник найден! Дуэль активна!",
         duoTitle: "🤝 Парный Комбо Партнер",
         duoSub: "Просыпайтесь вместе с партнером и получайте +50 монет ежедневно!",
+        labelPartner: "Текущий Партнер:",
         ranksTitle: "🏆 Зал Славы 5 AM",
         toastCheckinOk: "⚡ Соло Check-In успешен! +{coins} Монет! 🔥",
         toastPhotoOk: "📸 Фото подтверждено! +{coins} Монет! 🚀",
+        toastPhotoRejected: "❌ Фото слишком темное или не соответствует требованиям! 📸",
         toastBought: "🎉 Куплено: {item} за {price} монет!",
         toastNoCoins: "❌ Недостаточно монет! Требуется {price} монет."
     },
@@ -94,9 +154,13 @@ const I18N = {
         rankLegend: "👑 5 AM Legend",
         tabDashboard: "Dashboard",
         tabCalendar: "Calendar",
+        tabInventory: "Inventory",
         tabMarket: "Market",
         tabArena: "Arena",
         tabRanks: "Ranks",
+        labelStreak: "Days",
+        labelCoins: "Coins",
+        labelMultiplier: "Mult",
         windowBadge: "● LIVE WINDOW",
         windowTitle: "Morning Check-In Window",
         hoursLabel: "Hours",
@@ -114,7 +178,31 @@ const I18N = {
         calendarSub: "Green tiles represent verified 5 AM wake-ups!",
         habitTitle: "🏆 21-Day Habit Challenge",
         habitSub: "Reach a 21-day streak to unlock your Official Golden Certificate!",
+        inventoryBadge: "🎒 INVENTORY",
+        inventoryHeader: "My Inventory & Assets",
+        labelInvFreezes: "Streak Freezes",
+        labelInvPhotos: "Verified Photos",
+        labelInvBoost: "Coin Multiplier",
+        labelInvRefs: "Invited Friends",
+        titleOwnedItems: "📦 Active Items & Certificates",
+        itemFreezeTitle: "Streak Freeze Shield",
+        itemFreezeDesc: "Protects your streak from resetting to 0 if you miss 1 day.",
+        itemCertTitle: "21-Day Gold Certificate",
+        itemCertDesc: "Official verified discipline award for 21 consecutive 5 AM wake-ups.",
+        titleBadgesCabinet: "🏅 Trophy Cabinet (Badges)",
+        btnViewCert: "View 📜",
+        btnUseShield: "View",
         shopTitle: "🛒 5 AM Marketplace",
+        labelBalance: "Balance:",
+        shopItem1Title: "Streak Freeze",
+        shopItem1Desc: "Protects your streak if you miss 1 morning check-in.",
+        shopItem2Title: "Lion Riser Badge",
+        shopItem2Desc: "Exclusive gold lion badge displayed on your profile.",
+        shopItem3Title: "Speed Demon Title",
+        shopItem3Desc: "Title awarded to the fastest riser in the group.",
+        shopItem4Title: "VIP Group Access",
+        shopItem4Desc: "Unlock access to the Mastermind 5 AM Group.",
+        btnBuy: "Buy",
         arenaTitle: "⚔️ 1v1 Wake-Up Duels",
         arenaSub: "Challenge a friend or random player for a 50 coin pool!",
         matchBtn: "🎲 Find Random Matchmaking",
@@ -122,9 +210,11 @@ const I18N = {
         matchFound: "⚔️ Match Found! Duel Active!",
         duoTitle: "🤝 Duo Combo Partner",
         duoSub: "Team up with a partner. Wake up together for +50 daily bonus coins!",
+        labelPartner: "Current Partner:",
         ranksTitle: "🏆 Global Hall of Fame",
         toastCheckinOk: "⚡ Solo Check-In Successful! +{coins} Coins! 🔥",
         toastPhotoOk: "📸 Photo Verified! +{coins} Coins! 🚀",
+        toastPhotoRejected: "❌ Image is too dark or does not meet requirements! 📸",
         toastBought: "🎉 Purchased {item} for {price} Coins!",
         toastNoCoins: "❌ Insufficient Coins! You need {price} Coins."
     }
@@ -149,7 +239,6 @@ const defaultState = {
     lang: "uz"
 };
 
-// Load saved state or use default
 let state = (() => {
     try {
         const saved = localStorage.getItem("5amclub_state");
@@ -197,9 +286,7 @@ class SoundEffects {
             gain.connect(this.ctx.destination);
             osc.start(this.ctx.currentTime + startDelay);
             osc.stop(this.ctx.currentTime + startDelay + duration);
-        } catch (e) {
-            // Audio context policy safe fallback
-        }
+        } catch (e) {}
     }
 
     click() {
@@ -227,6 +314,8 @@ document.addEventListener("DOMContentLoaded", () => {
     initTabs();
     initLiveCountdown();
     renderCalendar();
+    renderInventory();
+    renderLeaderboard();
     initActions();
     updateUI();
 });
@@ -244,6 +333,9 @@ function initTelegramWebApp() {
             state.user.name = tgUser.first_name + (tgUser.last_name ? " " + tgUser.last_name : "");
             state.user.username = tgUser.username || "user";
             
+            const fighterName = document.getElementById("user-fighter-name");
+            if (fighterName) fighterName.textContent = state.user.name;
+
             if (tgUser.photo_url) {
                 const avatar = document.getElementById("user-avatar");
                 if (avatar) avatar.src = tgUser.photo_url;
@@ -270,6 +362,8 @@ function initLanguage() {
             saveState();
             applyLanguage();
             updateUI();
+            renderInventory();
+            renderLeaderboard();
         });
     });
 
@@ -295,12 +389,18 @@ function calculateMultiplier(streak) {
 function applyLanguage() {
     const t = I18N[state.lang] || I18N.uz;
 
-    // Navigation
+    // Navigation (6 Tabs)
     setElementText("tab-nav-dashboard", t.tabDashboard);
     setElementText("tab-nav-calendar", t.tabCalendar);
+    setElementText("tab-nav-inventory", t.tabInventory);
     setElementText("tab-nav-shop", t.tabMarket);
     setElementText("tab-nav-arena", t.tabArena);
     setElementText("tab-nav-ranks", t.tabRanks);
+
+    // Profile header labels
+    setElementText("label-streak", t.labelStreak);
+    setElementText("label-coins", t.labelCoins);
+    setElementText("label-multiplier", t.labelMultiplier);
 
     // Dashboard
     setElementText("badge-live-window", t.windowBadge);
@@ -325,11 +425,42 @@ function applyLanguage() {
     setElementText("title-habit", t.habitTitle);
     setElementText("sub-habit", t.habitSub);
 
-    // Shop, Arena, Ranks
+    // Inventory Tab
+    setElementText("badge-inventory", t.inventoryBadge);
+    setElementText("title-inventory-header", t.inventoryHeader);
+    setElementText("label-inv-freezes", t.labelInvFreezes);
+    setElementText("label-inv-photos", t.labelInvPhotos);
+    setElementText("label-inv-boost", t.labelInvBoost);
+    setElementText("label-inv-refs", t.labelInvRefs);
+    setElementText("title-owned-items", t.titleOwnedItems);
+    setElementText("item-freeze-title", t.itemFreezeTitle);
+    setElementText("item-freeze-desc", t.itemFreezeDesc);
+    setElementText("item-cert-title", t.itemCertTitle);
+    setElementText("item-cert-desc", t.itemCertDesc);
+    setElementText("title-badges-cabinet", t.titleBadgesCabinet);
+    setElementText("btn-view-cert", t.btnViewCert);
+    setElementText("btn-use-shield", t.btnUseShield);
+
+    // Shop
     setElementText("title-shop", t.shopTitle);
+    setElementText("label-balance", t.labelBalance);
+    setElementText("shop-item1-title", t.shopItem1Title);
+    setElementText("shop-item1-desc", t.shopItem1Desc);
+    setElementText("shop-item2-title", t.shopItem2Title);
+    setElementText("shop-item2-desc", t.shopItem2Desc);
+    setElementText("shop-item3-title", t.shopItem3Title);
+    setElementText("shop-item3-desc", t.shopItem3Desc);
+    setElementText("shop-item4-title", t.shopItem4Title);
+    setElementText("shop-item4-desc", t.shopItem4Desc);
+
+    // Arena & Ranks
     setElementText("title-arena", t.arenaTitle);
     setElementText("sub-arena", t.arenaSub);
+    setElementText("duo-title-card", t.duoTitle);
+    setElementText("duo-sub-card", t.duoSub);
+    setElementText("label-partner", t.labelPartner);
     setElementText("title-ranks", t.ranksTitle);
+    setElementText("text-btn-matchmaking", t.matchBtn);
 }
 
 function setElementText(id, text) {
@@ -355,8 +486,13 @@ function updateUI() {
     const progressPercent = Math.min(100, Math.round((state.user.streak / 21) * 100));
     
     if (progressFill) progressFill.style.width = `${progressPercent}%`;
-    if (progressLabel) progressLabel.textContent = `${state.user.streak} / 21 Days (${progressPercent}% Complete)`;
+    if (progressLabel) {
+        const unit = state.lang === "uz" ? "Kun" : (state.lang === "ru" ? "Дней" : "Days");
+        const doneText = state.lang === "uz" ? "Bajarildi" : (state.lang === "ru" ? "Завершено" : "Complete");
+        progressLabel.textContent = `${state.user.streak} / 21 ${unit} (${progressPercent}% ${doneText})`;
+    }
 
+    renderInventory();
     saveState();
 }
 
@@ -382,13 +518,101 @@ function initTabs() {
     });
 }
 
+// ==================== INVENTORY TAB RENDERING ====================
+function renderInventory() {
+    setElementText("inv-freeze-count", state.user.freezeCount || 0);
+    setElementText("inv-photo-count", state.user.photoCount || 0);
+    setElementText("inv-multiplier-val", `${state.user.multiplier}X`);
+    setElementText("inv-ref-val", state.user.refCount || 0);
+
+    const freezeBadge = document.getElementById("freeze-badge-count");
+    if (freezeBadge) {
+        const suffix = state.lang === "uz" ? "ta mavjud" : (state.lang === "ru" ? "шт. в наличии" : "Available");
+        freezeBadge.textContent = `${state.user.freezeCount || 0} ${suffix}`;
+    }
+
+    const certBadge = document.getElementById("cert-badge-status");
+    if (certBadge) {
+        if (state.user.streak >= 21) {
+            certBadge.textContent = "🏆 UNLOCKED (Oltin)";
+            certBadge.classList.add("unlocked");
+        } else {
+            certBadge.textContent = `${state.user.streak} / 21 Kun`;
+            certBadge.classList.remove("unlocked");
+        }
+    }
+
+    // Render Badges Cabinet
+    const cabinet = document.getElementById("badges-cabinet-list");
+    if (cabinet) {
+        const badgesData = [
+            { icon: "⚡", name: "Early Bird", req: "7 streak", unlocked: state.user.streak >= 7 },
+            { icon: "📸", name: "Photo Master", req: "5 foto", unlocked: state.user.photoCount >= 5 },
+            { icon: "👑", name: "Elite 21", req: "21 streak", unlocked: state.user.streak >= 21 },
+            { icon: "🦁", name: "5 AM Legend", req: "30 streak", unlocked: state.user.streak >= 30 },
+            { icon: "🛡", name: "Shielded", req: "1 freeze", unlocked: (state.user.freezeCount || 0) > 0 },
+            { icon: "👥", name: "Ambassador", req: "5 ref", unlocked: (state.user.refCount || 0) >= 5 }
+        ];
+
+        cabinet.innerHTML = badgesData.map(b => `
+            <div class="badge-card ${b.unlocked ? 'unlocked' : 'locked'}">
+                <span class="b-icon">${b.icon}</span>
+                <span class="b-name">${b.name}</span>
+                <small class="b-status">${b.unlocked ? '✅ Faol' : b.req}</small>
+            </div>
+        `).join("");
+    }
+}
+
+// ==================== LEADERBOARD RENDERING ([BOT] LABELS) ====================
+function renderLeaderboard() {
+    const bots = [
+        { rank: "#4", name: "[BOT] Bot-4", streak: 19, coins: 820 },
+        { rank: "#5", name: "[BOT] Bot-5", streak: 16, coins: 640 },
+        { rank: "#6", name: "[BOT] Bot-6", streak: 14, coins: 510 },
+        { rank: "#7", name: "[BOT] Bot-7", streak: 10, coins: 350 },
+        { rank: "#8", name: "[BOT] Bot-8", streak: 8, coins: 280 }
+    ];
+
+    const list = document.getElementById("leaderboard-list");
+    if (!list) return;
+
+    const unit = state.lang === "uz" ? "Kun" : (state.lang === "ru" ? "Дн" : "Days");
+    list.innerHTML = bots.map(b => `
+        <li class="leader-item">
+            <span class="rank">${b.rank}</span>
+            <span class="leader-name">${b.name}</span>
+            <span class="leader-streak">🔥 ${b.streak} ${unit}</span>
+            <span class="leader-coins">🪙 ${b.coins}</span>
+        </li>
+    `).join("");
+}
+
+// ==================== CERTIFICATE MODAL ====================
+function openCertificateModal() {
+    const modal = document.getElementById("cert-modal");
+    const certName = document.getElementById("cert-modal-name");
+    if (certName) certName.textContent = state.user.name.toUpperCase();
+    if (modal) {
+        modal.style.display = "flex";
+        sfx.victory();
+        launchConfetti();
+    }
+}
+window.openCertificateModal = openCertificateModal;
+
+function closeCertificateModal() {
+    const modal = document.getElementById("cert-modal");
+    if (modal) modal.style.display = "none";
+}
+window.closeCertificateModal = closeCertificateModal;
+
 // ==================== DYNAMIC LIVE COUNTDOWN ====================
 function initLiveCountdown() {
     function updateCountdown() {
         const now = new Date();
         const target = new Date();
         
-        // Target: next 05:00 AM window
         target.setHours(5, 0, 0, 0);
         if (now >= target) {
             target.setDate(target.getDate() + 1);
@@ -429,7 +653,7 @@ function renderCalendar() {
     }
 }
 
-// ==================== INTERACTIVE ACTIONS & WATERMARK ====================
+// ==================== SMART PHOTO VERIFICATION & ACTIONS ====================
 function initActions() {
     // Solo Check-In Button
     const checkinBtn = document.getElementById("btn-main-checkin");
@@ -451,7 +675,7 @@ function initActions() {
         });
     }
 
-    // Photo Upload & Watermark Stamp Canvas
+    // Photo Upload & Smart Verification with Canvas
     const uploadBtn = document.getElementById("btn-upload-photo");
     const fileInput = document.getElementById("photo-file-input");
 
@@ -475,6 +699,50 @@ function initActions() {
                     canvas.width = img.width;
                     canvas.height = img.height;
                     ctx.drawImage(img, 0, 0);
+
+                    // SMART PHOTO VERIFICATION (PIXEL BRIGHTNESS & VARIANCE ANALYSIS)
+                    try {
+                        const sampleW = Math.min(100, img.width);
+                        const sampleH = Math.min(100, img.height);
+                        const sampleCanvas = document.createElement("canvas");
+                        sampleCanvas.width = sampleW;
+                        sampleCanvas.height = sampleH;
+                        const sampleCtx = sampleCanvas.getContext("2d");
+                        sampleCtx.drawImage(img, 0, 0, sampleW, sampleH);
+
+                        const imgData = sampleCtx.getImageData(0, 0, sampleW, sampleH).data;
+                        let totalBrightness = 0;
+                        const brightnessList = [];
+
+                        for (let i = 0; i < imgData.length; i += 4) {
+                            const r = imgData[i];
+                            const g = imgData[i+1];
+                            const b = imgData[i+2];
+                            const br = 0.299 * r + 0.587 * g + 0.114 * b;
+                            totalBrightness += br;
+                            brightnessList.push(br);
+                        }
+
+                        const avgBrightness = totalBrightness / brightnessList.length;
+                        let variance = 0;
+                        for (let b of brightnessList) {
+                            variance += Math.pow(b - avgBrightness, 2);
+                        }
+                        const stdDev = Math.sqrt(variance / brightnessList.length);
+
+                        console.log(`Smart photo analysis: Brightness=${avgBrightness.toFixed(2)}, StdDev=${stdDev.toFixed(2)}`);
+
+                        // Check if photo is too dark (< 26) or solid blank (< 10)
+                        if (avgBrightness < 26 || stdDev < 10) {
+                            const t = I18N[state.lang] || I18N.uz;
+                            showToast(t.toastPhotoRejected);
+                            triggerHapticFeedback("error");
+                            sfx.click();
+                            return;
+                        }
+                    } catch (err) {
+                        console.warn("Client image analysis exception", err);
+                    }
 
                     // Stamp Watermark Banner
                     const bannerHeight = Math.max(60, img.height * 0.12);
@@ -500,7 +768,7 @@ function initActions() {
 
                     const photoEarned = Math.round(25 * state.user.multiplier);
                     state.user.coins += photoEarned;
-                    state.user.photoCount += 1;
+                    state.user.photoCount = (state.user.photoCount || 0) + 1;
 
                     updateUI();
                     sfx.victory();
@@ -526,7 +794,7 @@ function initActions() {
             matchBtn.disabled = true;
 
             setTimeout(() => {
-                setElementText("opponent-name", "@Riser_Samir");
+                setElementText("opponent-name", "[BOT] Bot-2");
                 const oppStatus = document.getElementById("opponent-status");
                 if (oppStatus) {
                     oppStatus.textContent = "MATCHED 🔥";
@@ -550,7 +818,7 @@ function buyItem(itemName, price) {
         sfx.victory();
 
         if (itemName === "Streak Freeze") {
-            state.user.freezeCount += 1;
+            state.user.freezeCount = (state.user.freezeCount || 0) + 1;
         } else if (itemName === "Lion Badge") {
             state.user.rank = "🦁 Lion Riser";
             if (!state.user.badges.includes("Lion Badge")) state.user.badges.push("Lion Badge");
