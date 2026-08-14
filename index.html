@@ -7,37 +7,71 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Telegram WebApp SDK -->
-    <script src="https://telegram.org/js/telegram-web_app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="app" class="app-container">
         
-        <!-- HEADER PROFILE CARD -->
-        <header class="profile-card">
-            <div class="profile-top-row">
-                <div class="profile-main">
-                    <div class="avatar-container">
-                        <img id="user-avatar" src="https://ui-avatars.com/api/?name=5+AM&background=f59e0b&color=fff&bold=true" alt="Avatar">
+        <!-- HEADER / USER PROFILE HUD & RPG GAUGES -->
+        <header class="app-header">
+            <div class="header-top-row">
+                <div class="user-identity">
+                    <div class="avatar-wrapper">
+                        <img id="user-avatar" src="https://ui-avatars.com/api/?name=5+AM&background=f59e0b&color=090d16&bold=true" alt="Avatar">
+                        <span class="level-badge" id="hud-level-badge">Lvl 1</span>
                         <span class="online-indicator"></span>
                     </div>
                     <div class="user-details">
-                        <h2 id="user-name">Morning Champion</h2>
+                        <div class="name-row">
+                            <h2 id="user-name">Morning Champion</h2>
+                            <span class="vitality-badge" id="hud-vitality-badge">⚡ SURGE ACTIVE</span>
+                        </div>
                         <span id="user-rank" class="rank-badge">🌅 Dawn Novice</span>
                     </div>
                 </div>
 
-                <!-- LANGUAGE SWITCHER PILLS -->
-                <div class="lang-switcher">
-                    <button class="lang-btn active" data-lang="uz" id="lang-uz-btn">UZ</button>
-                    <button class="lang-btn" data-lang="ru" id="lang-ru-btn">RU</button>
-                    <button class="lang-btn" data-lang="en" id="lang-en-btn">EN</button>
+                <!-- CONTROLS: SOUND TOGGLE & LANGUAGE SWITCHER -->
+                <div class="header-controls">
+                    <button class="sound-toggle-btn" id="sound-toggle-btn" title="Toggle Sound FX">🔊</button>
+                    <div class="lang-switcher">
+                        <button class="lang-btn active" data-lang="uz" id="lang-uz-btn">UZ</button>
+                        <button class="lang-btn" data-lang="ru" id="lang-ru-btn">RU</button>
+                        <button class="lang-btn" data-lang="en" id="lang-en-btn">EN</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="stats-pills">
+            <!-- RPG XP PROGRESS BAR -->
+            <div class="rpg-hud-card">
+                <div class="rpg-bar-header">
+                    <span class="rpg-label"><b id="hud-rpg-title">🌅 Tonggi Shogird</b> (Level <span id="hud-level-num">1</span>)</span>
+                    <span class="rpg-values" id="hud-xp-text">0 / 100 XP (0%)</span>
+                </div>
+                <div class="rpg-bar-track">
+                    <div class="rpg-bar-fill" id="hud-xp-fill" style="width: 0%;">
+                        <div class="xp-sparkle"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STAMINA VITALITY GAUGE -->
+            <div class="stamina-hud-card">
+                <div class="stamina-bar-header">
+                    <span class="stamina-label">⚡ <span id="label-stamina">Stamina Vitality</span>: <strong id="hud-stamina-text">100 / 100</strong></span>
+                    <span class="stamina-status-tag" id="hud-stamina-status">100% Energetic 🟢</span>
+                </div>
+                <div class="stamina-bar-track">
+                    <div class="stamina-bar-fill" id="hud-stamina-fill" style="width: 100%;">
+                        <div class="stamina-pulse-glow"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATS QUICK BAR -->
+            <div class="stats-bar">
                 <div class="pill streak-pill">
                     <span class="pill-icon">🔥</span>
                     <span id="stat-streak" class="pill-value">12</span>
@@ -53,10 +87,15 @@
                     <span id="stat-multiplier" class="pill-value">1.2X</span>
                     <span id="label-multiplier" class="pill-label">Mult</span>
                 </div>
+                <div class="pill tourney-pill">
+                    <span class="pill-icon">⚔️</span>
+                    <span id="stat-tournament" class="pill-value">350</span>
+                    <span id="label-tournament" class="pill-label">Points</span>
+                </div>
             </div>
         </header>
 
-        <!-- NAVIGATION TABS (6 TABS INCLUDING INVENTORY) -->
+        <!-- NAVIGATION TABS (6 TABS INCLUDING INVENTORY & TOURNAMENT) -->
         <nav class="nav-tabs">
             <button class="tab-btn active" data-tab="tab-dashboard" id="nav-btn-dashboard">
                 <span class="tab-icon">🌅</span>
@@ -84,9 +123,9 @@
             </button>
         </nav>
 
-        <!-- MAIN CONTENT AREA -->
-        <main class="content-area">
-
+        <!-- MAIN CONTENT CONTAINER -->
+        <main class="main-content">
+            
             <!-- TAB 1: DASHBOARD -->
             <section id="tab-dashboard" class="tab-content active">
                 <!-- COUNTDOWN CLOCK CARD -->
@@ -114,7 +153,7 @@
                     
                     <button id="btn-main-checkin" class="primary-btn glow-btn">
                         <span class="btn-icon">⚡</span>
-                        <span id="text-btn-checkin">SOLO CHECK-IN (+10 TANGA)</span>
+                        <span id="text-btn-checkin">SOLO CHECK-IN (+10 TANGA, +50 XP)</span>
                     </button>
                 </div>
 
@@ -128,13 +167,29 @@
                     <div class="action-row">
                         <input type="file" id="photo-file-input" accept="image/*" style="display:none;">
                         <button id="btn-upload-photo" class="secondary-btn">
-                            <span id="text-btn-upload">📷 Foto Isbot Yuborish (+25 Tanga)</span>
+                            <span id="text-btn-upload">📷 Foto Isbot Yuborish (+25 Tanga, +100 XP)</span>
                         </button>
                     </div>
                     <div id="stamped-preview-container" class="preview-box" style="display:none;">
+                        <div class="preview-tag">✅ VERIFIED OFFICIAL STAMP</div>
                         <img id="stamped-preview-img" src="" alt="Stamped Preview">
-                        <span class="stamp-verified-tag">✅ VERIFIED 5 AM CLUB</span>
                     </div>
+                </div>
+
+                <!-- BEDTIME PROTOCOL SLEEP CARD (21:30 PM) -->
+                <div class="card bedtime-card">
+                    <div class="card-header">
+                        <span class="badge moon-badge" id="badge-bedtime">🌙 21:30 UYQU PROTOKOLI</span>
+                        <h3 id="title-bedtime">Robin Sharma Uyqu Rejimi</h3>
+                    </div>
+                    <p class="bedtime-desc" id="desc-bedtime">
+                        🛌 <i>“Ertalabki vaqtingizga egalik qilish uchun uyqungizni asrang!”</i><br>
+                        Ekranlarni o'chiring va 7.5 soatlik shifobaxsh uyquga yoting.
+                    </p>
+                    <button id="btn-bedtime-sleep" class="bedtime-action-btn">
+                        <span class="btn-icon">😴</span>
+                        <span id="text-btn-bedtime">Men Uxlashga Yotdim (+20 XP & 100% Stamina)</span>
+                    </button>
                 </div>
 
                 <!-- DAILY WISDOM CARD -->
@@ -171,11 +226,14 @@
                     <div class="progress-bar-container">
                         <div id="cert-progress-fill" class="progress-fill" style="width: 57%;"></div>
                     </div>
-                    <span id="cert-progress-text" class="progress-label">12 / 21 Kun (57% Bajarildi)</span>
+                    <div class="cert-progress-footer">
+                        <span id="cert-progress-text" class="progress-label">12 / 21 Kun (57% Bajarildi)</span>
+                        <button class="action-sm-btn gold-btn" onclick="openCertificateModal()" id="btn-quick-cert">Sertifikatni Ko'rish 📜</button>
+                    </div>
                 </div>
             </section>
 
-            <!-- TAB 3: INVENTORY / XARIDORLIK (ITEM 6 UPGRADE) -->
+            <!-- TAB 3: INVENTORY / XARIDORLIK -->
             <section id="tab-inventory" class="tab-content">
                 <!-- INVENTORY SUMMARY CARD -->
                 <div class="card inventory-summary-card">
@@ -206,10 +264,10 @@
                             </div>
                         </div>
                         <div class="inv-stat-item">
-                            <span class="inv-stat-icon">👥</span>
+                            <span class="inv-stat-icon">⚔️</span>
                             <div class="inv-stat-data">
-                                <span class="inv-stat-val" id="inv-ref-val">3</span>
-                                <small id="label-inv-refs">Taklif Qilinganlar</small>
+                                <span class="inv-stat-val" id="inv-tourney-val">350</span>
+                                <small id="label-inv-tourney">Turnir Ballari</small>
                             </div>
                         </div>
                     </div>
@@ -247,26 +305,7 @@
                 <div class="card">
                     <h3 id="title-badges-cabinet">🏅 Trophy Cabinet (Nishonlar)</h3>
                     <div class="badges-cabinet-grid" id="badges-cabinet-list">
-                        <div class="badge-card unlocked">
-                            <span class="b-icon">⚡</span>
-                            <span class="b-name">Early Bird</span>
-                            <small class="b-status">7 kunlik streak</small>
-                        </div>
-                        <div class="badge-card unlocked">
-                            <span class="b-icon">📸</span>
-                            <span class="b-name">Photo Master</span>
-                            <small class="b-status">5 ta foto</small>
-                        </div>
-                        <div class="badge-card locked" id="badge-elite21">
-                            <span class="b-icon">👑</span>
-                            <span class="b-name">Elite 21</span>
-                            <small class="b-status">21 kun kerak</small>
-                        </div>
-                        <div class="badge-card locked" id="badge-legend">
-                            <span class="b-icon">🦁</span>
-                            <span class="b-name">5 AM Legend</span>
-                            <small class="b-status">30 kun kerak</small>
-                        </div>
+                        <!-- Rendered dynamically -->
                     </div>
                 </div>
             </section>
@@ -317,7 +356,10 @@
             <!-- TAB 5: ARENA & DUELS -->
             <section id="tab-arena" class="tab-content">
                 <div class="card arena-card">
-                    <h3 id="title-arena">⚔️ 1v1 Uyg'onish Dueli</h3>
+                    <div class="card-header">
+                        <span class="badge red-badge">⚔️ 1v1 DUEL (-20 ⚡ STAMINA)</span>
+                        <h3 id="title-arena">⚔️ 1v1 Uyg'onish Dueli</h3>
+                    </div>
                     <p id="sub-arena" class="sub-text">50 tanga tikib, erta uyg'onish bo'yicha do'stingiz yoki random o'yinchi bilan bellashing!</p>
 
                     <div class="arena-match-box">
@@ -333,13 +375,13 @@
                     </div>
 
                     <button id="btn-start-matchmaking" class="primary-btn pulse-btn">
-                        <span id="text-btn-matchmaking">🎲 Tasodifiy Raqib Qidirish</span>
+                        <span id="text-btn-matchmaking">🎲 Tasodifiy Raqib Qidirish (-20 Stamina)</span>
                     </button>
                 </div>
 
                 <div class="card duo-card">
                     <h3 id="duo-title-card">🤝 Duo Combo Sherik</h3>
-                    <p id="duo-sub-card" class="sub-text">Sherik bilan birgalikda uyg'onib, har kuni +50 bonus tanga oling!</p>
+                    <p id="duo-sub-card" class="sub-text">Sherik bilan birgalikda uyg'onib, har kuni +50 bonus tanga va +25 XP oling!</p>
                     <div class="duo-partner-info">
                         <span id="label-partner">Hozirgi Sherik:</span>
                         <strong id="duo-partner-name">@Alex_Riser</strong>
@@ -347,10 +389,27 @@
                 </div>
             </section>
 
-            <!-- TAB 6: LEADERBOARD (UPDATED WITH [BOT] LABELS) -->
+            <!-- TAB 6: LEADERBOARD & WEEKLY TOURNAMENT -->
             <section id="tab-leaderboard" class="tab-content">
+                <!-- TOURNAMENT BANNER CARD -->
+                <div class="card tournament-card">
+                    <div class="tournament-header">
+                        <span class="badge gold-badge" id="badge-tourney">⚔️ HAFTALIK TOURNAMENT</span>
+                        <h3 id="title-tournament-banner">5 AM Weekly Championship</h3>
+                    </div>
+                    <p class="sub-text" id="desc-tourney">
+                        Haftalik 1,000 Coin sovrin jamg'armasi uchun kurashing! Yakshanba 23:59 da yangilanadi.
+                    </p>
+                    <div class="tourney-prizes-row">
+                        <div class="prize-pill gold">👑 1st: +500 🪙 + 2x 🛡</div>
+                        <div class="prize-pill silver">🥈 2nd: +300 🪙 + 1x 🛡</div>
+                        <div class="prize-pill bronze">🥉 3rd: +150 🪙</div>
+                    </div>
+                </div>
+
+                <!-- PODIUM & GLOBAL LEADERBOARD -->
                 <div class="card leaderboard-card">
-                    <h3 id="title-ranks">🏆 Global Shon-Sharaf Zali</h3>
+                    <h3 id="title-ranks">🏆 Shon-Sharaf Zali & Turnir</h3>
                     
                     <div class="podium-container">
                         <div class="podium-spot spot-2">
@@ -374,63 +433,53 @@
                     </div>
 
                     <ul id="leaderboard-list" class="leaderboard-list">
-                        <li class="leader-item">
-                            <span class="rank">#4</span>
-                            <span class="leader-name">[BOT] Bot-4</span>
-                            <span class="leader-streak">🔥 19 Kun</span>
-                            <span class="leader-coins">🪙 820</span>
-                        </li>
-                        <li class="leader-item">
-                            <span class="rank">#5</span>
-                            <span class="leader-name">[BOT] Bot-5</span>
-                            <span class="leader-streak">🔥 16 Kun</span>
-                            <span class="leader-coins">🪙 640</span>
-                        </li>
-                        <li class="leader-item">
-                            <span class="rank">#6</span>
-                            <span class="leader-name">[BOT] Bot-6</span>
-                            <span class="leader-streak">🔥 14 Kun</span>
-                            <span class="leader-coins">🪙 510</span>
-                        </li>
-                        <li class="leader-item">
-                            <span class="rank">#7</span>
-                            <span class="leader-name">[BOT] Bot-7</span>
-                            <span class="leader-streak">🔥 10 Kun</span>
-                            <span class="leader-coins">🪙 350</span>
-                        </li>
-                        <li class="leader-item">
-                            <span class="rank">#8</span>
-                            <span class="leader-name">[BOT] Bot-8</span>
-                            <span class="leader-streak">🔥 8 Kun</span>
-                            <span class="leader-coins">🪙 280</span>
-                        </li>
+                        <!-- Rendered dynamically -->
                     </ul>
                 </div>
             </section>
 
         </main>
 
-        <!-- CERTIFICATE MODAL -->
+        <!-- DYNAMIC CANVAS CERTIFICATE MODAL -->
         <div id="cert-modal" class="modal-overlay" style="display:none;">
-            <div class="modal-card">
+            <div class="modal-card cert-modal-card">
                 <button class="modal-close-btn" onclick="closeCertificateModal()">✕</button>
-                <div class="certificate-preview">
-                    <div class="cert-border">
-                        <span class="cert-crown">🏆</span>
-                        <h2>THE 5 AM CLUB</h2>
-                        <h3>DISCIPLINE CERTIFICATE</h3>
-                        <p class="cert-presented">PROUDLY PRESENTED TO</p>
-                        <h1 id="cert-modal-name">CHAMPION</h1>
-                        <p class="cert-text">For completing 21 Consecutive Days of 5 AM Morning Discipline!</p>
-                        <p class="cert-motto">“Own Your Morning. Elevate Your Life.”</p>
-                        <div class="cert-stamp">★ VERIFIED OFFICIAL ★</div>
-                    </div>
+                <div class="cert-modal-header">
+                    <span class="badge gold-badge">🏆 RASMIY G'ALABA</span>
+                    <h3>21-Day Discipline Certificate</h3>
                 </div>
-                <button class="primary-btn glow-btn" style="margin-top:14px;" onclick="closeCertificateModal()">Yopish</button>
+
+                <!-- HIGH RESOLUTION CANVAS PREVIEW CONTAINER -->
+                <div class="canvas-wrapper">
+                    <canvas id="cert-canvas" width="1200" height="800"></canvas>
+                </div>
+
+                <div class="cert-modal-actions">
+                    <button class="primary-btn glow-btn" id="btn-download-cert-hd" onclick="downloadCertificateHD()">
+                        <span class="btn-icon">📥</span>
+                        <span id="text-download-cert">Yuklab Olish (HD PNG)</span>
+                    </button>
+                    <button class="secondary-btn" id="btn-share-cert-story" onclick="shareCertificateStory()">
+                        <span class="btn-icon">📲</span>
+                        <span id="text-share-story">Story'ga Joylash</span>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- FOOTER / NOTIFICATION TOAST -->
+        <!-- LEVEL UP CELEBRATION MODAL -->
+        <div id="level-up-modal" class="modal-overlay" style="display:none;">
+            <div class="modal-card level-up-card">
+                <div class="level-up-burst">🎉</div>
+                <h2 class="level-up-title" id="lvl-up-title">LEVEL UP!</h2>
+                <div class="level-badge-large" id="lvl-up-badge">LEVEL 2</div>
+                <h3 class="level-up-rank" id="lvl-up-rank-name">⚡ Sun Chaser</h3>
+                <p class="level-up-desc" id="lvl-up-desc">Tabriklaymiz! Yangi RPG unvoni ochildi va sizga <b>+50 bonus tanga</b> berildi!</p>
+                <button class="primary-btn glow-btn" onclick="closeLevelUpModal()" id="btn-lvl-claim">G'alabani Qabul Qilish 🚀</button>
+            </div>
+        </div>
+
+        <!-- NOTIFICATION TOAST -->
         <div id="toast" class="toast-notification">
             <span id="toast-message">Xabarnoma matni</span>
         </div>
