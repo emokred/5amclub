@@ -95,7 +95,7 @@
             </div>
         </header>
 
-        <!-- NAVIGATION TABS (6 TABS INCLUDING INVENTORY & TOURNAMENT) -->
+        <!-- NAVIGATION TABS (8 TABS INCLUDING WHEEL & SQUADS) -->
         <nav class="nav-tabs">
             <button class="tab-btn active" data-tab="tab-dashboard" id="nav-btn-dashboard">
                 <span class="tab-icon">🌅</span>
@@ -104,6 +104,14 @@
             <button class="tab-btn" data-tab="tab-calendar" id="nav-btn-calendar">
                 <span class="tab-icon">📅</span>
                 <span id="tab-nav-calendar" class="tab-text">Taqvim</span>
+            </button>
+            <button class="tab-btn" data-tab="tab-wheel" id="nav-btn-wheel">
+                <span class="tab-icon">🎡</span>
+                <span id="tab-nav-wheel" class="tab-text">G'ildirak</span>
+            </button>
+            <button class="tab-btn" data-tab="tab-squad" id="nav-btn-squad">
+                <span class="tab-icon">🛡️</span>
+                <span id="tab-nav-squad" class="tab-text">Guruhlar</span>
             </button>
             <button class="tab-btn" data-tab="tab-inventory" id="nav-btn-inventory">
                 <span class="tab-icon">🎒</span>
@@ -372,7 +380,112 @@
                 </div>
             </section>
 
-            <!-- TAB 3: INVENTORY / XARIDORLIK -->
+            <!-- TAB 3: DAILY WHEEL OF FORTUNE -->
+            <section id="tab-wheel" class="tab-content">
+                <div class="card wheel-header-card">
+                    <div class="card-header">
+                        <span class="badge gold-badge" id="badge-wheel-status">🎡 KUNLIK OMAD G'ILDIRAGI</span>
+                        <h3 id="title-wheel-header">Daily Wheel of Fortune</h3>
+                    </div>
+                    <p class="wheel-desc" id="desc-wheel-header">
+                        Har kuni omad g'ildiragini aylantiring va tangalar, XP va Streak Freeze qalqonlarini yutib oling!
+                    </p>
+                </div>
+
+                <div class="card wheel-card">
+                    <div class="wheel-spinner-container">
+                        <div class="wheel-pointer">▼</div>
+                        <div class="wheel-canvas-wrapper">
+                            <canvas id="wheel-canvas" width="340" height="340"></canvas>
+                        </div>
+                    </div>
+                    <button id="btn-spin-wheel" class="primary-btn glow-btn spin-btn" onclick="spinWheel()">
+                        <span class="btn-icon">🎡</span>
+                        <span id="text-btn-spin">G'ILDIRAGNI AYLANTIRISH (BEPUL)</span>
+                    </button>
+                    <div class="wheel-status-text" id="wheel-status-text">
+                        ⚡ Bugungi bepul imkoniyatingiz mavjud!
+                    </div>
+                </div>
+
+                <!-- PRIZE SHOWCASE GRID -->
+                <div class="card wheel-prizes-card">
+                    <h3 id="title-wheel-prizes">🎁 Sovrinlar Jamg'armasi</h3>
+                    <div class="wheel-prizes-grid">
+                        <div class="prize-card">
+                            <span class="p-icon">🪙</span>
+                            <span class="p-val">+15 Coins</span>
+                            <small class="p-rarity common" id="rarity-common-1">Oddiy</small>
+                        </div>
+                        <div class="prize-card">
+                            <span class="p-icon">⚡</span>
+                            <span class="p-val">+50 XP</span>
+                            <small class="p-rarity common" id="rarity-common-2">Oddiy</small>
+                        </div>
+                        <div class="prize-card">
+                            <span class="p-icon">🛡️</span>
+                            <span class="p-val">Streak Shield</span>
+                            <small class="p-rarity rare" id="rarity-rare-1">Noyob</small>
+                        </div>
+                        <div class="prize-card">
+                            <span class="p-icon">🪙</span>
+                            <span class="p-val">+30 Coins</span>
+                            <small class="p-rarity uncommon" id="rarity-uncommon-1">O'rtacha</small>
+                        </div>
+                        <div class="prize-card">
+                            <span class="p-icon">⚡</span>
+                            <span class="p-val">+100 XP</span>
+                            <small class="p-rarity rare" id="rarity-rare-2">Noyob</small>
+                        </div>
+                        <div class="prize-card">
+                            <span class="p-icon">🪙</span>
+                            <span class="p-val">+5 Coins</span>
+                            <small class="p-rarity common" id="rarity-common-3">Oddiy</small>
+                        </div>
+                        <div class="prize-card">
+                            <span class="p-icon">⚡</span>
+                            <span class="p-val">+20 XP</span>
+                            <small class="p-rarity common" id="rarity-common-4">Oddiy</small>
+                        </div>
+                        <div class="prize-card gold-border">
+                            <span class="p-icon">👑</span>
+                            <span class="p-val">+100 Jackpot</span>
+                            <small class="p-rarity legendary" id="rarity-legendary-1">Afsonaviy</small>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: SQUADS & CLANS -->
+            <section id="tab-squad" class="tab-content">
+                <!-- MY SQUAD HERO CARD -->
+                <div class="card squad-hero-card" id="my-squad-card">
+                    <div class="card-header">
+                        <span class="badge gold-badge" id="badge-squad-status">🛡️ MENING GURUHIM</span>
+                        <h3 id="title-my-squad">Squad Dashboard</h3>
+                    </div>
+                    <div class="squad-info-box" id="squad-info-box">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- TOP SQUADS LEADERBOARD CARD -->
+                <div class="card squad-leaderboard-card">
+                    <div class="card-header">
+                        <span class="badge realm-badge" id="badge-top-squads">🏆 GURUHLAR REYTINGI</span>
+                        <h3 id="title-top-squads">Top Discipline Guilds</h3>
+                    </div>
+                    <p class="sub-text" id="desc-top-squads">
+                        Ertalabki uyg'onish intizomi va umumiy streak bo'yicha eng kuchli guruhlar!
+                    </p>
+
+                    <div class="squads-list" id="squads-list">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: INVENTORY / XARIDORLIK -->
             <section id="tab-inventory" class="tab-content">
                 <!-- INVENTORY SUMMARY CARD -->
                 <div class="card inventory-summary-card">
@@ -615,6 +728,69 @@
                 <h3 class="level-up-rank" id="lvl-up-rank-name">⚡ Sun Chaser</h3>
                 <p class="level-up-desc" id="lvl-up-desc">Tabriklaymiz! Yangi RPG unvoni ochildi va sizga <b>+50 bonus tanga</b> berildi!</p>
                 <button class="primary-btn glow-btn" onclick="closeLevelUpModal()" id="btn-lvl-claim">G'alabani Qabul Qilish 🚀</button>
+            </div>
+        </div>
+
+        <!-- SQUAD CREATION MODAL -->
+        <div id="squad-modal" class="modal-overlay" style="display:none;">
+            <div class="modal-card squad-modal-card">
+                <button class="modal-close-btn" onclick="closeSquadModal()">✕</button>
+                <div class="squad-modal-header">
+                    <span class="badge gold-badge" id="badge-create-squad">🛡️ YANGI GURUH</span>
+                    <h3 id="title-create-squad">Yangi Squad Tuzish</h3>
+                </div>
+
+                <div class="squad-form">
+                    <div class="form-group">
+                        <label id="label-squad-name">Squad Nomi:</label>
+                        <input type="text" id="input-squad-name" placeholder="Masalan: Dawn Titans" maxlength="24">
+                    </div>
+                    <div class="form-group">
+                        <label id="label-squad-tag">Squad Tagi (3-5 harf):</label>
+                        <input type="text" id="input-squad-tag" placeholder="TITAN" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <label id="label-squad-motto">Shior (Motto):</label>
+                        <input type="text" id="input-squad-motto" placeholder="Birgalikda 5 AM ga egalik qilamiz!" maxlength="60">
+                    </div>
+                </div>
+
+                <div class="squad-modal-actions">
+                    <button class="primary-btn glow-btn" onclick="submitCreateSquad()" id="btn-submit-squad">
+                        <span class="btn-icon">🚀</span>
+                        <span id="text-btn-create-squad">Squad Tuzish (100 Coins)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- INTERACTIVE BADGE VAULT INSPECTOR MODAL -->
+        <div id="badge-modal" class="modal-overlay" style="display:none;">
+            <div class="modal-card badge-modal-card">
+                <button class="modal-close-btn" onclick="closeBadgeModal()">✕</button>
+                <div class="badge-modal-header">
+                    <div class="badge-3d-icon-wrapper" id="badge-modal-icon-wrap">
+                        <span class="badge-3d-icon" id="badge-modal-icon">⚡</span>
+                    </div>
+                    <h3 id="badge-modal-title">Early Bird</h3>
+                    <span class="badge-status-tag" id="badge-modal-status">UNLOCKED</span>
+                </div>
+                <div class="badge-modal-body">
+                    <p id="badge-modal-desc" class="badge-modal-desc">Achieved 7 consecutive days of 5:00 AM wake-ups!</p>
+                    <div class="badge-req-box">
+                        <span class="req-label" id="label-badge-condition">Ochish talabi:</span>
+                        <strong id="badge-modal-req">7 Days Streak</strong>
+                    </div>
+                    <div class="badge-progress-track">
+                        <div class="badge-progress-fill" id="badge-modal-progress-fill" style="width: 100%;"></div>
+                    </div>
+                    <div class="badge-progress-text" id="badge-modal-progress-text">Progress: 100%</div>
+                </div>
+                <div class="badge-modal-actions">
+                    <button class="primary-btn glow-btn" onclick="closeBadgeModal()">
+                        <span id="text-badge-modal-close">Tushunarli 👍</span>
+                    </button>
+                </div>
             </div>
         </div>
 
