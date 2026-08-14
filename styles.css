@@ -1809,3 +1809,481 @@ body.theme-scifi .app-container {
     color: var(--accent-emerald-bright);
     font-weight: 700;
 }
+
+/* ==================== WHEEL OF FORTUNE STYLING ==================== */
+.wheel-header-card {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(15, 23, 42, 0.9) 100%);
+    border: 1px solid var(--border-gold);
+}
+
+.wheel-desc {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+}
+
+.wheel-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: radial-gradient(circle at center, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.95) 100%);
+    border: 1px solid var(--border-gold);
+}
+
+.wheel-spinner-container {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wheel-pointer {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.8rem;
+    color: var(--accent-gold);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8), 0 0 15px rgba(245, 158, 11, 0.8);
+    z-index: 10;
+    animation: pointerPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pointerPulse {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(3px); }
+}
+
+.wheel-canvas-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#wheel-canvas {
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    box-shadow: 0 0 30px rgba(245, 158, 11, 0.35);
+    transition: transform 0.1s linear;
+}
+
+.spin-btn {
+    width: 100%;
+    max-width: 320px;
+    padding: 14px;
+    font-size: 0.92rem;
+}
+
+.spin-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.wheel-status-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent-gold);
+    text-align: center;
+}
+
+/* PRIZE SHOWCASE GRID */
+.wheel-prizes-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.prize-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 3px;
+}
+
+.prize-card.gold-border {
+    border-color: var(--accent-gold);
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.prize-card .p-icon {
+    font-size: 1.3rem;
+}
+
+.prize-card .p-val {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.prize-card .p-rarity {
+    font-size: 0.55rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 1px 4px;
+    border-radius: 4px;
+}
+
+.p-rarity.common { color: #94a3b8; background: rgba(148, 163, 184, 0.15); }
+.p-rarity.uncommon { color: #34d399; background: rgba(52, 211, 153, 0.15); }
+.p-rarity.rare { color: #60a5fa; background: rgba(96, 165, 250, 0.15); }
+.p-rarity.legendary { color: #fbbf24; background: rgba(251, 191, 36, 0.2); }
+
+/* ==================== SQUADS / GUILD CLAN SYSTEM STYLING ==================== */
+.squad-hero-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+    border: 1px solid var(--border-gold);
+}
+
+.squad-active-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.squad-emblem {
+    font-size: 2.2rem;
+}
+
+.squad-main-meta h4 {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.squad-tag-badge {
+    font-size: 0.7rem;
+    font-weight: 900;
+    color: var(--accent-gold);
+    background: rgba(245, 158, 11, 0.2);
+    padding: 2px 6px;
+    border-radius: 6px;
+    border: 1px solid var(--border-gold);
+}
+
+.squad-motto {
+    font-size: 0.72rem;
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+.squad-stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.squad-stat-item {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.squad-stat-item .s-val {
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.squad-stat-item .s-lbl {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.squad-empty-box {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+    padding: 8px 0;
+}
+
+.squad-empty-box p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+}
+
+.squad-btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* TOP SQUADS LIST */
+.squads-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.squad-item-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.squad-item-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-gold);
+}
+
+.sq-rank {
+    font-weight: 900;
+    font-size: 0.85rem;
+    color: var(--accent-gold);
+    width: 24px;
+}
+
+.sq-icon {
+    font-size: 1.4rem;
+}
+
+.sq-details {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.sq-title-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sq-title-row strong {
+    font-size: 0.85rem;
+    color: var(--text-main);
+}
+
+.sq-tag {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--text-gold);
+}
+
+.sq-motto {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sq-right-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.sq-streak {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--accent-gold);
+}
+
+.sq-members {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+/* SQUAD FORM MODAL */
+.squad-modal-card {
+    background: #0f172a;
+    border: 2px solid var(--accent-gold);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    box-shadow: 0 0 35px rgba(245, 158, 11, 0.35);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.squad-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.form-group label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-gold);
+}
+
+.form-group input {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    color: #ffffff;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.form-group input:focus {
+    border-color: var(--accent-gold);
+}
+
+/* ==================== INTERACTIVE BADGE VAULT INSPECTOR MODAL ==================== */
+.badge-modal-card {
+    background: #0f172a;
+    border: 2px solid var(--accent-gold);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    box-shadow: 0 0 40px rgba(245, 158, 11, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+}
+
+.badge-modal-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.badge-3d-icon-wrapper {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(245, 158, 11, 0.3) 0%, rgba(15, 23, 42, 0.9) 100%);
+    border: 2px solid var(--accent-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.5);
+    animation: bounce 1.5s infinite alternate;
+}
+
+.badge-3d-icon {
+    font-size: 2.5rem;
+}
+
+.badge-modal-header h3 {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.badge-status-tag {
+    font-size: 0.75rem;
+    font-weight: 900;
+    padding: 4px 12px;
+    border-radius: 12px;
+}
+
+.badge-status-tag.unlocked {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--accent-emerald-bright);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.badge-status-tag.locked {
+    background: rgba(148, 163, 184, 0.2);
+    color: var(--text-muted);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.badge-modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.badge-modal-desc {
+    font-size: 0.82rem;
+    color: #cbd5e1;
+    line-height: 1.45;
+}
+
+.badge-req-box {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+}
+
+.req-label {
+    color: var(--text-muted);
+}
+
+.badge-req-box strong {
+    color: var(--accent-gold);
+}
+
+.badge-progress-track {
+    width: 100%;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.badge-progress-fill {
+    height: 100%;
+    background: var(--accent-gold-gradient);
+    border-radius: 6px;
+    transition: width 0.4s ease;
+}
+
+.badge-progress-text {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
