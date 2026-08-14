@@ -377,7 +377,7 @@ REALMS = {
 # ==================== MULTI-LANGUAGE DICTIONARY ====================
 TEXTS = {
     "uz": {
-        "welcome": '👋 **"The 5 AM Club" botiga xush kelibsiz, {name}!**\n\n“Ertalabki vaqtingizga egalik qiling. Hayotingizni yuksaltiring.”\n\n⚙️ 4 ta asosiy katalog bo'limlaridan foydalaning:',
+        "welcome": """👋 **"The 5 AM Club" botiga xush kelibsiz, {name}!**\n\n“Ertalabki vaqtingizga egalik qiling. Hayotingizni yuksaltiring.”\n\n⚙️ 4 ta asosiy katalog bo'limlaridan foydalaning:""",
         "hub_solo": "🌅 Solo Rejim",
         "hub_multiverse": "🎭 Multiverse Roleplay",
         "hub_arena": "🎮 Interaktiv Arena",
@@ -422,7 +422,7 @@ TEXTS = {
         "tournament_empty": "⚔️ Turnirda hali qatnashchilar yo'q."
     },
     "ru": {
-        "welcome": '👋 **Добро пожаловать в бот "The 5 AM Club", {name}!**\n\n«Владейте своим утром. Поднимите свою жизнь.»\n\n⚙️ Используйте 4 главных каталога ниже:',
+        "welcome": """👋 **Добро пожаловать в бот "The 5 AM Club", {name}!**\n\n«Владейте своим утром. Поднимите свою жизнь.»\n\n⚙️ Используйте 4 главных каталога ниже:""",
         "hub_solo": "🌅 Соло Режим",
         "hub_multiverse": "🎭 Мультивселенная",
         "hub_arena": "🎮 Интерактивная Арена",
@@ -467,7 +467,7 @@ TEXTS = {
         "tournament_empty": "⚔️ В турнире пока нет участников."
     },
     "en": {
-        "welcome": '👋 **Welcome to The 5 AM Club, {name}!**\n\n“Own your morning. Elevate your life.”\n\n⚙️ Use the 4 main catalog hubs below:',
+        "welcome": """👋 **Welcome to The 5 AM Club, {name}!**\n\n“Own your morning. Elevate your life.”\n\n⚙️ Use the 4 main catalog hubs below:""",
         "hub_solo": "🌅 Solo Mode",
         "hub_multiverse": "🎭 Multiverse Roleplay",
         "hub_arena": "🎮 Interactive Arena",
