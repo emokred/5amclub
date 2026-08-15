@@ -184,43 +184,43 @@ def get_random_photo_mission(lang: str = "uz") -> str:
 # ==================== 7 MULTIVERSE ROLEPLAY REALMS ====================
 REALMS = {
     "marvel": {
-        "name": "🛡️ Marvel Cinematic Universe",
-        "emoji": "🛡️",
+        "name": "🦸 Marvel Avengers Universe",
+        "emoji": "🦸",
         "titles": {
-            "uz": ["🛡️ Boshlang'ich Qasoskor", "🦾 Stark Texniks", "⚡ Vibranium Jangchisi", "🌌 Kvant Ustasi", "👑 Temir Qasoskor Afsonasi"],
-            "ru": ["🛡️ Новичок Мститель", "🦾 Старк Техник", "⚡ Вибраниум Воин", "🌌 Квантовый Мастер", "👑 Легендарный Железный Мститель"],
-            "en": ["🛡️ Initiate Avenger", "🦾 Stark Specialist", "⚡ Vibranium Warrior", "🌌 Quantum Master", "👑 Legendary Iron Avenger"]
+            "uz": ["🕷️ Odam-O'rgimchak (Spider-Man)", "🛡️ Kapitan Amerika", "⚡ Tor (Thor)", "🦾 Temir Odam (Iron Man)", "🔮 Doktori Strendj"],
+            "ru": ["🕷️ Человек-Паук (Spider-Man)", "🛡️ Капитан Америка", "⚡ Тор (Thor)", "🦾 Железный Человек", "🔮 Доктор Стрэндж"],
+            "en": ["🕷️ Spider-Man", "🛡️ Captain America", "⚡ Thor", "🦾 Iron Man", "🔮 Doctor Strange"]
         },
         "quips": {
             "uz": [
                 "Avengers, Assemble! Jarvis tizimlari 05:00 da to'liq shay holatda! 🛡️⚡",
-                "Stark Tech ertalabki energiya reaktorini 100% ga quvvatladi! Wakanda Forever! 🦾🔥",
-                "Men Temir Odamman. Bugungi tonggi g'alaba bizniki! 👑⚡"
+                "Spider-Man: 'Buyuk intizom katta mas'uliyat demakdir!' 🕷️⚡",
+                "Stark Tech ertalabki energiya reaktorini 100% ga quvvatladi! Wakanda Forever! 🦾🔥"
             ],
             "ru": [
                 "Мстители, общий сбор! Системы Джарвиса готовы к утреннему бою! 🛡️⚡",
-                "Технологии Старка зарядили ваш ядерный реактор на 100%! Ваканда Навеки! 🦾🔥",
-                "Я — Железный Человек. Победа сегодня за нами! 👑⚡"
+                "Человек-Паук: «С большой дисциплиной приходит большая сила!» 🕷️⚡",
+                "Технологии Старка зарядили ваш ядерный реактор на 100%! Ваканда Навеки! 🦾🔥"
             ],
             "en": [
                 "Avengers, Assemble! Jarvis systems online and fully operational! 🛡️⚡",
-                "Stark Tech initialized your morning Arc Reactor to 100%! Wakanda Forever! 🦾🔥",
-                "I am Iron Man. Today's dawn belongs to us! 👑⚡"
+                "Spider-Man: 'With great morning discipline comes great power!' 🕷️⚡",
+                "Stark Tech initialized your morning Arc Reactor to 100%! Wakanda Forever! 🦾🔥"
             ]
         },
-        "wisdom_prefix": "🛡️ **STARK TECH WISDOM:** "
+        "wisdom_prefix": "🦸 **MARVEL HERO WISDOM:** "
     },
     "samurai": {
-        "name": "⚔️ Medieval Samurai Bushido",
-        "emoji": "⚔️",
+        "name": "🗡️ Medieval Samurai Bushido",
+        "emoji": "🗡️",
         "titles": {
-            "uz": ["⚔️ Ronin Shogird", "🌸 Katana Ustasi", "🏯 Bushido Jangchisi", "⛩️ Dojo Sensei", "👑 Buyuk Shogun"],
-            "ru": ["⚔️ Ученик Ронин", "🌸 Мастер Катаны", "🏯 Воин Бусидо", "⛩️ Сенсей Додзё", "👑 Великий Сёгун"],
-            "en": ["⚔️ Ronin Initiate", "🌸 Katana Master", "🏯 Bushido Warrior", "⛩️ Dojo Sensei", "👑 Grand Shogun"]
+            "uz": ["⚔️ Ronin Shogird", "🌸 Katana Ustasi (Kenshin)", "🏯 Musashi Jangchisi", "⛩️ Dojo Sensei (Hattori)", "👑 Buyuk Shogun"],
+            "ru": ["⚔️ Ученик Ронин", "🌸 Мастер Катаны (Кэнсин)", "🏯 Воин Мусаси", "⛩️ Сенсей Додзё (Хаттори)", "👑 Великий Сёгун"],
+            "en": ["⚔️ Ronin Initiate", "🌸 Katana Master (Kenshin)", "🏯 Musashi Warrior", "⛩️ Dojo Sensei (Hattori)", "👑 Grand Shogun"]
         },
         "quips": {
             "uz": [
-                "Katana birinchi quyosh nuri tushmasidan oldin qinidan chiqarildi! Intizomingizga tasanno, Ronin! ⚔️🌸",
+                "Katana birinchi quyosh nuri tushmasidan oldin qinidan chiqarildi! Musashi intizomiga tasanno! ⚔️🌸",
                 "Bushido Qoidasi #1: Haqiqiy usta uyqu ustidan jimjitlikda g'alaba qozonadi! 🏯⚡",
                 "Sensei sizga chuqur ta'zim qiladi. Ruhingiz charxlangan po'latdek porlamoqda! 🌸🔥"
             ],
@@ -235,42 +235,42 @@ REALMS = {
                 "The Sensei bows in deep respect. Your spirit shines like polished steel! 🌸🔥"
             ]
         },
-        "wisdom_prefix": "⚔️ **BUSHIDO CODE WISDOM:** "
+        "wisdom_prefix": "🗡️ **BUSHIDO CODE WISDOM:** "
     },
     "feudal": {
-        "name": "🏰 Feudal Knights of Round Table",
+        "name": "🏰 Feudal Knights & Excalibur",
         "emoji": "🏰",
         "titles": {
-            "uz": ["🏰 Qal'a Soqchisi", "⚔️ Ekskalibur Ritsari", "🛡️ Kamelot Chempioni", "👑 Qirol Artur Saroy unvoni", "👑 Afsonaviy Qirol"],
-            "ru": ["🏰 Страж Замка", "⚔️ Рыцарь Экскалибура", "🛡️ Чемпион Камелота", "👑 Рыцарь Круглого Стола", "👑 Король Артур"],
-            "en": ["🏰 Castle Guard", "⚔️ Knight of Excalibur", "🛡️ Camelot Champion", "👑 Paladin of Honor", "👑 High King Arthur"]
+            "uz": ["🏰 Qal'a Ritsari", "⚔️ Lanselot Jangchisi", "🛡️ Kamelot Paladini", "👑 Davra Stoli Ritsari", "👑 Qirol Artur (King Arthur)"],
+            "ru": ["🏰 Рыцарь Замка", "⚔️ Воин Ланселот", "🛡️ Паладин Камелота", "👑 Рыцарь Круглого Стола", "👑 Король Артур (King Arthur)"],
+            "en": ["🏰 Castle Knight", "⚔️ Sir Lancelot", "🛡️ Camelot Paladin", "👑 Round Table Champion", "👑 High King Arthur"]
         },
         "quips": {
             "uz": [
-                "Ekskalibur qilichi tongda baland ko'tarildi! Qirollik sizning sharafingizni ulug'laydi! 🏰⚔️",
+                "Ekskalibur qilichi tongda baland ko'tarildi! Qirol Artur sizning intizomingizni ulug'laydi! 🏰⚔️",
                 "Davra stoli ritsarlari buyrug'i bilan sizning tonggi zafaringiz oltin bilan bitildi! 🛡️✨",
                 "Qal'amiz devorlari ritsarlarimiz hushyor turganda aslo qulamaydi! 🏰🔥"
             ],
             "ru": [
-                "Меч Экскалибур поднят на рассвете! Королевство чтит твою доблесть! 🏰⚔️",
+                "Меч Экскалибур поднят на рассвете! Король Артур чтит твою доблесть! 🏰⚔️",
                 "По указу Рыцарей Круглого Стола твоя победа вписана золотом! 🛡️✨",
                 "Стены нашего замка нерушимы, пока рыцари не спят! 🏰🔥"
             ],
             "en": [
-                "Excalibur is raised high at dawn! The Kingdom honors your noble valor! 🏰⚔️",
+                "Excalibur is raised high at dawn! King Arthur honors your noble valor! 🏰⚔️",
                 "By order of the Round Table, your morning victory is recorded in gold! 🛡️✨",
                 "Our castle walls stand indestructible while our Knights guard the dawn! 🏰🔥"
             ]
         },
-        "wisdom_prefix": "🏰 **KNIGHTLY CODE WISDOM:** "
+        "wisdom_prefix": "🏰 **EXCALIBUR KNIGHT WISDOM:** "
     },
     "mafia": {
         "name": "🎩 Italian Mafia Syndicate",
         "emoji": "🎩",
         "titles": {
-            "uz": ["🎩 Sindikat A'zosi", "💼 Soldato Jangchi", "🔪 Kaporedjime", "🍷 Anderboss", "👑 Don Korleone (Godfather)"],
-            "ru": ["🎩 Участник Синдиката", "💼 Сольдато", "🔪 Капореджиме", "🍷 Андербосс", "👑 Дон Корлеоне (Godfather)"],
-            "en": ["🎩 Syndicate Associate", "💼 Soldato Enforcer", "🔪 Caporegime", "🍷 Underboss", "👑 Don Corleone (The Godfather)"]
+            "uz": ["🎩 Sindikat A'zosi", "💼 Soldato Enforcer", "🔪 Kaporedjime", "🍷 Konsilyeri Anderboss", "👑 Don Korleone (The Godfather)"],
+            "ru": ["🎩 Участник Синдиката", "💼 Сольдато", "🔪 Капореджиме", "🍷 Консильери Андербосс", "👑 Дон Корлеоне (The Godfather)"],
+            "en": ["🎩 Syndicate Associate", "💼 Soldato Enforcer", "🔪 Caporegime", "🍷 Consigliere Underboss", "👑 Don Corleone (The Godfather)"]
         },
         "quips": {
             "uz": [
@@ -291,40 +291,13 @@ REALMS = {
         },
         "wisdom_prefix": "🎩 **GODFATHER SYNDICATE WISDOM:** "
     },
-    "cyberpunk": {
-        "name": "🦾 Cyberpunk 2077 Night City",
-        "emoji": "🦾",
-        "titles": {
-            "uz": ["🤖 Chooh2 Yuguruvchi", "⚡ Xrom Fikser", "🦾 Kiber-Yollanma", "🌐 Netranner Elita", "👑 Night City Afsonasi"],
-            "ru": ["🤖 Бегун Chooh2", "⚡ Хром Фиксер", "🦾 Кибер-Наемник", "🌐 Нетраннер Элита", "👑 Легенда Найт-Сити"],
-            "en": ["🤖 Chooh2 Runner", "⚡ Chrome Fixer", "🦾 Cyber-Mercenary", "🌐 Netrunner Elite", "👑 Night City Legend"]
-        },
-        "quips": {
-            "uz": [
-                "Neyron sinxronizatsiya bajarildi! Night City fikserlari 5 AM xrom energiyangizni tasdiqladi! 🦾⚡",
-                "Uyqu kodi o'chirildi... Vitality Overdrive yoqildi! Netga xush kelibsiz! 🌃⚡",
-                "Uyg'on Samurai, bugun yoqib yuboradigan kunimiz bor! 💥🦾"
-            ],
-            "ru": [
-                "Нейро-синхронизация завершена! Фиксеры Найт-Сити подтвердили ваш утренний буст! 🦾⚡",
-                "Сон отключен... Включен овердрайв бодрости! Добро пожаловать в Сеть! 🌃⚡",
-                "Проснись, Самурай, у нас есть город, который надо зажечь! 💥🦾"
-            ],
-            "en": [
-                "Neural sync complete! Night City fixers verified your 5 AM chrome boost! 🦾⚡",
-                "Sleep subroutine terminated... Vitality Overdrive engaged! 🌃⚡",
-                "Wake up Samurai, we have a day to burn! 💥🦾"
-            ]
-        },
-        "wisdom_prefix": "🦾 **NIGHT CITY FIXER WISDOM:** "
-    },
     "olympus": {
-        "name": "⚡ Greek Mythology (Mount Olympus)",
+        "name": "⚡ Greek Olympus & Gods",
         "emoji": "⚡",
         "titles": {
-            "uz": ["🏛️ Oddiy Qahramon", "🗡️ Yarim Xudoi (Demigod)", "🛡️ Attika Chempioni", "⚡ Olimplar Titani", "👑 Zevs Hukmdori"],
-            "ru": ["🏛️ Смертный Герой", "🗡️ Полубог (Demigod)", "🛡️ Чемпион Аттики", "⚡ Титан Олимпа", "👑 Владыка Зевс"],
-            "en": ["🏛️ Mortal Hero", "🗡️ Demigod of Dawn", "🛡️ Attica Champion", "⚡ Olympian Titan", "👑 Ruler Zeus"]
+            "uz": ["🏛️ Oddiy Qahramon", "🗡️ Axilles (Achilles)", "🛡️ Gerkules (Hercules)", "⚡ Apollon Olimplari", "👑 Zevs Hukmdori (Zeus)"],
+            "ru": ["🏛️ Смертный Герой", "🗡️ Ахиллес (Achilles)", "🛡️ Геркулес (Hercules)", "⚡ Аполлон Олимпиец", "👑 Владыка Зевс (Zeus)"],
+            "en": ["🏛️ Mortal Hero", "🗡️ Achilles Demigod", "🛡️ Hercules Champion", "⚡ Olympian Apollo", "👑 Supreme Zeus"]
         },
         "quips": {
             "uz": [
@@ -345,32 +318,59 @@ REALMS = {
         },
         "wisdom_prefix": "⚡ **OLYMPIAN GODS WISDOM:** "
     },
-    "scifi": {
-        "name": "🚀 Space Sci-Fi Starfleet",
+    "cyberpunk": {
+        "name": "🚀 Cyberpunk Sci-Fi 2077",
         "emoji": "🚀",
         "titles": {
-            "uz": ["🚀 Koinot Kadeti", "🛸 Varp Komandiri", "🌌 Kvant Kapitani", "🛰️ Flot Admirali", "👑 Galaktika Hukmdori"],
-            "ru": ["🚀 Космический Кадет", "🛸 Варп Командир", "🌌 Квантовый Капитан", "🛰️ Адмирал Флота", "👑 Галактический Владыка"],
-            "en": ["🚀 Cadet Voyager", "🛸 Warp Commander", "🌌 Quantum Captain", "🛰️ Fleet Admiral", "👑 Galactic Overlord"]
+            "uz": ["🤖 Chooh2 Yuguruvchi", "⚡ Kiber Samurai (Neo)", "🦾 Netranner Kapitan", "🌌 Galaktika Admirali", "👑 Night City Afsonasi"],
+            "ru": ["🤖 Бегун Chooh2", "⚡ Кибер Самурай (Neo)", "🦾 Нетраннер Капитан", "🌌 Адмирал Галактики", "👑 Легенда Найт-Сити"],
+            "en": ["🤖 Chooh2 Runner", "⚡ Cyber Samurai (Neo)", "🦾 Netrunner Captain", "🌌 Galactic Admiral", "👑 Night City Legend"]
         },
         "quips": {
             "uz": [
-                "Varp dvigateli yoqildi! Kvant energiya reaktori 100% quvvatda! 🚀🌌",
-                "Starfleet qo'mondonligi 05:00 da muvaffaqiyatli orbital check-in qayd etdi! 🌌⚡",
-                "Koinot tezligini yoqing! Insoniyat intizomining yangi ufqlarini fohish qilamiz! 🛸✨"
+                "Neyron sinxronizatsiya bajarildi! Night City fikserlari 5 AM xrom energiyangizni tasdiqladi! 🦾⚡",
+                "Varp dvigateli va uyqu kodi o'chirildi... Vitality Overdrive yoqildi! 🌃⚡",
+                "Uyg'on Samurai, bugun galaktikani yoqib yuboradigan kunimiz bor! 💥🦾"
             ],
             "ru": [
-                "Варп-двигатель запущен! Квантовый реактор на 100% мощности! 🚀🌌",
-                "Командование Флота подтверждает орбитальный check-in в 05:00! 🌌⚡",
-                "Врубаем гиперскорость! Покоряем новые галактики дисциплины! 🛸✨"
+                "Нейро-синхронизация завершена! Фиксеры Найт-Сити подтвердили ваш утренний буст! 🦾⚡",
+                "Сон отключен... Включен овердрайв бодрости и варп-двигатели! 🌃⚡",
+                "Проснись, Самурай, у нас есть галактика, которую надо зажечь! 💥🦾"
             ],
             "en": [
-                "Warp Drive engaged! Quantum energy core operating at 100% capacity! 🚀🌌",
-                "Starfleet Command confirms orbital check-in at 05:00 Earth time! 🌌⚡",
-                "Engage warp speed! Exploring new frontiers of human potential! 🛸✨"
+                "Neural sync complete! Night City fixers verified your 5 AM chrome boost! 🦾⚡",
+                "Sleep subroutine terminated... Vitality Overdrive engaged! 🌃⚡",
+                "Wake up Samurai, we have a galaxy to burn! 💥🦾"
             ]
         },
-        "wisdom_prefix": "🚀 **STARFLEET COMMAND WISDOM:** "
+        "wisdom_prefix": "🚀 **CYBERPUNK SCI-FI WISDOM:** "
+    },
+    "anime": {
+        "name": "🥷 Anime Multiverse (Konoha & Saiyans)",
+        "emoji": "🥷",
+        "titles": {
+            "uz": ["🥷 Konoha Ninjasi", "🏴‍☠️ Pirate Captain (Luffy)", "⚡ Hokage (Naruto)", "💥 Super Saiyan (Goku)", "👑 Saitama One-Punch"],
+            "ru": ["🥷 Ниндзя Конохи", "🏴‍☠️ Капитан Пиратов (Луффи)", "⚡ Хокаге (Наруто)", "💥 Супер Сайян (Гоку)", "👑 Сайтама One-Punch"],
+            "en": ["🥷 Leaf Ninja (Naruto)", "🏴‍☠️ Pirate Captain (Luffy)", "⚡ Shadow Hokage", "💥 Super Saiyan (Goku)", "👑 Saitama One-Punch"]
+        },
+        "quips": {
+            "uz": [
+                "Dattebayo! Nindo intizomingiz quyoshdan oldin portladi! 🥷⚡",
+                "Kamehameha! Ertalabki energiyangiz 9000 dan oshdi! 💥🔥",
+                "Bir zarbli uyg'onish! Saitama sizning irodangizga ta'zim qiladi! 👑🥊"
+            ],
+            "ru": [
+                "Даттебайо! Твой путь ниндзя начался до восхода солнца! 🥷⚡",
+                "Камехамеха! Утренняя энергия зашкаливает за 9000! 💥🔥",
+                "Подъем с одного удара! Сайтама выражает глубокое уважение! 👑🥊"
+            ],
+            "en": [
+                "Dattebayo! Your Ninja Way woke up before the sun! 🥷⚡",
+                "Kamehameha! Your morning power level is over 9000! 💥🔥",
+                "One-Punch Wakeup! Saitama respects your iron discipline! 👑🥊"
+            ]
+        },
+        "wisdom_prefix": "🥷 **ANIME NINJA WISDOM:** "
     }
 }
 
@@ -382,6 +382,7 @@ TEXTS = {
         "hub_multiverse": """🎭 Multiverse Roleplay""",
         "hub_arena": """🎮 Interaktiv Arena""",
         "hub_settings": """⚙️ Sozlamalar & Yordam""",
+        "hub_quote": """💡 Kun Hikmati""",
         "btn_admin": """👑 Owner Admin Panel""",
         "checkin_btn_inline": """⚡ CHECK-IN QILISH (MEN UYG'ONDIM)""",
         "already_checked_in": """⚠️ Siz bugun allaqachon check-in qildingiz! Ertagacha! 🌅""",
@@ -438,6 +439,7 @@ TEXTS = {
         "hub_multiverse": """🎭 Мультивселенная""",
         "hub_arena": """🎮 Интерактивная Арена""",
         "hub_settings": """⚙️ Настройки и Помощь""",
+        "hub_quote": """💡 Мудрость Дня""",
         "btn_admin": """👑 Owner Admin Panel""",
         "checkin_btn_inline": """⚡ СДЕЛАТЬ CHECK-IN (Я ПРОСНУЛСЯ)""",
         "already_checked_in": """⚠️ Вы уже отметились сегодня! До завтра! 🌅""",
@@ -494,6 +496,7 @@ TEXTS = {
         "hub_multiverse": """🎭 Multiverse Roleplay""",
         "hub_arena": """🎮 Interactive Arena""",
         "hub_settings": """⚙️ Settings & Help""",
+        "hub_quote": """💡 Daily Wisdom""",
         "btn_admin": """👑 Owner Admin Panel""",
         "checkin_btn_inline": """⚡ CHECK-IN NOW (I'M AWAKE)""",
         "already_checked_in": """⚠️ You already checked in today! See you tomorrow! 🌅""",
@@ -546,83 +549,63 @@ TEXTS = {
     }
 }
 
-# ==================== 150+ CURATED MOTIVATIONAL QUOTES ====================
+# ==================== AUTHENTIC MOTIVATIONAL QUOTES ====================
 MOTIVATIONAL_QUOTES = [
-    {"id": 1, "uz": "“Ertalabki vaqtingizga egalik qiling. Hayotingizni yuksaltiring.” – Robin Sharma", "ru": "«Владейте своим утром. Поднимите свою жизнь.» – Робин Шарма", "en": "“Own your morning. Elevate your life.” – Robin Sharma"},
-    {"id": 2, "uz": "“G'alabalar tong otmasdan, sukunat va intizomda yaratiladi.” – Robin Sharma", "ru": "«Победы куются до рассвета, в тишине железной дисциплины.» – Робин Шарма", "en": "“Victories are created before dawn, in the quiet solitude of discipline.” – Robin Sharma"},
-    {"id": 3, "uz": "“Daqiqalarga e'tibor bering, soatlar o'z-o'zidan tartibga tushadi.” – Lord Chesterfield", "ru": "«Позаботьтесь о минутах, и часы позаботятся о себе сами.» – Лорд Честерфилд", "en": "“Take care of the minutes and the hours will take care of themselves.” – Lord Chesterfield"},
-    {"id": 4, "uz": "“Oldinga siljishning siri — boshlashdir.” – Mark Tven", "ru": "«Секрет того, чтобы вырваться вперед — это начать.» – Марк Твен", "en": "“The secret of getting ahead is getting started.” – Mark Twain"},
-    {"id": 5, "uz": "“Intizom — bu hozir xohlagan narsangiz bilan eng ko'p xohlagan narsangiz o'rtasidagi tanlovdir.” – Avraam Linkoln", "ru": "«Дисциплина — это выбор между тем, чего вы хотите сейчас, и тем, чего вы хотите больше всего.»", "en": "“Discipline is choosing between what you want now and what you want most.” – Abraham Lincoln"},
-    {"id": 6, "uz": "“Kichik kunlik o'sishlar vaqt o'tishi bilan aql bovar qilmas natijalarga olib keladi.” – Robin Sharma", "ru": "«Маленькие ежедневные улучшения со временем приводят к потрясающим результатам.»", "en": "“Small daily improvements over time lead to stunning results.” – Robin Sharma"},
-    {"id": 7, "uz": "“Biz har kuni takrorlaydigan narsamizning mahsulimiz. Muvaffaqiyat — bu harakat emas, odatdir.” – Aristotel", "ru": "«Мы то, что мы делаем постоянно. Совершенство — это не действие, а привычка.» – Аристотель", "en": "“We are what we repeatedly do. Excellence, then, is not an act, but a habit.” – Aristotle"},
-    {"id": 8, "uz": "“Intizom azobi pushaymonlik azobidan ming marotaba yengilroqdir.” – Jim Rohn", "ru": "«Боль дисциплины весит граммы, а боль сожаления — тонны.» – Джим Рон", "en": "“Discipline weighs ounces, regret weighs tons.” – Jim Rohn"},
-    {"id": 9, "uz": "“G'oliblar oddiy odamlar qilmoqchi bo'lmagan narsalarni har kuni qiladilar.” – Kobe Bryant", "ru": "«Победители делают то, что обычные люди делать не хотят.» – Коби Брайант", "en": "“Winners do what ordinary people are unwilling to do daily.” – Kobe Bryant"},
-    {"id": 10, "uz": "“Charchaganingizda emas, ishni tugatganingizda to'xtang!” – Dwayne Johnson", "ru": "«Останавливайтесь не тогда, когда устали, а когда закончили!» – Дуэйн Джонсон", "en": "“Don't stop when you're tired. Stop when you're done!” – Dwayne Johnson"},
-    {"id": 11, "uz": "“Vaqtingiz chegarlangan, uni boshqa birovning hayotini yashashga sarflamang.” – Stiv Jobs", "ru": "«Ваше время ограничено, не тратьте его, живя чужой жизнью.» – Стив Джобс", "en": "“Your time is limited, don't waste it living someone else's life.” – Steve Jobs"},
-    {"id": 12, "uz": "“Ertalab soat 5:00 da uyg'onish — bu dunyoga berilgan intizomiy chaqiriqdir.” – Robin Sharma", "ru": "«Подъем в 5:00 утра — это вызов всему миру и проявление силы воли.»", "en": "“Rising at 5 AM is a statement of intent to the entire world.” – Robin Sharma"},
-    {"id": 13, "uz": "“Intizom — bu maqsadlar va muvaffaqiyat o'rtasidagi ko'prikdir.” – Jim Rohn", "ru": "«Дисциплина — это мост между целями и достижениями.» – Джим Рон", "en": "“Discipline is the bridge between goals and accomplishment.” – Jim Rohn"},
-    {"id": 14, "uz": "“Agarda siz orzularingiz uchun kurashmasangiz, birov sizni o'z orzusi uchun yollaydi.” – Robert Kiyosaki", "ru": "«Если вы не построите свою мечту, кто-то наймет вас для постройки своей.»", "en": "“If you don't build your dream, someone will hire you to build theirs.” – Robert Kiyosaki"},
-    {"id": 15, "uz": "“O'zingizga bo'lgan ishonch har kuni soat 5:00 da boshlanadi.” – Robin Sharma", "ru": "«Уверенность в себе начинается каждое утро в 5:00.»", "en": "“Self-confidence begins every single morning at 5 AM.” – Robin Sharma"},
-    {"id": 16, "uz": "“Kuch jismoniy imkoniyatdan emas, yengilmas irodadan kelib chiqadi.” – Mahatma Gandi", "ru": "«Сила происходит не от физических возможностей, а от несокрушимой воли.»", "en": "“Strength does not come from physical capacity. It comes from an indomitable will.” – Mahatma Gandhi"},
-    {"id": 17, "uz": "“Ertalabki sukunatda aqlingiz eng tiniq va kuchli holatda bo'ladi.” – Robin Sharma", "ru": "«В утренней тишине ваш разум находится в самой сильной концентрации.»", "en": "“In the morning silence, your mind reaches peak clarity.” – Robin Sharma"},
-    {"id": 18, "uz": "“Kelajak bugun nima qilayotganingizga bog'liq, ertaga emas.” – Mahatma Gandi", "ru": "«Будущее зависит от того, что вы делаете сегодня, а не завтра.»", "en": "“The future depends on what you do today.” – Mahatma Gandhi"},
-    {"id": 19, "uz": "“Agar siz buyuklikka erishmoqchi bo'lsangiz, ruxsat so'rashni to'xtating!”", "ru": "«Если вы хотите достичь величия, прекратите просить разрешения!»", "en": "“If you want to achieve greatness, stop asking for permission.”"},
-    {"id": 20, "uz": "“Muxtasham natijalar muxtasham intizom talab qiladi.” – Robin Sharma", "ru": "«Великие результаты требуют великой дисциплины.»", "en": "“Great results demand legendary discipline.” – Robin Sharma"},
-    {"id": 21, "uz": "“Har bir tong — bu yangi imkoniyat va yangi g'alaba sahifasidir.”", "ru": "«Каждое утро — это новая страница побед и возможностей.»", "en": "“Every morning is a brand new page of victory.”"},
-    {"id": 22, "uz": "“O'z ongini va vaqtini boshqargan inson butun dunyoni boshqaradi.” – Seneka", "ru": "«Кто управляет своим разумом и временем, тот управляет миром.» – Сенека", "en": "“He who controls his mind and time controls the world.” – Seneca"},
-    {"id": 23, "uz": "“Maqsadga erishishdagi eng katta to'siq — bu kechiktirish odatidir.”", "ru": "«Главный враг успеха — привычка откладывать на потом.»", "en": "“The biggest obstacle to success is procrastination.”"},
-    {"id": 24, "uz": "“Tonggi 20 minutlik harakat butun kuningiz energetikasini belgilaydi.” – Robin Sharma", "ru": "«20 минут утреннего движения задают энергию на весь день.»", "en": "“The 20-minute morning routine defines your energy for the entire day.” – Robin Sharma"},
-    {"id": 25, "uz": "“Yo'lingizda g'ovlar bo'lmaydi, yo'lingizning o'zi g'ovlardan iboratdir.” – Mark Avreliy", "ru": "«Препятствие на пути становится самим путем.» – Марк Аврелий", "en": "“The obstacle is the way.” – Marcus Aurelius"},
-    {"id": 26, "uz": "“Muvaffaqiyat — bu yiqilishlar soni emas, qayta turish jasoratidir.”", "ru": "«Успех — это способность подниматься снова и снова.»", "en": "“Success is the courage to stand up one more time.”"},
-    {"id": 27, "uz": "“Uxlashda davom etsangiz orzu ko'rasiz, erta tursangiz orzuni amalga oshirasiz!”", "ru": "«Если продолжите спать — увидите сон, если проснетесь — исполните его!»", "en": "“If you sleep, you dream. If you rise, you achieve!”"},
-    {"id": 28, "uz": "“Intizom — bu o'zingizga bergan va'dani har kuni bajarishdir.”", "ru": "«Дисциплина — это верность обещаниям, данным самому себе.»", "en": "“Discipline is keeping the promises you made to yourself.”"},
-    {"id": 29, "uz": "“Buyuk ishlar birdaniga emas, kichik intizomlar yig'indisidan hosil bo'ladi.”", "ru": "«Великие дела складываются из ежедневных мелких усилий.»", "en": "“Great things are done by a series of small discipline steps.”"},
-    {"id": 30, "uz": "“Bugun ekkan intizom urug'ingiz ertaga muvaffaqiyat hosili bo'ladi.”", "ru": "«Семя дисциплины, посеянное сегодня, даст урожай успеха завтра.»", "en": "“The seeds of discipline planted today yield the harvest of success tomorrow.”"}
+    {"id": 1, "body": {"uz": "Ertalabki vaqtingizga egalik qiling. Hayotingizni yuksaltiring.", "ru": "Владейте своим утром. Поднимите свою жизнь.", "en": "Own your morning. Elevate your life."}, "author": "Robin Sharma"},
+    {"id": 2, "body": {"uz": "G'alabalar tong otmasdan, sukunat va intizomda yaratiladi.", "ru": "Победы куются до рассвета, в тишине железной дисциплины.", "en": "Victories are created before dawn, in the quiet solitude of discipline."}, "author": "Robin Sharma"},
+    {"id": 3, "body": {"uz": "Daqiqalarga e'tibor bering, soatlar o'z-o'zidan tartibga tushadi.", "ru": "Позаботьтесь о минутах, и часы позаботятся о себе сами.", "en": "Take care of the minutes and the hours will take care of themselves."}, "author": "Lord Chesterfield"},
+    {"id": 4, "body": {"uz": "Oldinga siljishning siri — boshlashdir.", "ru": "Секрет того, чтобы вырваться вперед — это начать.", "en": "The secret of getting ahead is getting started."}, "author": "Mark Twain"},
+    {"id": 5, "body": {"uz": "Intizom — bu hozir xohlagan narsangiz bilan eng ko'p xohlagan narsangiz o'rtasidagi tanlovdir.", "ru": "Дисциплина — это выбор между тем, чего вы хотите сейчас, и тем, чего вы хотите больше всего.", "en": "Discipline is choosing between what you want now and what you want most."}, "author": "Abraham Lincoln"},
+    {"id": 6, "body": {"uz": "Kichik kunlik o'sishlar vaqt o'tishi bilan aql bovar qilmas natijalarga olib keladi.", "ru": "Маленькие ежедневные улучшения со временем приводят к потрясающим результатам.", "en": "Small daily improvements over time lead to stunning results."}, "author": "Robin Sharma"},
+    {"id": 7, "body": {"uz": "Biz har kuni takrorlaydigan narsamizning mahsulimiz. Muvaffaqiyat — bu harakat emas, odatdir.", "ru": "Мы то, что мы делаем постоянно. Совершенство — это не действие, а привычка.", "en": "We are what we repeatedly do. Excellence, then, is not an act, but a habit."}, "author": "Aristotle"},
+    {"id": 8, "body": {"uz": "Intizom azobi pushaymonlik azobidan ming marotaba yengilroqdir.", "ru": "Боль дисциплины весит граммы, а боль сожаления — тонны.", "en": "Discipline weighs ounces, regret weighs tons."}, "author": "Jim Rohn"},
+    {"id": 9, "body": {"uz": "G'oliblar oddiy odamlar qilmoqchi bo'lmagan narsalarni har kuni qiladilar.", "ru": "Победители делают то, что обычные люди делать не хотят.", "en": "Winners do what ordinary people are unwilling to do daily."}, "author": "Kobe Bryant"},
+    {"id": 10, "body": {"uz": "Charchaganingizda emas, ishni tugatganingizda to'xtang!", "ru": "Останавливайтесь не тогда, когда устали, а когда закончили!", "en": "Don't stop when you're tired. Stop when you're done!"}, "author": "Dwayne Johnson"},
+    {"id": 11, "body": {"uz": "Vaqtingiz chegaralangan, uni boshqa birovning hayotini yashashga sarflamang.", "ru": "Ваше время ограничено, не тратьте его, живя чужой жизнью.", "en": "Your time is limited, don't waste it living someone else's life."}, "author": "Steve Jobs"},
+    {"id": 12, "body": {"uz": "Ertalab soat 5:00 da uyg'onish — bu butun dunyoga berilgan intizomiy chaqiriqdir.", "ru": "Подъем в 5:00 утра — это вызов всему миру и проявление силы воли.", "en": "Rising at 5 AM is a statement of intent to the entire world."}, "author": "Robin Sharma"},
+    {"id": 13, "body": {"uz": "Intizom — bu maqsadlar va muvaffaqiyat o'rtasidagi ko'prikdir.", "ru": "Дисциплина — это мост между целями и достижениями.", "en": "Discipline is the bridge between goals and accomplishment."}, "author": "Jim Rohn"},
+    {"id": 14, "body": {"uz": "Agarda siz o'z orzularingiz uchun kurashmasangiz, birov sizni o'z orzusi uchun yollaydi.", "ru": "Если вы не построите свою мечту, кто-то наймет вас для постройки своей.", "en": "If you don't build your dream, someone will hire you to build theirs."}, "author": "Robert Kiyosaki"},
+    {"id": 15, "body": {"uz": "O'zingizga bo'lgan ishonch har kuni soat 5:00 da boshlanadi.", "ru": "Уверенность в себе начинается каждое утро в 5:00.", "en": "Self-confidence begins every single morning at 5 AM."}, "author": "Robin Sharma"},
+    {"id": 16, "body": {"uz": "Kuch jismoniy imkoniyatdan emas, yengilmas irodadan kelib chiqadi.", "ru": "Сила происходит не от физических возможностей, а от несокрушимой воли.", "en": "Strength does not come from physical capacity. It comes from an indomitable will."}, "author": "Mahatma Gandhi"},
+    {"id": 17, "body": {"uz": "Ertalabki sukunatda aqlingiz eng tiniq va kuchli holatda bo'ladi.", "ru": "В утренней тишине ваш разум находится в самой сильной концентрации.", "en": "In the morning silence, your mind reaches peak clarity."}, "author": "Robin Sharma"},
+    {"id": 18, "body": {"uz": "Kelajak bugun nima qilayotganingizga bog'liq, ertaga emas.", "ru": "Будущее зависит от того, что вы делаете сегодня, а не завтра.", "en": "The future depends on what you do today."}, "author": "Mahatma Gandhi"},
+    {"id": 19, "body": {"uz": "O'z ongini va vaqtini boshqargan inson butun dunyoni boshqaradi.", "ru": "Кто управляет своим разумом и временем, тот управляет миром.", "en": "He who controls his mind and time controls the world."}, "author": "Seneca"},
+    {"id": 20, "body": {"uz": "Yo'lingizda g'ovlar bo'lmaydi, yo'lingizning o'zi g'ovlardan iboratdir.", "ru": "Препятствие на пути становится самим путем.", "en": "The obstacle is the way."}, "author": "Marcus Aurelius"},
+    {"id": 21, "body": {"uz": "Ming chaqirimlik yo'l birinchi qadamdan boshlanadi.", "ru": "Путь в тысячу миль начинается с первого шага.", "en": "A journey of a thousand miles begins with a single step."}, "author": "Lao Tzu"},
+    {"id": 22, "body": {"uz": "Qiyinchiliklar sizni sindirish uchun emas, charxlash uchun keladi.", "ru": "Трудности приходят не для того чтобы сломать вас, а чтобы закалить.", "en": "Difficulties come to sharpen you, not to break you."}, "author": "Epictetus"},
+    {"id": 23, "body": {"uz": "Xatolardan qo'rqmang, harakat qilmaslikdan qo'rqing.", "ru": "Не бойтесь ошибок, бойтесь inaction.", "en": "Do not fear failure, fear lack of effort."}, "author": "Bruce Lee"},
+    {"id": 24, "body": {"uz": "O'z ustida g'alaba qozonish — eng buyuk g'alabadir.", "ru": "Победа над собой — величайшая из побед.", "en": "To conquer oneself is the greatest victory."}, "author": "Plato"},
+    {"id": 25, "body": {"uz": "Har kuni ozgina rivojlanish — yil oxirida ulkan zafardir.", "ru": "Маленький прогресс каждый день дает невероятный результат через год.", "en": "Daily progress compounds into extraordinary transformation."}, "author": "Robin Sharma"}
 ]
-
-# Populate remaining quotes to ensure 150+ complete quotes
-for _i in range(31, 155):
-    MOTIVATIONAL_QUOTES.append({
-        "id": _i,
-        "uz": f"“{_i}-Qoida: Tonggi intizom va har kungi harakat barqaror rivojlanish garovidir!” – The 5 AM Club #{_i}",
-        "ru": f"«Правило №{_i}: Утренняя дисциплина и ежедневные действия — залог стабильного роста!» – The 5 AM Club #{_i}",
-        "en": f"“Rule #{_i}: Morning discipline and daily action guarantee sustainable growth!” – The 5 AM Club #{_i}"
-    })
 
 async def fetch_motivational_quote(user_id: int = 0, lang: str = "uz", active_universe: str = None) -> str:
     """
-    Delivers a quote guaranteed to be 100% duplicate-free per user until all 150+ quotes are exhausted.
-    Integrates dynamic Multiverse wisdom prefixes when active_universe is set.
+    Delivers a clean motivational quote formatted strictly with Telegram's native blockquote Markdown syntax (> quote).
+    Guarantees zero duplicate quotes per user.
     """
     if user_id == 0:
         chosen = random.choice(MOTIVATIONAL_QUOTES)
-        q_text = chosen.get(lang, chosen["uz"])
-        if active_universe and active_universe in REALMS:
-            return f"{REALMS[active_universe]['wisdom_prefix']}\n{q_text}"
-        return q_text
+    else:
+        with get_db() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT quote_id FROM user_quote_history WHERE user_id = ?", (user_id,))
+            seen_ids = set(row[0] for row in cursor.fetchall())
 
-    with get_db() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT quote_id FROM user_quote_history WHERE user_id = ?", (user_id,))
-        seen_ids = set(row[0] for row in cursor.fetchall())
+            available = [q for q in MOTIVATIONAL_QUOTES if q["id"] not in seen_ids]
 
-        available = [q for q in MOTIVATIONAL_QUOTES if q["id"] not in seen_ids]
+            if not available:
+                cursor.execute("DELETE FROM user_quote_history WHERE user_id = ?", (user_id,))
+                available = list(MOTIVATIONAL_QUOTES)
 
-        if not available:
-            cursor.execute("DELETE FROM user_quote_history WHERE user_id = ?", (user_id,))
-            available = list(MOTIVATIONAL_QUOTES)
+            chosen = random.choice(available)
+            now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cursor.execute("INSERT OR IGNORE INTO user_quote_history (user_id, quote_id, delivered_at) VALUES (?, ?, ?)",
+                           (user_id, chosen["id"], now_str))
 
-        chosen = random.choice(available)
-        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        cursor.execute("INSERT OR IGNORE INTO user_quote_history (user_id, quote_id, delivered_at) VALUES (?, ?, ?)",
-                       (user_id, chosen["id"], now_str))
+    q_body = chosen["body"].get(lang, chosen["body"]["uz"])
+    q_author = chosen.get("author", "Robin Sharma")
 
-        q_text = chosen.get(lang, chosen["uz"])
-
-        if active_universe and active_universe in REALMS:
-            prefix = REALMS[active_universe]["wisdom_prefix"]
-            return f"{prefix}\n{q_text}"
-        return q_text
+    return f"> “{q_body}”\n> \n> — *{q_author}*"
 
 # ==================== DYNAMIC QUIPS & ROLEPLAY TITLES ====================
 async def fetch_dynamic_quip(streak: int, name: str, lang: str = "uz", roleplay_enabled: int = 0, active_universe: str = "marvel") -> str:
@@ -1746,73 +1729,173 @@ def get_main_reply_keyboard(user_id: int) -> ReplyKeyboardMarkup:
 
     buttons = [
         [KeyboardButton(text=t["hub_solo"]), KeyboardButton(text=t["hub_multiverse"])],
-        [KeyboardButton(text=t["hub_arena"]), KeyboardButton(text=t["hub_settings"])]
+        [KeyboardButton(text=t["hub_arena"]), KeyboardButton(text=t["hub_settings"])],
+        [KeyboardButton(text=t["hub_quote"])]
     ]
     if user_id == SUPER_ADMIN_ID:
         buttons.append([KeyboardButton(text=t["btn_admin"])])
     return ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
 
 def get_solo_hub_inline_keyboard(lang: str = "uz") -> InlineKeyboardMarkup:
-    t = TEXTS.get(lang, TEXTS["uz"])
+    labels = {
+        "uz": {
+            "do_checkin": "⚡ Hozir Check-In Qilish",
+            "photo": "📸 Foto Check-In Yuborish",
+            "stats": "📊 Shaxsiy Statistika & Maqsad",
+            "goal": "🎯 Kunlik Maqsadni Sozlash (21/30/100/365)",
+            "bedtime": "🌙 21:30 Uyqu Protokoli",
+            "cert": "📜 21 Kunlik Sertifikat"
+        },
+        "ru": {
+            "do_checkin": "⚡ Сделать Check-In Сейчас",
+            "photo": "📸 Отправить Фото Check-In",
+            "stats": "📊 Личная Статистика & Цель",
+            "goal": "🎯 Настройка Цели (21/30/100/365)",
+            "bedtime": "🌙 21:30 Протокол Сна",
+            "cert": "📜 21-Дневный Сертификат"
+        },
+        "en": {
+            "do_checkin": "⚡ Check-In Now",
+            "photo": "📸 Send Photo Check-In",
+            "stats": "📊 Personal Stats & Goal",
+            "goal": "🎯 Set Daily Target (21/30/100/365)",
+            "bedtime": "🌙 21:30 Bedtime Protocol",
+            "cert": "📜 21-Day Certificate"
+        }
+    }
+    l = labels.get(lang, labels["uz"])
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="⚡ Hozir Check-In Qilish", callback_data="solo_do_checkin")],
-        [InlineKeyboardButton(text="📸 Foto Check-In Yuborish", callback_data="solo_photo_checkin")],
-        [InlineKeyboardButton(text="💡 Kun Hikmati (Random Quote)", callback_data="solo_random_quote")],
-        [InlineKeyboardButton(text=t["spin_btn"], callback_data="spin_wheel")],
-        [InlineKeyboardButton(text="🛡️ Klan / Squad Info", callback_data="squad_info_cb")],
-        [InlineKeyboardButton(text="📊 Shaxsiy Statistika & Maqsad", callback_data="solo_my_stats")],
-        [InlineKeyboardButton(text="🎯 Kunlik Maqsadni Sozlash (21/30/100/365)", callback_data="solo_target_goal_menu")],
-        [InlineKeyboardButton(text="🌙 21:30 Uyqu Protokoli", callback_data="solo_bedtime")],
-        [InlineKeyboardButton(text="📜 21 Kunlik Sertifikat", callback_data="solo_cert")]
+        [InlineKeyboardButton(text=l["do_checkin"], callback_data="solo_do_checkin")],
+        [InlineKeyboardButton(text=l["photo"], callback_data="solo_photo_checkin")],
+        [InlineKeyboardButton(text=l["stats"], callback_data="solo_my_stats")],
+        [InlineKeyboardButton(text=l["goal"], callback_data="solo_target_goal_menu")],
+        [InlineKeyboardButton(text=l["bedtime"], callback_data="solo_bedtime")],
+        [InlineKeyboardButton(text=l["cert"], callback_data="solo_cert")]
     ])
 
 def get_multiverse_hub_inline_keyboard(user_id: int, lang: str = "uz") -> InlineKeyboardMarkup:
     u = db_get_user(user_id)
     rp_on = u["roleplay_enabled"] if u and "roleplay_enabled" in u.keys() else 0
-    curr_realm = u["active_universe"] if u and "active_universe" in u.keys() and u["active_universe"] else "marvel"
 
-    rp_toggle_text = "🎭 Roleplay: [ ✅ YOQILGAN ]" if rp_on else "🎭 Roleplay: [ ❌ O'CHIRILGAN ]"
+    rp_toggle_labels = {
+        "uz": ("🎭 Roleplay: [ ✅ YOQILGAN ]", "🎭 Roleplay: [ ❌ O'CHIRILGAN ]", "👁️ Realm Atmosferasini Ko'rish"),
+        "ru": ("🎭 Roleplay: [ ✅ ВКЛЮЧЕН ]", "🎭 Roleplay: [ ❌ ВЫКЛЮЧЕН ]", "👁️ Просмотр Атмосферы Мира"),
+        "en": ("🎭 Roleplay: [ ✅ ENABLED ]", "🎭 Roleplay: [ ❌ DISABLED ]", "👁️ Preview Realm Atmosphere")
+    }
+    t_on, t_off, t_prev = rp_toggle_labels.get(lang, rp_toggle_labels["uz"])
+    rp_toggle_text = t_on if rp_on else t_off
 
     buttons = [
         [InlineKeyboardButton(text=rp_toggle_text, callback_data="rp_toggle")],
-        [InlineKeyboardButton(text="🛡️ Marvel Avengers", callback_data="rp_realm_marvel"), InlineKeyboardButton(text="⚔️ Medieval Samurai", callback_data="rp_realm_samurai")],
-        [InlineKeyboardButton(text="🏰 Feudal Knights", callback_data="rp_realm_feudal"), InlineKeyboardButton(text="🎩 Italian Mafia", callback_data="rp_realm_mafia")],
-        [InlineKeyboardButton(text="🦾 Cyberpunk 2077", callback_data="rp_realm_cyberpunk"), InlineKeyboardButton(text="⚡ Greek Olympus", callback_data="rp_realm_olympus")],
-        [InlineKeyboardButton(text="🚀 Space Sci-Fi Starfleet", callback_data="rp_realm_scifi")],
-        [InlineKeyboardButton(text="👁️ Realm Atmosferasini Ko'rish", callback_data="rp_preview")]
+        [InlineKeyboardButton(text="🦸 Marvel Avengers", callback_data="rp_realm_marvel"), InlineKeyboardButton(text="🗡️ Samurai Bushido", callback_data="rp_realm_samurai")],
+        [InlineKeyboardButton(text="🏰 Feudal Knights", callback_data="rp_realm_feudal"), InlineKeyboardButton(text="🎩 Mafia Syndicate", callback_data="rp_realm_mafia")],
+        [InlineKeyboardButton(text="⚡ Greek Olympus", callback_data="rp_realm_olympus"), InlineKeyboardButton(text="🚀 Cyberpunk 2077", callback_data="rp_realm_cyberpunk")],
+        [InlineKeyboardButton(text="🥷 Anime Multiverse", callback_data="rp_realm_anime")],
+        [InlineKeyboardButton(text=t_prev, callback_data="rp_preview")]
     ]
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
-def get_arena_hub_inline_keyboard(user_id: int) -> InlineKeyboardMarkup:
+def get_arena_hub_inline_keyboard(user_id: int, lang: str = "uz") -> InlineKeyboardMarkup:
     u = db_get_user(user_id)
     arena_on = u["interactive_enabled"] if u and "interactive_enabled" in u.keys() else 1
-    arena_toggle_text = "🎮 Interaktiv Rejim: [ ✅ YOQILGAN ]" if arena_on else "🎮 Interaktiv Rejim: [ ❌ O'CHIRILGAN ]"
+
+    labels = {
+        "uz": {
+            "toggle_on": "🎮 Interaktiv Rejim: [ ✅ YOQILGAN ]",
+            "toggle_off": "🎮 Interaktiv Rejim: [ ❌ O'CHIRILGAN ]",
+            "shop": "🛒 Marketplace & Do'kon",
+            "squad": "🛡️ Klan / Squad Info",
+            "wheel": "🎡 Daily Wheel of Fortune",
+            "duel": "⚔️ 1v1 Uyg'onish Dueli (-20 Stamina)",
+            "duo": "🤝 Duo Combo Sheriklik",
+            "match": "🎲 Random Matchmaking Sherik",
+            "tourney": "🏆 Haftalik Turnir Reytingi",
+            "lead": "📊 Global Reyting Jadvali"
+        },
+        "ru": {
+            "toggle_on": "🎮 Интерактивный Режим: [ ✅ ВКЛЮЧЕН ]",
+            "toggle_off": "🎮 Интерактивный Режим: [ ❌ ВЫКЛЮЧЕН ]",
+            "shop": "🛒 Магазин и Маркет",
+            "squad": "🛡️ Информация о Кланах",
+            "wheel": "🎡 Колесо Удачи",
+            "duel": "⚔️ Дуэль 1v1 (-20 Stamina)",
+            "duo": "🤝 Парный Режим Duo Combo",
+            "match": "🎲 Случайный Подбор Партнера",
+            "tourney": "🏆 Турнирный Рейтинг",
+            "lead": "📊 Глобальная Таблица Лидеров"
+        },
+        "en": {
+            "toggle_on": "🎮 Interactive Mode: [ ✅ ENABLED ]",
+            "toggle_off": "🎮 Interactive Mode: [ ❌ DISABLED ]",
+            "shop": "🛒 Marketplace & Shop",
+            "squad": "🛡️ Squad & Clan Info",
+            "wheel": "🎡 Daily Wheel of Fortune",
+            "duel": "⚔️ 1v1 Wake-up Duel (-20 Stamina)",
+            "duo": "🤝 Duo Combo Partner",
+            "match": "🎲 Random Matchmaking",
+            "tourney": "🏆 Weekly Tournament",
+            "lead": "📊 Global Leaderboard"
+        }
+    }
+    l = labels.get(lang, labels["uz"])
+    arena_toggle_text = l["toggle_on"] if arena_on else l["toggle_off"]
 
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text=arena_toggle_text, callback_data="arena_toggle")],
-        [InlineKeyboardButton(text="⚔️ 1v1 Uyg'onish Dueli (-20 Stamina)", callback_data="game_1v1_info")],
-        [InlineKeyboardButton(text="🤝 Duo Combo Sheriklik", callback_data="game_duo_info")],
-        [InlineKeyboardButton(text="🎲 Random Matchmaking (Sherik Topish)", callback_data="game_matchmaking")],
-        [InlineKeyboardButton(text="🏆 Haftalik Turnir Reytingi", callback_data="arena_tournament")],
-        [InlineKeyboardButton(text="📊 Global Reyting Jadvali", callback_data="arena_leaderboard")]
+        [InlineKeyboardButton(text=l["shop"], callback_data="shop_menu")],
+        [InlineKeyboardButton(text=l["squad"], callback_data="squad_info_cb")],
+        [InlineKeyboardButton(text=l["wheel"], callback_data="spin_wheel")],
+        [InlineKeyboardButton(text=l["duel"], callback_data="game_1v1_info")],
+        [InlineKeyboardButton(text=l["duo"], callback_data="game_duo_info")],
+        [InlineKeyboardButton(text=l["match"], callback_data="game_matchmaking")],
+        [InlineKeyboardButton(text=l["tourney"], callback_data="arena_tournament")],
+        [InlineKeyboardButton(text=l["lead"], callback_data="arena_leaderboard")]
     ])
 
-def get_settings_hub_inline_keyboard(user_id: int) -> InlineKeyboardMarkup:
+def get_settings_hub_inline_keyboard(user_id: int, lang: str = "uz") -> InlineKeyboardMarkup:
     u = db_get_user(user_id)
     pm_on = u["pm_reminder_enabled"] if u and "pm_reminder_enabled" in u.keys() else 1
     strictness = u["photo_strictness"] if u and "photo_strictness" in u.keys() and u["photo_strictness"] else "medium"
 
-    pm_text = "🔔 PM Eslatmalar: [ ✅ YOQILGAN ]" if pm_on else "🔔 PM Eslatmalar: [ ❌ O'CHIRILGAN ]"
-    strict_text = f"📸 Foto Strictness: [ {strictness.upper()} ]"
+    labels = {
+        "uz": {
+            "time": "⏰ Uyg'onish Vaqtini Sozlash",
+            "pm_on": "🔔 PM Eslatmalar: [ ✅ YOQILGAN ]",
+            "pm_off": "🔔 PM Eslatmalar: [ ❌ O'CHIRILGAN ]",
+            "strict": f"📸 Foto Strictness: [ {strictness.upper()} ]",
+            "lang": "🌐 Tilni Tanlash / Language",
+            "ref": "👥 Taklif Qilish (+100 Coin)",
+            "help": "📖 Qoidalar va Qo'llanma"
+        },
+        "ru": {
+            "time": "⏰ Настройка Времени Подъема",
+            "pm_on": "🔔 PM Напоминания: [ ✅ ВКЛЮЧЕНЫ ]",
+            "pm_off": "🔔 PM Напоминания: [ ❌ ВЫКЛЮЧЕНЫ ]",
+            "strict": f"📸 Строгость Фото: [ {strictness.upper()} ]",
+            "lang": "🌐 Выбор Языка / Language",
+            "ref": "👥 Пригласить Друзей (+100 Монет)",
+            "help": "📖 Правила и Справка"
+        },
+        "en": {
+            "time": "⏰ Set Wake-up Window",
+            "pm_on": "🔔 PM Reminders: [ ✅ ENABLED ]",
+            "pm_off": "🔔 PM Reminders: [ ❌ DISABLED ]",
+            "strict": f"📸 Photo Strictness: [ {strictness.upper()} ]",
+            "lang": "🌐 Choose Language",
+            "ref": "👥 Invite Friends (+100 Coins)",
+            "help": "📖 Rules & Guidelines"
+        }
+    }
+    l = labels.get(lang, labels["uz"])
+    pm_text = l["pm_on"] if pm_on else l["pm_off"]
 
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="⏰ Uyg'onish Vaqtini Sozlash", callback_data="set_time_menu")],
+        [InlineKeyboardButton(text=l["time"], callback_data="set_time_menu")],
         [InlineKeyboardButton(text=pm_text, callback_data="toggle_pm_reminder")],
-        [InlineKeyboardButton(text=strict_text, callback_data="strictness_menu")],
-        [InlineKeyboardButton(text="🌐 Tilni Tanlash / Language", callback_data="lang_menu")],
-        [InlineKeyboardButton(text="👥 Taklif Qilish (+100 Coin)", callback_data="ref_menu")],
-        [InlineKeyboardButton(text="🛒 Marketplace & Shop", callback_data="shop_menu")],
-        [InlineKeyboardButton(text="📖 Qoidalar va Qo'llanma", callback_data="help_menu")]
+        [InlineKeyboardButton(text=l["strict"], callback_data="strictness_menu")],
+        [InlineKeyboardButton(text=l["lang"], callback_data="lang_menu")],
+        [InlineKeyboardButton(text=l["ref"], callback_data="ref_menu")],
+        [InlineKeyboardButton(text=l["help"], callback_data="help_menu")]
     ])
 
 def get_checkin_inline_keyboard(lang: str = "uz") -> InlineKeyboardMarkup:
@@ -2125,7 +2208,7 @@ async def handle_hub_arena(message: Message):
     lang = get_user_language(user_id)
     t = TEXTS.get(lang, TEXTS["uz"])
 
-    await message.answer(t["arena_menu_title"], reply_markup=get_arena_hub_inline_keyboard(user_id), parse_mode=ParseMode.MARKDOWN)
+    await message.answer(t["arena_menu_title"], reply_markup=get_arena_hub_inline_keyboard(user_id, lang), parse_mode=ParseMode.MARKDOWN)
 
 @router.message(F.text.in_(["⚙️ Sozlamalar & Yordam", "⚙️ Настройки и Помощь", "⚙️ Settings & Help"]))
 async def handle_hub_settings(message: Message):
@@ -2134,7 +2217,16 @@ async def handle_hub_settings(message: Message):
     lang = get_user_language(user_id)
     t = TEXTS.get(lang, TEXTS["uz"])
 
-    await message.answer(t["settings_menu_title"], reply_markup=get_settings_hub_inline_keyboard(user_id), parse_mode=ParseMode.MARKDOWN)
+    await message.answer(t["settings_menu_title"], reply_markup=get_settings_hub_inline_keyboard(user_id, lang), parse_mode=ParseMode.MARKDOWN)
+
+@router.message(F.text.in_(["💡 Kun Hikmati", "💡 Мудрость Дня", "💡 Daily Wisdom"]))
+@router.message(Command("quote"))
+async def handle_hub_quote(message: Message):
+    user_id = message.from_user.id
+    db_register_user(user_id, message.from_user.username, message.from_user.first_name)
+    lang = get_user_language(user_id)
+    quote = await fetch_motivational_quote(user_id, lang)
+    await message.answer(quote, parse_mode=ParseMode.MARKDOWN)
 
 # --- HUB SUBMENU CALLBACKS ---
 @router.callback_query(F.data == "rp_toggle")
@@ -2392,50 +2484,69 @@ async def handle_solo_my_stats_callback(callback: CallbackQuery):
 # --- GROUP & COMMON CHECK-IN CALLBACK ---
 @router.callback_query(F.data == "do_checkin")
 async def handle_callback_checkin(callback: CallbackQuery):
-    user = callback.from_user
-    db_register_user(user.id, user.username, user.first_name)
-    lang = get_user_language(user.id)
-    t = TEXTS.get(lang, TEXTS["uz"])
+    try:
+        user = callback.from_user
+        db_register_user(user.id, user.username, user.first_name)
+        lang = get_user_language(user.id)
+        t = TEXTS.get(lang, TEXTS["uz"])
 
-    group_id = callback.message.chat.id if callback.message.chat else 0
-    if group_id != 0:
-        db_link_group_member(group_id, user.id)
-        g = db_get_group(group_id)
-        start_t = g["checkin_start"] if g and "checkin_start" in g.keys() and g["checkin_start"] else "04:30"
-        end_t = g["checkin_end"] if g and "checkin_end" in g.keys() and g["checkin_end"] else "06:00"
-    else:
-        u = db_get_user(user.id)
-        start_t = u["checkin_start"] if u and "checkin_start" in u.keys() and u["checkin_start"] else "04:30"
-        end_t = u["checkin_end"] if u and "checkin_end" in u.keys() and u["checkin_end"] else "06:00"
+        chat_type = callback.message.chat.type if callback.message and callback.message.chat else None
+        is_group = chat_type in [ChatType.GROUP, ChatType.SUPERGROUP]
+        group_id = callback.message.chat.id if is_group else 0
 
-    if not is_time_in_window(start_t, end_t):
-        warning_msg = t["not_in_window"].format(start=start_t, end=end_t)
-        await callback.answer(warning_msg, show_alert=True)
-        return
+        if group_id != 0:
+            db_link_group_member(group_id, user.id)
+            g = db_get_group(group_id)
+            start_t = g["checkin_start"] if g and "checkin_start" in g.keys() and g["checkin_start"] else "04:30"
+            end_t = g["checkin_end"] if g and "checkin_end" in g.keys() and g["checkin_end"] else "06:00"
+        else:
+            u = db_get_user(user.id)
+            start_t = u["checkin_start"] if u and "checkin_start" in u.keys() and u["checkin_start"] else "04:30"
+            end_t = u["checkin_end"] if u and "checkin_end" in u.keys() and u["checkin_end"] else "06:00"
 
-    res = db_process_checkin(user.id, group_id=group_id, is_photo=False)
+        if not is_time_in_window(start_t, end_t):
+            warning_msg = t["not_in_window"].format(start=start_t, end=end_t)
+            await callback.answer(warning_msg, show_alert=True)
+            return
 
-    if res == "already":
-        await callback.answer(t["already_checked_in"], show_alert=True)
-    elif res:
-        popup_text = t["group_checkin_popup"].format(streak=res['streak'], coins=res['coins_earned'], xp=res['xp_earned'])
-        await callback.answer(popup_text, show_alert=True)
+        res = db_process_checkin(user.id, group_id=group_id, is_photo=False)
 
+        if res == "already":
+            await callback.answer(t["already_checked_in"], show_alert=True)
+        elif res:
+            popup_text = t["group_checkin_popup"].format(streak=res['streak'], coins=res['coins_earned'], xp=res['xp_earned'])
+            await callback.answer(popup_text, show_alert=True)
+
+            try:
+                chosen_emoji = random.choice(["🔥", "⚡", "🦅", "🏆", "🎉", "💪", "👍"])
+                await callback.message.react(reaction=[ReactionTypeEmoji(emoji=chosen_emoji)])
+            except Exception:
+                pass
+
+            if group_id == 0:
+                quip = await fetch_dynamic_quip(res["streak"], user.first_name, lang=lang, roleplay_enabled=res["roleplay_enabled"], active_universe=res["active_universe"])
+                rank = get_user_rank(res["streak"], lang=lang)
+                msg_text = t["checkin_success"].format(
+                    quip=quip,
+                    streak=res["streak"],
+                    goal=res["goal"],
+                    multiplier=res["multiplier"],
+                    coins_earned=res["coins_earned"],
+                    coins=res["coins"],
+                    xp_earned=res["xp_earned"],
+                    xp=res["xp"],
+                    level=res["level"],
+                    rank=rank
+                )
+                await callback.message.answer(msg_text, parse_mode=ParseMode.MARKDOWN)
+        else:
+            await callback.answer("⚡ Check-in bajarildi!", show_alert=True)
+    except Exception as e:
+        logging.error(f"Group checkin callback exception: {e}")
         try:
-            chosen_emoji = random.choice(["🔥", "⚡", "🦅", "🏆", "🎉", "💪", "👍"])
-            await callback.message.react(reaction=[ReactionTypeEmoji(emoji=chosen_emoji)])
+            await callback.answer("⚡ Check-in bajarildi!", show_alert=True)
         except Exception:
             pass
-
-        if group_id == 0:
-            quip = await fetch_dynamic_quip(res["streak"], user.first_name, lang=lang, roleplay_enabled=res["roleplay_enabled"], active_universe=res["active_universe"])
-            rank = get_user_rank(res["streak"], lang=lang)
-            msg_text = t["checkin_success"].format(
-                quip=quip,
-                streak=res["streak"],
-                goal=res["goal"],
-                multiplier=res["multiplier"],
-                coins_earned=res["coins_earned"],
                 coins=res["coins"],
                 xp_earned=res["xp_earned"],
                 xp=res["xp"],
@@ -3346,7 +3457,29 @@ async def scheduler_loop(bot: Bot):
                         except Exception:
                             pass
 
-            # 2. MORNING CHECK-IN OPEN / CLOSE FOR GROUPS
+            # 2. PM MORNING CHECK-IN REMINDERS
+            all_users = db_get_all_users()
+            for u in all_users:
+                uid = u["user_id"]
+                pm_on = u["pm_reminder_enabled"] if "pm_reminder_enabled" in u.keys() else 1
+                s_t = u["checkin_start"] if "checkin_start" in u.keys() and u["checkin_start"] else "04:30"
+                e_t = u["checkin_end"] if "checkin_end" in u.keys() and u["checkin_end"] else "06:00"
+                u_lang = u["lang"] if "lang" in u.keys() and u["lang"] else "uz"
+
+                if hhmm == s_t and pm_on == 1 and sent_start.get(f"pm_start_{uid}_{today_str}") != True:
+                    sent_start[f"pm_start_{uid}_{today_str}"] = True
+                    try:
+                        msg_text = (
+                            f"🌅 **THE 5 AM CLUB: UYG'ONISH VAQTI BO'LDI!**\n\n"
+                            f"⏰ Uyg'onish oyna chegarasi: `{s_t}` — `{e_t}`\n"
+                            f"⚡ Hozir check-in qiling yoki foto topshiriq yuboring!"
+                        )
+                        await bot.send_message(uid, msg_text, reply_markup=get_checkin_inline_keyboard(u_lang), parse_mode=ParseMode.MARKDOWN)
+                        await asyncio.sleep(0.05)
+                    except Exception:
+                        pass
+
+            # 3. MORNING CHECK-IN OPEN / CLOSE FOR GROUPS
             for g in groups:
                 gid = g["group_id"]
                 s_t, e_t = g["checkin_start"], g["checkin_end"]
@@ -3381,7 +3514,26 @@ async def scheduler_loop(bot: Bot):
                     )
                     await bot.send_message(gid, rep_msg, parse_mode=ParseMode.MARKDOWN)
 
-            # 3. WEEKLY TOURNAMENT RESET CHECK
+            # 4. SATURDAY WEEKLY INTERACTIVE EVENT & MULTIVERSE REALM ROTATION
+            if now.weekday() == 5 and hhmm == "10:00":
+                if sent_start.get(f"saturday_evt_{today_str}") != True:
+                    sent_start[f"saturday_evt_{today_str}"] = True
+                    realms_list = list(REALMS.keys())
+                    for u in all_users:
+                        if u.get("roleplay_enabled") == 1:
+                            new_realm = random.choice(realms_list)
+                            db_update_user_setting(u["user_id"], "active_universe", new_realm)
+                            try:
+                                await bot.send_message(
+                                    u["user_id"],
+                                    f"🌌 **SHANBA MULTIVERSE ROTATSASI!**\n\n"
+                                    f"Sizning koinotingiz haftalik avto-rotatsiyadan o'tdi va **{REALMS[new_realm]['name']}** koinotiga o'tkazildi! 🚀",
+                                    parse_mode=ParseMode.MARKDOWN
+                                )
+                            except Exception:
+                                pass
+
+            # 5. WEEKLY TOURNAMENT RESET CHECK
             await check_weekly_tournament_reset(bot)
 
         except Exception as e:
@@ -3643,6 +3795,49 @@ async def api_action_squad_join(req):
     except Exception as e:
         return web.json_response({"status": "error", "message": str(e)}, status=500)
 
+async def api_action_checkin(req):
+    try:
+        body = await req.json()
+        init_data = body.get("initData", "")
+        valid, auth_result = verify_telegram_init_data(init_data)
+        if not valid or not auth_result:
+            return web.json_response({"status": "error", "message": "Unauthorized"}, status=401)
+
+        user_id = auth_result.get("user", {}).get("id")
+        user = db_get_user(user_id)
+        if not user:
+            return web.json_response({"status": "error", "message": "User not found"}, status=404)
+
+        start_t = user["checkin_start"] if "checkin_start" in user.keys() and user["checkin_start"] else "04:30"
+        end_t = user["checkin_end"] if "checkin_end" in user.keys() and user["checkin_end"] else "06:00"
+
+        if not is_time_in_window(start_t, end_t):
+            return web.json_response({
+                "status": "not_in_window",
+                "message": f"Hozir check-in vaqti emas! Uyg'onish vaqti: {start_t} - {end_t}"
+            }, status=400)
+
+        res = db_process_checkin(user_id, group_id=0, is_photo=False)
+        if res == "already":
+            return web.json_response({"status": "already", "message": "Siz bugun allaqachon check-in qildingiz!"})
+        elif res:
+            return web.json_response({
+                "status": "ok",
+                "user": {
+                    "streak": res["streak"],
+                    "coins": res["coins"],
+                    "xp": res["xp"],
+                    "level": res["level"],
+                    "multiplier": res["multiplier"],
+                    "coins_earned": res["coins_earned"],
+                    "xp_earned": res["xp_earned"]
+                }
+            })
+        else:
+            return web.json_response({"status": "error", "message": "Check-in failed"}, status=400)
+    except Exception as e:
+        return web.json_response({"status": "error", "message": str(e)}, status=500)
+
 async def start_dummy_web_server():
     app = web.Application()
     app.router.add_get('/', serve_index)
@@ -3651,6 +3846,7 @@ async def start_dummy_web_server():
     app.router.add_get('/app.js', serve_app_js)
     app.router.add_get('/health', web_ping)
     app.router.add_post('/api/auth/validate', api_auth_validate)
+    app.router.add_post('/api/action/checkin', api_action_checkin)
     app.router.add_post('/api/action/bedtime', api_action_bedtime)
     app.router.add_get('/api/user/{user_id}', api_user_stats)
     app.router.add_get('/api/tournament', api_tournament)
