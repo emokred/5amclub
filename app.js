@@ -419,13 +419,13 @@ const MULTIVERSE_REALM_TITLES = {
             en: [[1, "🏛️ Olympus Hero"], [5, "⚡ Zeus Lightning"], [10, "⚔️ Spartan Warrior"], [20, "👑 Sovereign of Olympus"]]
         }
     },
-    scifi: {
-        badge: "🚀 Galactic Fleet",
-        quip: "Hyperdrive engaged! Galactic Fleet launched before dawn! 🚀",
+    anime: {
+        badge: "🥷 Konoha & Saiyans",
+        quip: "Dattebayo! Ninja Way wake-up sequence activated! Kamehameha morning boost! 🥷⚡",
         ranks: {
-            uz: [[1, "🚀 Koinot Kadeti"], [5, "🛸 Plazma Uchuvchisi"], [10, "🪐 Galaktika Komandiri"], [20, "👑 Koinot Floti Qiroli"]],
-            ru: [[1, "🚀 Звездный Кадет"], [5, "🛸 Плазменный Пилот"], [10, "🪐 Галактический Командир"], [20, "👑 Повелитель Галактики"]],
-            en: [[1, "🚀 Star Cadet"], [5, "🛸 Plasma Pilot"], [10, "🪐 Galactic Commander"], [20, "👑 Sovereign of Galaxy"]]
+            uz: [[1, "🥷 Konoha Ninjasi"], [5, "🏴‍☠️ Pirate Captain (Luffy)"], [10, "⚡ Hokage (Naruto)"], [20, "💥 Super Saiyan (Goku)"], [35, "👑 Saitama One-Punch"]],
+            ru: [[1, "🥷 Ниндзя Конохи"], [5, "🏴‍☠️ Капитан Пиратов (Луффи)"], [10, "⚡ Хокаге (Наруто)"], [20, "💥 Супер Сайян (Гоку)"], [35, "👑 Сайтама One-Punch"]],
+            en: [[1, "🥷 Leaf Ninja (Naruto)"], [5, "🏴‍☠️ Pirate Captain (Luffy)"], [10, "⚡ Shadow Hokage"], [20, "💥 Super Saiyan (Goku)"], [35, "👑 Saitama One-Punch"]]
         }
     }
 };
@@ -1534,13 +1534,63 @@ function initActions() {
     // 1. Solo Check-In Button
     const checkinBtn = document.getElementById("btn-main-checkin");
     if (checkinBtn) {
-        checkinBtn.addEventListener("click", () => {
+        checkinBtn.addEventListener("click", async () => {
+            const todayStr = new Date().toISOString().split("T")[0];
+            if (state.user.lastCheckinDate === todayStr || state.user.checkedInToday) {
+                sfx.click();
+                showToast("⚠️ Siz bugun allaqachon check-in qildingiz! Ertagacha! 🌅");
+                return;
+            }
+
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData) {
+                try {
+                    const res = await fetch("/api/action/checkin", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ initData: window.Telegram.WebApp.initData })
+                    });
+                    const data = await res.json();
+                    if (data.status === "not_in_window") {
+                        sfx.click();
+                        showToast(`⚠️ ${data.message || "Hozir check-in vaqti emas!"}`);
+                        return;
+                    } else if (data.status === "already") {
+                        sfx.click();
+                        showToast("⚠️ Siz bugun allaqachon check-in qildingiz! Ertagacha! 🌅");
+                        state.user.lastCheckinDate = todayStr;
+                        state.user.checkedInToday = true;
+                        saveState();
+                        return;
+                    } else if (data.status === "ok" && data.user) {
+                        sfx.coin();
+                        state.user.streak = data.user.streak;
+                        state.user.coins = data.user.coins;
+                        state.user.xp = data.user.xp;
+                        state.user.level = data.user.level;
+                        state.user.stamina = 100;
+                        state.user.lastCheckinDate = todayStr;
+                        state.user.checkedInToday = true;
+                        
+                        showToast(`⚡ Check-In Muvaffaqiyatli! +${data.user.coins_earned} Coin, +${data.user.xp_earned} XP 🎉`);
+                        updateUI();
+                        renderCalendar();
+                        renderHDCanvasCertificate();
+                        launchConfetti();
+                        triggerHapticFeedback("medium");
+                        return;
+                    }
+                } catch (e) {
+                    console.warn("Backend checkin offline, using local verification:", e);
+                }
+            }
+
             sfx.coin();
             const earnedCoins = Math.round(10 * state.user.multiplier);
             state.user.streak += 1;
             state.user.coins += earnedCoins;
-            state.user.stamina = 100; // Morning full vitality
+            state.user.stamina = 100;
             state.user.tourneyPoints = (state.user.tourneyPoints || 0) + 50;
+            state.user.lastCheckinDate = todayStr;
             state.user.checkedInToday = true;
 
             addXP(50);
@@ -1548,10 +1598,8 @@ function initActions() {
             renderCalendar();
             renderHDCanvasCertificate();
             launchConfetti();
-
-            const t = I18N[state.lang] || I18N.uz;
-            showToast(t.toastCheckinOk.replace("{coins}", earnedCoins));
             triggerHapticFeedback("medium");
+            showToast(`⚡ Check-In Muvaffaqiyatli! (+${earnedCoins} Tanga, +50 XP) 🎉`);
         });
     }
 
