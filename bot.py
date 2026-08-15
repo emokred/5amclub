@@ -33,6 +33,7 @@ from aiogram.types import (
 )
 from aiogram.enums import ParseMode, ChatType, ChatMemberStatus
 from aiogram.types.reaction_type_emoji import ReactionTypeEmoji
+from aiogram.exceptions import TelegramConflictError
 
 # ==================== CONFIGURATION ====================
 BOT_TOKEN = os.getenv("BOT_TOKEN", "8843755987:AAF4gGBSVa1SKr8oxq26kX__C3b8WSkTFz4")
@@ -1992,8 +1993,8 @@ def get_group_wizard_step4_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🛡️ Marvel Avengers", callback_data="gw_realm_marvel"), InlineKeyboardButton(text="⚔️ Medieval Samurai", callback_data="gw_realm_samurai")],
         [InlineKeyboardButton(text="🏰 Feudal Knights", callback_data="gw_realm_feudal"), InlineKeyboardButton(text="🎩 Italian Mafia", callback_data="gw_realm_mafia")],
-        [InlineKeyboardButton(text="🦾 Cyberpunk 2077", callback_data="gw_realm_cyberpunk"), InlineKeyboardButton(text="⚡ Greek Olympus", callback_data="gw_realm_olympus")],
-        [InlineKeyboardButton(text="🚀 Space Sci-Fi", callback_data="gw_realm_scifi")],
+        [InlineKeyboardButton(text="⚡ Greek Olympus", callback_data="gw_realm_olympus"), InlineKeyboardButton(text="🚀 Cyberpunk 2077", callback_data="gw_realm_cyberpunk")],
+        [InlineKeyboardButton(text="🥷 Anime Multiverse", callback_data="gw_realm_anime")],
         [InlineKeyboardButton(text="🚀 GURUHNI FAOL LASHTIRISH (FINISH)", callback_data="gw_finish")]
     ])
 
@@ -2282,7 +2283,8 @@ async def handle_arena_toggle_cb(callback: CallbackQuery):
     db_update_user_setting(user_id, "interactive_enabled", new_val)
     status_str = "yoqildi" if new_val == 1 else "o'chirildi"
     await callback.answer(f"✅ Interaktiv Arena {status_str}!")
-    await callback.message.edit_reply_markup(reply_markup=get_arena_hub_inline_keyboard(user_id))
+    lang = get_user_language(user_id)
+    await callback.message.edit_reply_markup(reply_markup=get_arena_hub_inline_keyboard(user_id, lang))
 
 @router.callback_query(F.data == "toggle_pm_reminder")
 async def handle_toggle_pm_cb(callback: CallbackQuery):
@@ -2293,7 +2295,8 @@ async def handle_toggle_pm_cb(callback: CallbackQuery):
     db_update_user_setting(user_id, "pm_reminder_enabled", new_val)
     status_str = "yoqildi" if new_val == 1 else "o'chirildi"
     await callback.answer(f"✅ PM Eslatmalar {status_str}!")
-    await callback.message.edit_reply_markup(reply_markup=get_settings_hub_inline_keyboard(user_id))
+    lang = get_user_language(user_id)
+    await callback.message.edit_reply_markup(reply_markup=get_settings_hub_inline_keyboard(user_id, lang))
 
 @router.callback_query(F.data == "strictness_menu")
 async def handle_strictness_menu_cb(callback: CallbackQuery):
@@ -2547,13 +2550,6 @@ async def handle_callback_checkin(callback: CallbackQuery):
             await callback.answer("⚡ Check-in bajarildi!", show_alert=True)
         except Exception:
             pass
-                coins=res["coins"],
-                xp_earned=res["xp_earned"],
-                xp=res["xp"],
-                level=res["level"],
-                rank=rank
-            )
-            await callback.message.answer(msg_text, parse_mode=ParseMode.MARKDOWN)
 
 # --- BEDTIME PROTOCOL HANDLER ---
 @router.callback_query(F.data == "bedtime_sleep_now")
@@ -2687,8 +2683,8 @@ def get_group_realm_select_inline_keyboard() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🛡️ Marvel Avengers", callback_data="gcfg_setrealm_marvel"), InlineKeyboardButton(text="⚔️ Medieval Samurai", callback_data="gcfg_setrealm_samurai")],
         [InlineKeyboardButton(text="🏰 Feudal Knights", callback_data="gcfg_setrealm_feudal"), InlineKeyboardButton(text="🎩 Italian Mafia", callback_data="gcfg_setrealm_mafia")],
-        [InlineKeyboardButton(text="🦾 Cyberpunk 2077", callback_data="gcfg_setrealm_cyberpunk"), InlineKeyboardButton(text="⚡ Greek Olympus", callback_data="gcfg_setrealm_olympus")],
-        [InlineKeyboardButton(text="🚀 Space Sci-Fi", callback_data="gcfg_setrealm_scifi")]
+        [InlineKeyboardButton(text="⚡ Greek Olympus", callback_data="gcfg_setrealm_olympus"), InlineKeyboardButton(text="🚀 Cyberpunk 2077", callback_data="gcfg_setrealm_cyberpunk")],
+        [InlineKeyboardButton(text="🥷 Anime Multiverse", callback_data="gcfg_setrealm_anime")]
     ])
 
 def get_group_games_inline_keyboard() -> InlineKeyboardMarkup:
@@ -2708,12 +2704,13 @@ async def cmd_gconfig(message: Message):
         return
 
     g = db_get_group(group_id)
-    start_t = g["checkin_start"] if g and "checkin_start" in g.keys() else "04:30"
-    end_t = g["checkin_end"] if g and "checkin_end" in g.keys() else "06:00"
-    rp_on = "✅ YOQILGAN" if (g and g.get("roleplay_enabled")) else "❌ O'CHIRILGAN"
-    arena_on = "✅ YOQILGAN" if (g and g.get("interactive_enabled")) else "❌ O'CHIRILGAN"
-    realm = g.get("active_universe", "marvel").upper() if g else "MARVEL"
-    opt = g.get("opt_in_mode", "auto").upper() if g else "AUTO"
+    g_dict = dict(g) if g else {}
+    start_t = g_dict.get("checkin_start", "04:30")
+    end_t = g_dict.get("checkin_end", "06:00")
+    rp_on = "✅ YOQILGAN" if g_dict.get("roleplay_enabled") else "❌ O'CHIRILGAN"
+    arena_on = "✅ YOQILGAN" if g_dict.get("interactive_enabled") else "❌ O'CHIRILGAN"
+    realm = g_dict.get("active_universe", "marvel").upper()
+    opt = g_dict.get("opt_in_mode", "auto").upper()
 
     text = (
         "⚙️ **THE 5 AM CLUB GURUH BOSH QARUV KATALOGI**\n\n"
@@ -3505,7 +3502,8 @@ async def scheduler_loop(bot: Bot):
                         else:
                             sleepers.append(f"• **{html.escape(m['first_name'])}** 😴")
 
-                    quote = await fetch_motivational_quote(0, "uz", g.get("active_universe") if g.get("roleplay_enabled") else None)
+                    g_dict = dict(g)
+                    quote = await fetch_motivational_quote(0, "uz", g_dict.get("active_universe") if g_dict.get("roleplay_enabled") else None)
                     rep_msg = (
                         f"🔒 **CHECK-IN CLOSED ({e_t})**\n\n"
                         f"🌅 **AWAKE MEMBERS:**\n" + ("\n".join(awake) if awake else "None 😞") + "\n\n"
@@ -3520,7 +3518,8 @@ async def scheduler_loop(bot: Bot):
                     sent_start[f"saturday_evt_{today_str}"] = True
                     realms_list = list(REALMS.keys())
                     for u in all_users:
-                        if u.get("roleplay_enabled") == 1:
+                        u_dict = dict(u)
+                        if u_dict.get("roleplay_enabled") == 1:
                             new_realm = random.choice(realms_list)
                             db_update_user_setting(u["user_id"], "active_universe", new_realm)
                             try:

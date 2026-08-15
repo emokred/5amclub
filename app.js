@@ -673,7 +673,7 @@ function getRankTitle(streak, lang) {
 
 // ==================== MULTIVERSE DYNAMIC UI ENGINE & TARGET GOAL MATRIX ====================
 function applyMultiverseTheme(realm) {
-    const validRealms = ["marvel", "samurai", "feudal", "mafia", "cyberpunk", "olympus", "scifi"];
+    const validRealms = ["marvel", "samurai", "feudal", "mafia", "cyberpunk", "olympus", "anime"];
     if (!validRealms.includes(realm)) realm = "marvel";
 
     state.user.active_universe = realm;
