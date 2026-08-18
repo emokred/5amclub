@@ -1311,7 +1311,7 @@ function renderHDCanvasCertificate() {
     ctx.fillStyle = "#fcfbf7";
     ctx.fillRect(0, 0, width, height);
 
-    // Subtle Parchment Texture & Starburst Overlay
+    // Subtle Parchment Texture Overlay
     ctx.fillStyle = "rgba(217, 119, 6, 0.03)";
     for (let i = 0; i < 60; i++) {
         const x = (i * 137) % width;
@@ -1392,6 +1392,68 @@ function renderHDCanvasCertificate() {
     ctx.fillStyle = "#b45309";
     ctx.fillText("“Own Your Morning. Elevate Your Life.”", width / 2, 520);
 
+    // 9. Footer Signatures & Official Gold Starburst Seal
+    const todayStr = new Date().toLocaleDateString(state.lang === "uz" ? "uz-UZ" : (state.lang === "ru" ? "ru-RU" : "en-US"), {
+        year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    // Left Signature
+    ctx.textAlign = "left";
+    ctx.font = "600 14px 'Plus Jakarta Sans', sans-serif";
+    ctx.fillStyle = "#64748b";
+    ctx.fillText(`Issue Date: ${todayStr}`, 90, 680);
+    ctx.fillText(`Verified Streak: ${state.user.streak} Days`, 90, 705);
+    ctx.strokeStyle = "#cbd5e1";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(90, 660);
+    ctx.lineTo(320, 660);
+    ctx.stroke();
+    ctx.font = "italic 16px 'Outfit', sans-serif";
+    ctx.fillStyle = "#0f172a";
+    ctx.fillText("Official Registration Authority", 90, 650);
+
+    // Right Signature
+    ctx.textAlign = "right";
+    const certUID = `5AM-${state.user.id.toString().slice(-4)}-${new Date().getFullYear()}`;
+    ctx.font = "600 14px 'Plus Jakarta Sans', sans-serif";
+    ctx.fillStyle = "#64748b";
+    ctx.fillText(`Serial Code: ${certUID}`, width - 90, 680);
+    ctx.fillText("Robin Sharma Standard", width - 90, 705);
+    ctx.strokeStyle = "#cbd5e1";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(width - 320, 660);
+    ctx.lineTo(width - 90, 660);
+    ctx.stroke();
+    ctx.font = "italic 16px 'Outfit', sans-serif";
+    ctx.fillStyle = "#0f172a";
+    ctx.fillText("Robin Sharma System Architecture", width - 90, 650);
+
+    // Center Golden Starburst Seal
+    ctx.textAlign = "center";
+    ctx.beginPath();
+    ctx.arc(width / 2, 670, 52, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(217, 119, 6, 0.12)";
+    ctx.fill();
+    ctx.strokeStyle = "#d97706";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.font = "bold 11px 'Outfit', sans-serif";
+    ctx.fillStyle = "#b45309";
+    ctx.fillText("★ 5 AM CLUB ★", width / 2, 660);
+    ctx.fillText("VERIFIED", width / 2, 675);
+    ctx.fillText("GOLD DIPLOMA", width / 2, 690);
+}
+
+function openCertificateModal() {
+    const modal = document.getElementById("cert-modal");
+    const lockedBox = document.getElementById("cert-locked-overlay");
+    const canvasWrapper = document.getElementById("cert-canvas-wrapper");
+    const actions = document.getElementById("cert-modal-actions");
+
+    if (state.user.streak < 21) {
         // LOCKED STATE
         if (lockedBox) lockedBox.style.display = "block";
         if (canvasWrapper) canvasWrapper.style.display = "none";
@@ -1429,7 +1491,7 @@ function closeCertificateModal() {
 window.closeCertificateModal = closeCertificateModal;
 
 // ==================== SUBSTACK-STYLE INSTAGRAM STORY STAMP CANVAS ENGINE ====================
-function renderSubstackStoryStamp() {
+function renderSubstackStoryStamp(uploadedImg = null) {
     const canvas = document.getElementById("stamp-canvas");
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -1462,69 +1524,88 @@ function renderSubstackStoryStamp() {
 
     // 3. User Avatar Circle / Icon
     ctx.beginPath();
-    ctx.arc(width / 2, 180, 50, 0, Math.PI * 2);
+    ctx.arc(width / 2, 175, 45, 0, Math.PI * 2);
     ctx.fillStyle = "rgba(245, 158, 11, 0.2)";
     ctx.fill();
     ctx.strokeStyle = "#fbbf24";
     ctx.lineWidth = 3;
     ctx.stroke();
 
-    ctx.font = "38px 'Outfit', sans-serif";
-    ctx.fillText("🌅", width / 2, 193);
+    ctx.font = "34px 'Outfit', sans-serif";
+    ctx.fillText("🌅", width / 2, 187);
 
     // 4. User Name & Rank
-    ctx.font = "bold 32px 'Outfit', sans-serif";
+    ctx.font = "bold 30px 'Outfit', sans-serif";
     ctx.fillStyle = "#ffffff";
-    ctx.fillText((state.user.name || "CHAMPION").toUpperCase(), width / 2, 270);
+    ctx.fillText((state.user.name || "CHAMPION").toUpperCase(), width / 2, 255);
 
-    ctx.font = "600 18px 'Plus Jakarta Sans', sans-serif";
+    ctx.font = "600 16px 'Plus Jakarta Sans', sans-serif";
     ctx.fillStyle = "#fbbf24";
-    ctx.fillText(state.user.rank, width / 2, 305);
+    ctx.fillText(state.user.rank, width / 2, 288);
 
     // 5. Huge Streak Pill Badge
     const pillGrad = ctx.createLinearGradient(width / 2 - 160, 0, width / 2 + 160, 0);
     pillGrad.addColorStop(0, "rgba(245, 158, 11, 0.35)");
     pillGrad.addColorStop(1, "rgba(239, 68, 68, 0.35)");
     ctx.fillStyle = pillGrad;
-    ctx.roundRect(width / 2 - 160, 340, 320, 60, 30);
+    ctx.roundRect(width / 2 - 160, 320, 320, 54, 27);
     ctx.fill();
     ctx.strokeStyle = "#fbbf24";
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    ctx.font = "bold 24px 'Outfit', sans-serif";
+    ctx.font = "bold 22px 'Outfit', sans-serif";
     ctx.fillStyle = "#ffffff";
-    ctx.fillText(`🔥 ${state.user.streak} DAYS STREAK`, width / 2, 378);
+    ctx.fillText(`🔥 ${state.user.streak} DAYS STREAK`, width / 2, 355);
 
-    // 6. Substack Quote Container Box
-    ctx.fillStyle = "rgba(15, 23, 42, 0.6)";
-    ctx.roundRect(80, 440, width - 160, 340, 20);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(251, 191, 36, 0.3)";
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+    // 6. Embedded Uploaded Photo OR Substack Quote Container Box
+    if (uploadedImg && uploadedImg.width) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(90, 410, width - 180, 370, 20);
+        ctx.clip();
+        ctx.drawImage(uploadedImg, 90, 410, width - 180, 370);
+        ctx.restore();
 
-    ctx.font = "italic 500 22px 'Outfit', sans-serif";
-    ctx.fillStyle = "#f1f5f9";
-    ctx.fillText("“Ertalabki vaqtingizga egalik qiling.", width / 2, 530);
-    ctx.fillText("Hayotingizni yuksaltiring.”", width / 2, 570);
+        ctx.strokeStyle = "#fbbf24";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(90, 410, width - 180, 370);
 
-    ctx.font = "bold 16px 'Plus Jakarta Sans', sans-serif";
-    ctx.fillStyle = "#94a3b8";
-    ctx.fillText("— Robin Sharma, 5 AM Club", width / 2, 630);
+        // Stamp Watermark Overlay on Photo
+        ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+        ctx.fillRect(100, 720, width - 200, 50);
+        ctx.fillStyle = "#fbbf24";
+        ctx.font = "bold 15px 'Outfit', sans-serif";
+        ctx.fillText(`✅ VERIFIED STAMP • ${new Date().toLocaleTimeString()}`, width / 2, 750);
+    } else {
+        ctx.fillStyle = "rgba(15, 23, 42, 0.6)";
+        ctx.roundRect(80, 410, width - 160, 370, 20);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(251, 191, 36, 0.3)";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
 
-    // Timestamp & Stats
-    const todayStr = new Date().toLocaleDateString(state.lang === "uz" ? "uz-UZ" : (state.lang === "ru" ? "ru-RU" : "en-US"), {
-        year: 'numeric', month: 'long', day: 'numeric'
-    });
-    ctx.font = "600 16px 'Plus Jakarta Sans', sans-serif";
-    ctx.fillStyle = "#fbbf24";
-    ctx.fillText(`VERIFIED CHECK-IN • ${todayStr}`, width / 2, 730);
+        ctx.font = "italic 500 22px 'Outfit', sans-serif";
+        ctx.fillStyle = "#f1f5f9";
+        ctx.fillText("“Ertalabki vaqtingizga egalik qiling.", width / 2, 510);
+        ctx.fillText("Hayotingizni yuksaltiring.”", width / 2, 550);
+
+        ctx.font = "bold 16px 'Plus Jakarta Sans', sans-serif";
+        ctx.fillStyle = "#94a3b8";
+        ctx.fillText("— Robin Sharma, 5 AM Club", width / 2, 610);
+
+        const todayStr = new Date().toLocaleDateString(state.lang === "uz" ? "uz-UZ" : (state.lang === "ru" ? "ru-RU" : "en-US"), {
+            year: 'numeric', month: 'long', day: 'numeric'
+        });
+        ctx.font = "600 16px 'Plus Jakarta Sans', sans-serif";
+        ctx.fillStyle = "#fbbf24";
+        ctx.fillText(`VERIFIED CHECK-IN • ${todayStr}`, width / 2, 720);
+    }
 
     // 7. Substack Footer Watermark Stamp
     ctx.font = "bold 14px 'Outfit', sans-serif";
     ctx.fillStyle = "#64748b";
-    ctx.fillText("JOIN THE MOVEMENT • @FIVEAMCLUBBOT", width / 2, 920);
+    ctx.fillText("SHARE TO INSTAGRAM / TELEGRAM STORIES • @FIVEAMCLUBBOT", width / 2, 920);
 }
 
 function openSubstackStoryStampModal() {
@@ -1752,7 +1833,30 @@ function initActions() {
         });
     }
 
-    // 3. Photo Upload & Smart Verification with Canvas
+function isCurrentTimeInWindow(startStr = "04:30", endStr = "06:00") {
+    try {
+        const now = new Date();
+        const tashkentTimeStr = now.toLocaleTimeString("en-US", { timeZone: "Asia/Tashkent", hour12: false });
+        const [h, m] = tashkentTimeStr.split(":").map(Number);
+        const currentMins = h * 60 + m;
+
+        const [sH, sM] = startStr.split(":").map(Number);
+        const startMins = sH * 60 + sM;
+
+        const [eH, eM] = endStr.split(":").map(Number);
+        const endMins = eH * 60 + eM;
+
+        if (startMins <= endMins) {
+            return currentMins >= startMins && currentMins <= endMins;
+        } else {
+            return currentMins >= startMins || currentMins <= endMins;
+        }
+    } catch (e) {
+        return true;
+    }
+}
+
+    // 3. Photo Upload & Smart Verification with Time Window Check
     const uploadBtn = document.getElementById("btn-upload-photo");
     const fileInput = document.getElementById("photo-file-input");
 
@@ -1766,6 +1870,21 @@ function initActions() {
             const file = e.target.files[0];
             if (!file) return;
 
+            const sT = state.user.checkin_start || "04:30";
+            const eT = state.user.checkin_end || "06:00";
+
+            if (!isCurrentTimeInWindow(sT, eT)) {
+                const notInWindowMsg = state.lang === "uz" 
+                    ? `⚠️ Hozir photo check-in vaqti emas! Uyg'onish vaqti: ${sT} - ${eT} 🌅` 
+                    : (state.lang === "ru" 
+                        ? `⚠️ Сейчас не время для фото-отметки! Время подъема: ${sT} - ${eT} 🌅` 
+                        : `⚠️ Not check-in window! Wake-up window: ${sT} - ${eT} 🌅`);
+                showToast(notInWindowMsg, "error");
+                try { triggerHapticFeedback("error"); } catch(err) {}
+                fileInput.value = "";
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = (event) => {
                 const img = new Image();
@@ -1777,7 +1896,7 @@ function initActions() {
                     canvas.height = img.height;
                     ctx.drawImage(img, 0, 0);
 
-                    // Brightness & Variance Analysis
+                    // Strict Brightness & Variance Analysis
                     try {
                         const sampleW = Math.min(100, img.width);
                         const sampleH = Math.min(100, img.height);
@@ -1807,11 +1926,13 @@ function initActions() {
                         }
                         const stdDev = Math.sqrt(variance / brightnessList.length);
 
-                        if (avgBrightness < 26 || stdDev < 10) {
-                            const t = I18N[state.lang] || I18N.uz;
-                            showToast(t.toastPhotoRejected);
-                            triggerHapticFeedback("error");
-                            sfx.click();
+                        if (avgBrightness < 28 || stdDev < 12) {
+                            const rejectedMsg = state.lang === "uz"
+                                ? "❌ Rasm juda qorong'u yoki talabga javob bermaydi! Yorug'roq rasm yuboring! 📸"
+                                : (state.lang === "ru" ? "❌ Фото слишком темное! Отправьте более четкое фото! 📸" : "❌ Photo too dark or invalid! Send a brighter photo! 📸");
+                            showToast(rejectedMsg, "error");
+                            try { triggerHapticFeedback("error"); } catch(err) {}
+                            fileInput.value = "";
                             return;
                         }
                     } catch (err) {}
@@ -1846,7 +1967,11 @@ function initActions() {
 
                     addXP(100);
                     updateUI();
-                    renderHDCanvasCertificate();
+                    renderSubstackStoryStamp(img);
+
+                    const stampModal = document.getElementById("stamp-modal");
+                    if (stampModal) stampModal.style.display = "flex";
+
                     sfx.victory();
                     launchConfetti();
 
