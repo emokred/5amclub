@@ -701,19 +701,52 @@
                     <h3>21-Day Discipline Certificate</h3>
                 </div>
 
+                <!-- CERTIFICATE LOCKED OVERLAY -->
+                <div id="cert-locked-overlay" class="cert-locked-box" style="display:none;">
+                    <div class="locked-icon">🔒</div>
+                    <h3>Sertifikat Bloklangan!</h3>
+                    <p>Oltin sertifikatni ochish uchun <b>21 kunlik uzluksiz streak</b>ga erishishingiz kerak!</p>
+                    <div class="cert-progress-wrapper" style="margin-top:15px;">
+                        <div class="cert-progress-track" style="background:rgba(255,255,255,0.1); height:12px; border-radius:6px; overflow:hidden;">
+                            <div id="cert-lock-progress-fill" class="cert-progress-fill" style="width:0%; height:100%; background:linear-gradient(90deg, #f59e0b, #fbbf24);"></div>
+                        </div>
+                        <span id="cert-lock-progress-text" style="display:block; margin-top:8px; font-size:13px; color:#fbbf24; font-weight:600;">0 / 21 Kun (0%)</span>
+                    </div>
+                </div>
+
                 <!-- HIGH RESOLUTION CANVAS PREVIEW CONTAINER -->
-                <div class="canvas-wrapper">
+                <div class="canvas-wrapper" id="cert-canvas-wrapper">
                     <canvas id="cert-canvas" width="1200" height="800"></canvas>
                 </div>
 
-                <div class="cert-modal-actions">
+                <div class="cert-modal-actions" id="cert-modal-actions">
                     <button class="primary-btn glow-btn" id="btn-download-cert-hd" onclick="downloadCertificateHD()">
                         <span class="btn-icon">📥</span>
                         <span id="text-download-cert">Yuklab Olish (HD PNG)</span>
                     </button>
-                    <button class="secondary-btn" id="btn-share-cert-story" onclick="shareCertificateStory()">
-                        <span class="btn-icon">📲</span>
-                        <span id="text-share-story">Story'ga Joylash</span>
+                    <button class="secondary-btn" id="btn-share-cert-story" onclick="openSubstackStoryStampModal()">
+                        <span class="btn-icon">📸</span>
+                        <span id="text-share-story">Story Card Yaratish</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SUBSTACK / INSTAGRAM STORY STAMP MODAL -->
+        <div id="stamp-modal" class="modal-overlay" style="display:none;">
+            <div class="modal-card stamp-modal-card">
+                <button class="modal-close-btn" onclick="closeStampModal()">✕</button>
+                <div class="stamp-modal-header">
+                    <span class="badge gold-badge">📸 VERIFIED STORY STAMP</span>
+                    <h3>Substack-Style Instagram Story Card</h3>
+                </div>
+                <div class="canvas-wrapper">
+                    <canvas id="stamp-canvas" width="750" height="1000"></canvas>
+                </div>
+                <div class="cert-modal-actions">
+                    <button class="primary-btn glow-btn" onclick="downloadStampStoryHD()">
+                        <span class="btn-icon">📥</span>
+                        <span>Story Card (HD PNG)</span>
                     </button>
                 </div>
             </div>

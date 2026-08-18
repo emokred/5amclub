@@ -1,3 +1,4 @@
+from __future__ import annotations
 import asyncio
 import hashlib
 import hmac
@@ -173,10 +174,86 @@ PHOTO_MISSIONS = {
         "💻 **Mission:** Take a photo of your organized morning workspace!",
         "⏰ **Mission:** Snap a photo of the alarm clock showing your wake-up time!",
         "🍎 **Mission:** Send a photo of your healthy morning breakfast!",
-        "📝 **Mission:** Take a photo of your handwritten to-do list for today!",
         "🌳 **Mission:** Step outside and send a photo of fresh morning nature!"
     ]
 }
+
+# ==================== PILLOW ANNOUNCEMENT BANNER GENERATOR ====================
+def generate_announcement_banner(title: str, subtitle: str, badge_icon: str = "🏆", theme: str = "gold") -> bytes:
+    """
+    Generates a high-quality visual banner image (PNG) using Pillow for announcements.
+    """
+    width, height = 800, 420
+    img = Image.new("RGB", (width, height), color=(15, 23, 42))
+    draw = ImageDraw.Draw(img)
+
+    colors = {
+        "gold": ((15, 23, 42), (45, 25, 10), (245, 158, 11)),
+        "marvel": ((20, 10, 30), (60, 15, 25), (239, 68, 68)),
+        "cyberpunk": ((10, 25, 40), (20, 10, 50), (6, 182, 212)),
+        "anime": ((30, 10, 40), (50, 20, 10), (249, 115, 22))
+    }
+    bg_start, bg_end, accent = colors.get(theme, colors["gold"])
+
+    for y in range(height):
+        r = int(bg_start[0] + (bg_end[0] - bg_start[0]) * (y / height))
+        g = int(bg_start[1] + (bg_end[1] - bg_start[1]) * (y / height))
+        b = int(bg_start[2] + (bg_end[2] - bg_start[2]) * (y / height))
+        draw.line([(0, y), (width, y)], fill=(r, g, b))
+
+    # Outer ornate borders
+    draw.rectangle([15, 15, width - 15, height - 15], outline=accent, width=4)
+    draw.rectangle([25, 25, width - 25, height - 25], outline=(255, 255, 255, 60), width=1)
+
+    try:
+        font_large = ImageFont.truetype("arial.ttf", 34)
+        font_sub = ImageFont.truetype("arial.ttf", 20)
+    except Exception:
+        font_large = ImageFont.load_default()
+        font_sub = ImageFont.load_default()
+
+    draw.text((width / 2, 110), f"{badge_icon} {title} {badge_icon}", fill=accent, font=font_large, anchor="mm")
+    draw.text((width / 2, 210), subtitle, fill=(241, 245, 249), font=font_sub, anchor="mm")
+    draw.text((width / 2, 340), "★ THE 5 AM CLUB OFFICIAL ANNOUNCEMENT ★", fill=(148, 163, 184), font=font_sub, anchor="mm")
+
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return buf.getvalue()
+
+# ==================== THEMED INLINE REACTION ENGINE ====================
+REACTIONS_STORE = {}
+
+REALM_REACTION_EMOJIS = {
+    "marvel": [("🦸", "Avenger"), ("⚡", "Power"), ("🛡️", "Vibranium")],
+    "samurai": [("🗡️", "Katana"), ("⚔️", "Bushido"), ("🏯", "Shogun")],
+    "feudal": [("🏰", "Castle"), ("⚔️", "Knight"), ("👑", "King")],
+    "mafia": [("🎩", "Syndicate"), ("🔫", "Capo"), ("💼", "Don")],
+    "olympus": [("⚡", "Zeus"), ("🏛️", "Olympus"), ("🔱", "Poseidon")],
+    "cyberpunk": [("🚀", "Sci-Fi"), ("🦾", "Cyber"), ("🛸", "UFO")],
+    "anime": [("🥷", "Ninja"), ("💥", "Saiyan"), ("🌀", "Chakra")],
+    "standard": [("👍", "Like"), ("🔥", "Fire"), ("⚡", "Power")]
+}
+
+def get_reaction_inline_keyboard(chat_id: int, message_id: int, realm: str = "standard", lang: str = "uz") -> InlineKeyboardMarkup:
+    t = TEXTS.get(lang, TEXTS["uz"])
+    key = f"{chat_id}_{message_id}"
+    store = REACTIONS_STORE.get(key, {"0": 0, "1": 0, "2": 0, "users": {}})
+
+    emojis = REALM_REACTION_EMOJIS.get(realm.lower(), REALM_REACTION_EMOJIS["standard"])
+
+    btn1 = f"{emojis[0][0]} {store.get('0', 0)}"
+    btn2 = f"{emojis[1][0]} {store.get('1', 0)}"
+    btn3 = f"{emojis[2][0]} {store.get('2', 0)}"
+
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=t["checkin_btn_inline"], callback_data="do_checkin")],
+        [InlineKeyboardButton(text=t.get("grp_register_btn", "✋ Guruhda Registratsiyadan O'tish"), callback_data="group_join_member")],
+        [
+            InlineKeyboardButton(text=btn1, callback_data=f"react_0_{realm}"),
+            InlineKeyboardButton(text=btn2, callback_data=f"react_1_{realm}"),
+            InlineKeyboardButton(text=btn3, callback_data=f"react_2_{realm}")
+        ]
+    ])
 
 def get_random_photo_mission(lang: str = "uz") -> str:
     missions = PHOTO_MISSIONS.get(lang, PHOTO_MISSIONS["uz"])
@@ -432,7 +509,12 @@ TEXTS = {
         "squad_joined": """🎉 **Klanga muvaffaqiyatli qo'shildingiz!**\n\n🛡️ Siz endi **{name}** `[{tag}]` klanining a'zosiz!""",
         "squad_not_found": """❌ Bunday ID ga ega klan topilmadi!""",
         "squad_leaderboard_title": """🛡️ **TOP-10 KLANLAR REYTINGI (5 AM CLANS)** 🛡️\n\n""",
-        "badge_unlocked": """🎖️ **YANGI NISHON OCHILDI!**\n\nSiz **{badge_name}** nishonini qo'lga kiritdingiz! ({badge_desc}) 🚀"""
+        "badge_unlocked": """🎖️ **YANGI NISHON OCHILDI!**\n\nSiz **{badge_name}** nishonini qo'lga kiritdingiz! ({badge_desc}) 🚀""",
+        "grp_awake_title": """🌅 **UYG'ONGAN A'ZOLAR RO'YXATI:**""",
+        "grp_graveyard_title": """😴 **UXLAB QOLGANLAR QABRISTONI:**""",
+        "grp_register_btn": """✋ Guruhda Registratsiyadan O'tish""",
+        "grp_registered_pm": """Siz **{group}** guruhida 5 AM Club uchun omadli ro'yxatdan o'tdingiz :)""",
+        "grp_to_group_btn": """Guruhga o'tish ↗"""
     },
     "ru": {
         "welcome": """👋 **Добро пожаловать в бот "The 5 AM Club", {name}!**\n\n«Владейте своим утром. Поднимите свою жизнь.»\n\n⚙️ Используйте 4 главных каталога ниже:""",
@@ -489,7 +571,12 @@ TEXTS = {
         "squad_joined": """🎉 **Вы успешно вступили в клан!**\n\n🛡️ Теперь вы участник клана **{name}** `[{tag}]` !""",
         "squad_not_found": """❌ Клан с таким ID не найден!""",
         "squad_leaderboard_title": """🛡️ **ТОП-10 КЛАНОВ ДИСЦИПЛИНЫ (5 AM CLANS)** 🛡️\n\n""",
-        "badge_unlocked": """🎖️ **НОВЫЙ ЗНАЧОК РАЗБЛОКИРОВАН!**\n\nВы получили значок **{badge_name}**! ({badge_desc}) 🚀"""
+        "badge_unlocked": """🎖️ **НОВЫЙ ЗНАЧОК РАЗБЛОКИРОВАН!**\n\nВы получили значок **{badge_name}**! ({badge_desc}) 🚀""",
+        "grp_awake_title": """🌅 **СПИСОК ПРОСНУВШИХСЯ УЧАСТНИКОВ:**""",
+        "grp_graveyard_title": """😴 **КЛАДБИЩЕ СОНИ:**""",
+        "grp_register_btn": """✋ Зарегистрироваться в Группе""",
+        "grp_registered_pm": """Вы успешно зарегистрировались в группе **{group}** for 5 AM Club :)""",
+        "grp_to_group_btn": """Перейти в группу ↗"""
     },
     "en": {
         "welcome": """👋 **Welcome to The 5 AM Club, {name}!**\n\n“Own your morning. Elevate your life.”\n\n⚙️ Use the 4 main catalog hubs below:""",
@@ -546,7 +633,12 @@ TEXTS = {
         "squad_joined": """🎉 **Successfully joined squad!**\n\n🛡️ You are now a member of **{name}** `[{tag}]` !""",
         "squad_not_found": """❌ No squad found with that ID!""",
         "squad_leaderboard_title": """🛡️ **TOP-10 DISCIPLINE SQUADS (5 AM CLANS)** 🛡️\n\n""",
-        "badge_unlocked": """🎖️ **NEW BADGE UNLOCKED!**\n\nYou earned the **{badge_name}** badge! ({badge_desc}) 🚀"""
+        "badge_unlocked": """🎖️ **NEW BADGE UNLOCKED!**\n\nYou earned the **{badge_name}** badge! ({badge_desc}) 🚀""",
+        "grp_awake_title": """🌅 **LIST OF AWAKE MEMBERS:**""",
+        "grp_graveyard_title": """😴 **SLEEPYHEADS GRAVEYARD:**""",
+        "grp_register_btn": """✋ Register in Group""",
+        "grp_registered_pm": """You have successfully registered for The 5 AM Club in **{group}** :)""",
+        "grp_to_group_btn": """Go to Group ↗"""
     }
 }
 
@@ -1010,7 +1102,8 @@ def init_sqlite_db():
                 interactive_enabled INTEGER DEFAULT 1,
                 pm_reminder_enabled INTEGER DEFAULT 1,
                 photo_strictness TEXT DEFAULT 'medium',
-                opt_in_mode TEXT DEFAULT 'auto'
+                opt_in_mode TEXT DEFAULT 'auto',
+                lang TEXT DEFAULT 'uz'
             )
         """)
 
@@ -1023,6 +1116,7 @@ def init_sqlite_db():
         if "pm_reminder_enabled" not in g_columns: cursor.execute("ALTER TABLE groups ADD COLUMN pm_reminder_enabled INTEGER DEFAULT 1")
         if "photo_strictness" not in g_columns: cursor.execute("ALTER TABLE groups ADD COLUMN photo_strictness TEXT DEFAULT 'medium'")
         if "opt_in_mode" not in g_columns: cursor.execute("ALTER TABLE groups ADD COLUMN opt_in_mode TEXT DEFAULT 'auto'")
+        if "lang" not in g_columns: cursor.execute("ALTER TABLE groups ADD COLUMN lang TEXT DEFAULT 'uz'")
 
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS user_quote_history (
@@ -1301,8 +1395,8 @@ def db_process_spin(user_id: int) -> dict:
             WHERE user_id = ?
         """, (today_str, new_coins, new_xp, new_level, new_freeze, user_id))
 
-        if xp_add > 0:
-            db_add_tournament_points(user_id, user["first_name"], user["username"], xp_add // 2)
+    if xp_add > 0:
+        db_add_tournament_points(user_id, user["first_name"], user["username"], xp_add // 2)
 
     db_check_and_unlock_badges(user_id)
 
@@ -1535,9 +1629,9 @@ def db_record_bedtime(user_id: int) -> tuple[bool, str]:
             WHERE user_id = ?
         """, (new_xp, new_level, now_str, today_str, user_id))
 
-        db_add_tournament_points(user_id, user["first_name"], user["username"], 25, is_photo=False)
-        db_check_and_unlock_badges(user_id)
-        return True, "ok"
+    db_add_tournament_points(user_id, user["first_name"], user["username"], 25, is_photo=False)
+    db_check_and_unlock_badges(user_id)
+    return True, "ok"
 
 # ==================== MAIN CHECKIN PIPELINE ====================
 def db_process_checkin(user_id: int, group_id: int = 0, is_photo: bool = False):
@@ -1622,28 +1716,28 @@ def db_process_checkin(user_id: int, group_id: int = 0, is_photo: bool = False):
             VALUES (?, ?, ?, ?, ?)
         """, (user_id, group_id, now_str, today_str, coins_earned))
 
-        db_add_tournament_points(user_id, user["first_name"], user["username"], tourney_pts, is_photo=is_photo)
+    db_add_tournament_points(user_id, user["first_name"], user["username"], tourney_pts, is_photo=is_photo)
 
-        target_goal = user["target_goal"] if "target_goal" in user.keys() and user["target_goal"] else 21
-        roleplay_enabled = user["roleplay_enabled"] if "roleplay_enabled" in user.keys() else 0
-        active_universe = user["active_universe"] if "active_universe" in user.keys() and user["active_universe"] else "marvel"
+    target_goal = user["target_goal"] if "target_goal" in user.keys() and user["target_goal"] else 21
+    roleplay_enabled = user["roleplay_enabled"] if "roleplay_enabled" in user.keys() else 0
+    active_universe = user["active_universe"] if "active_universe" in user.keys() and user["active_universe"] else "marvel"
 
-        db_check_and_unlock_badges(user_id)
-        return {
-            "streak": new_streak,
-            "goal": target_goal,
-            "multiplier": multiplier,
-            "coins": new_coins,
-            "xp": new_xp,
-            "level": new_level,
-            "level_title": rpg_data["title"],
-            "xp_earned": xp_earned,
-            "photo_count": new_photo_count,
-            "coins_earned": coins_earned,
-            "checkin_time": time_str,
-            "roleplay_enabled": roleplay_enabled,
-            "active_universe": active_universe
-        }
+    db_check_and_unlock_badges(user_id)
+    return {
+        "streak": new_streak,
+        "goal": target_goal,
+        "multiplier": multiplier,
+        "coins": new_coins,
+        "xp": new_xp,
+        "level": new_level,
+        "level_title": rpg_data["title"],
+        "xp_earned": xp_earned,
+        "photo_count": new_photo_count,
+        "coins_earned": coins_earned,
+        "checkin_time": time_str,
+        "roleplay_enabled": roleplay_enabled,
+        "active_universe": active_universe
+    }
 
 def db_reset_group_snoozed(group_id: int):
     with get_db() as conn:
@@ -2040,8 +2134,10 @@ async def start_lang_cb(callback: CallbackQuery):
     t = TEXTS.get(lang, TEXTS["uz"])
     await callback.message.answer(t["lang_updated"], reply_markup=get_main_reply_keyboard(user_id), parse_mode=ParseMode.MARKDOWN)
 
+    user_name = html.escape(callback.from_user.first_name or "Champion")
+    welcome_str = t.get('welcome', '👋').format(name=user_name)
     wiz_msg = (
-        f"👋 **\"{t['welcome']}\"**\n\n"
+        f"{welcome_str}\n\n"
         "📌 **4 Bosqichli Solo Onboarding Wizard (2/4):**\n"
         "Keling, ertalabki uyg'onish vaqtingiz, kunlik intizomiy maqsad hamda Multiverse rejimlarini sozlaymiz!"
     )
@@ -2337,17 +2433,6 @@ async def handle_solo_bedtime_cb(callback: CallbackQuery):
         parse_mode=ParseMode.MARKDOWN
     )
 
-@router.callback_query(F.data.in_(["bedtime_sleep_now", "bedtime_sleep"]))
-async def handle_bedtime_sleep_now_cb(callback: CallbackQuery):
-    user_id = callback.from_user.id
-    lang = get_user_language(user_id)
-    t = TEXTS.get(lang, TEXTS["uz"])
-    success, reason = db_record_bedtime(user_id)
-    if success:
-        await callback.answer(t["bedtime_success"], show_alert=True)
-    else:
-        await callback.answer("⚠️ Bugun allaqachon uxlash protokoli bajarildi! Ertagacha! 🌙", show_alert=True)
-
 @router.callback_query(F.data == "solo_target_goal_menu")
 async def handle_target_goal_menu_cb(callback: CallbackQuery):
     await callback.answer()
@@ -2552,21 +2637,106 @@ async def handle_callback_checkin(callback: CallbackQuery):
             pass
 
 # --- BEDTIME PROTOCOL HANDLER ---
-@router.callback_query(F.data == "bedtime_sleep_now")
+@router.callback_query(F.data.in_(["bedtime_sleep_now", "bedtime_sleep"]))
 async def handle_bedtime_sleep_callback(callback: CallbackQuery):
-    user_id = callback.from_user.id
-    db_register_user(user_id, callback.from_user.username, callback.from_user.first_name)
-    lang = get_user_language(user_id)
-    t = TEXTS.get(lang, TEXTS["uz"])
+    try:
+        user_id = callback.from_user.id
+        db_register_user(user_id, callback.from_user.username, callback.from_user.first_name)
+        lang = get_user_language(user_id)
+        t = TEXTS.get(lang, TEXTS["uz"])
 
-    success, reason = db_record_bedtime(user_id)
-    if success:
-        await callback.answer("😴 Xayrli tun! +20 XP berildi!", show_alert=True)
-        await callback.message.answer(t["bedtime_success"], parse_mode=ParseMode.MARKDOWN)
-    elif reason == "already_recorded":
-        await callback.answer("⚠️ Bugun uxlash protokoli allaqachon qayd etilgan! Xayrli tun! 😴", show_alert=True)
-    else:
-        await callback.answer("✅", show_alert=False)
+        success, reason = db_record_bedtime(user_id)
+        if success:
+            await callback.answer(t.get("bedtime_success", "😴 Xayrli tun! +20 XP va 100% Stamina berildi!"), show_alert=True)
+            if callback.message and callback.message.chat and callback.message.chat.type == ChatType.PRIVATE:
+                await callback.message.answer(t["bedtime_success"], parse_mode=ParseMode.MARKDOWN)
+        elif reason == "already_recorded":
+            await callback.answer("⚠️ Bugun uxlash protokoli allaqachon qayd etilgan! Xayrli tun! 😴", show_alert=True)
+        else:
+            await callback.answer("😴 Xayrli tun!", show_alert=True)
+    except Exception as e:
+        logging.error(f"Bedtime callback exception: {e}")
+        try: await callback.answer("😴 Xayrli tun!", show_alert=True)
+        except Exception: pass
+
+# --- THEMED REACTION CALLBACK HANDLER ---
+@router.callback_query(F.data.startswith("react_"))
+async def handle_reaction_cb(callback: CallbackQuery):
+    try:
+        if not callback.message or not callback.message.chat:
+            await callback.answer()
+            return
+        parts = callback.data.split("_")
+        idx = parts[1]
+        realm = parts[2] if len(parts) > 2 else "standard"
+        chat_id = callback.message.chat.id
+        msg_id = callback.message.message_id
+        user_id = callback.from_user.id
+
+        key = f"{chat_id}_{msg_id}"
+        if key not in REACTIONS_STORE:
+            REACTIONS_STORE[key] = {"0": 0, "1": 0, "2": 0, "users": {}}
+
+        store = REACTIONS_STORE[key]
+        user_prev = store["users"].get(user_id)
+
+        if user_prev == idx:
+            store[idx] = max(0, store.get(idx, 0) - 1)
+            del store["users"][user_id]
+            await callback.answer("Reaksiya olib tashlandi!", show_alert=False)
+        else:
+            if user_prev is not None:
+                store[user_prev] = max(0, store.get(user_prev, 0) - 1)
+            store[idx] = store.get(idx, 0) + 1
+            store["users"][user_id] = idx
+            await callback.answer("✅ Reaksiya bildirildi!", show_alert=False)
+
+        g = db_get_group(chat_id)
+        lang = dict(g).get("lang") if g else get_user_language(user_id)
+        try:
+            await callback.message.edit_reply_markup(reply_markup=get_reaction_inline_keyboard(chat_id, msg_id, realm, lang or "uz"))
+        except Exception:
+            pass
+    except Exception as e:
+        logging.error(f"Reaction handler exception: {e}")
+        try: await callback.answer()
+        except Exception: pass
+
+# --- GROUP MEMBER REGISTRATION HANDLER ---
+@router.callback_query(F.data == "group_join_member")
+async def handle_group_join_member_cb(callback: CallbackQuery):
+    try:
+        if not callback.message or not callback.message.chat:
+            await callback.answer("✅ Ro'yxatdan o'tildi!", show_alert=True)
+            return
+        user = callback.from_user
+        group = callback.message.chat
+        db_register_user(user.id, user.username, user.first_name)
+        db_link_group_member(group.id, user.id)
+
+        await callback.answer("🎉 Guruhda omadli ro'yxatdan o'tdingiz!", show_alert=True)
+
+        lang = get_user_language(user.id)
+        t = TEXTS.get(lang, TEXTS["uz"])
+
+        group_title = html.escape(group.title or "5 AM Club Group")
+        group_url = f"https://t.me/{group.username}" if getattr(group, "username", None) else f"https://t.me/c/{str(group.id).replace('-100', '')}"
+
+        pm_text = t.get("grp_registered_pm", "Siz {group} guruhida 5 AM Club uchun omadli ro'yxatdan o'tdingiz :)").format(group=group_title)
+        btn_label = t.get("grp_to_group_btn", "Guruhga o'tish ↗")
+
+        pm_kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text=btn_label, url=group_url)]
+        ])
+
+        try:
+            await callback.bot.send_message(user.id, pm_text, reply_markup=pm_kb, parse_mode=ParseMode.MARKDOWN)
+        except Exception as e:
+            logging.warning(f"Could not send PM registration note to user {user.id}: {e}")
+    except Exception as e:
+        logging.error(f"Group join member exception: {e}")
+        try: await callback.answer("✅ Ro'yxatdan o'tildi!", show_alert=True)
+        except Exception: pass
 
 @router.message(Command("bedtime"))
 async def cmd_bedtime(message: Message):
@@ -3371,15 +3541,20 @@ async def check_weekly_tournament_reset(bot: Bot):
             with get_db() as conn:
                 cursor = conn.cursor()
                 w_id, w_name, w_pts = 0, "No Winner", 0
+                w2_name, w3_name = "", ""
                 if participants:
                     w1 = participants[0]
-                    w_id, w_name, w_pts = w1["user_id"], w1["first_name"], w1["points"]
+                    w_id = w1["user_id"]
+                    w_name = f"[{html.escape(w1['first_name'])}](tg://user?id={w1['user_id']})"
+                    w_pts = w1["points"]
                     cursor.execute("UPDATE users SET coins = coins + 500, freeze_count = freeze_count + 2 WHERE user_id = ?", (w_id,))
                     if len(participants) > 1:
                         w2 = participants[1]
+                        w2_name = f"[{html.escape(w2['first_name'])}](tg://user?id={w2['user_id']})"
                         cursor.execute("UPDATE users SET coins = coins + 300, freeze_count = freeze_count + 1 WHERE user_id = ?", (w2["user_id"],))
                     if len(participants) > 2:
                         w3 = participants[2]
+                        w3_name = f"[{html.escape(w3['first_name'])}](tg://user?id={w3['user_id']})"
                         cursor.execute("UPDATE users SET coins = coins + 150 WHERE user_id = ?", (w3["user_id"],))
 
                 cursor.execute("""
@@ -3391,15 +3566,30 @@ async def check_weekly_tournament_reset(bot: Bot):
             groups = db_get_active_groups()
             broadcast_msg = (
                 f"🏆 **HAFTALIK TOURNAMENT #{season['season_number']} G'OLIBLARI E'LON QILINDI!** 🏆\n\n"
-                f"👑 **1-o'rin (Chempion):** {w_name} (`{w_pts} pts`) — `+500 tanga, 2x Freeze va 👑 Haftalik Chempion nishoni!`\n\n"
-                f"🚀 Yangi #{season['season_number'] + 1}-mavsum boshlandi! Barcha ballar yangilandi. Bellashuv davom etadi!"
+                f"🥇 **1-o'rin (Chempion):** {w_name} (`{w_pts} pts`)\n"
+                f"🎁 *Mukofot:* `+500 Tanga, 2x Streak Freeze & 👑 Haftalik Chempion Nishoni!`\n\n"
             )
+            if w2_name:
+                broadcast_msg += f"🥈 **2-o'rin:** {w2_name} — `+300 Tanga, 1x Streak Freeze`\n"
+            if w3_name:
+                broadcast_msg += f"🥉 **3-o'rin:** {w3_name} — `+150 Tanga`\n"
+
+            broadcast_msg += (
+                f"\n🚀 **Yangi #{season['season_number'] + 1}-mavsum boshlandi!**\n"
+                f"Barcha ballar yangilandi. Tonggi intizom bellashuvi davom etadi! Har kuni 5 AM da g'alabaga erishing! 💪"
+            )
+
+            banner_bytes = generate_announcement_banner(f"TOURNAMENT #{season['season_number']} WINNERS", "Congratulations to our Champions!", "🏆", "gold")
+
             for g in groups:
                 try:
-                    await bot.send_message(g["group_id"], broadcast_msg, parse_mode=ParseMode.MARKDOWN)
+                    await bot.send_photo(g["group_id"], photo=BufferedInputFile(banner_bytes, filename="tourney.png"), caption=broadcast_msg, parse_mode=ParseMode.MARKDOWN)
                     await asyncio.sleep(0.05)
                 except Exception:
-                    pass
+                    try:
+                        await bot.send_message(g["group_id"], broadcast_msg, parse_mode=ParseMode.MARKDOWN)
+                    except Exception:
+                        pass
 
             db_get_or_create_active_season()
     except Exception as e:
@@ -3425,10 +3615,13 @@ async def scheduler_loop(bot: Bot):
                     sent_bedtime[f"grp_bedtime_{today_str}"] = True
                     for g in groups:
                         try:
+                            g_dict = dict(g)
+                            g_lang = g_dict.get("lang") or "uz"
+                            t_grp_bed = TEXTS.get(g_lang, TEXTS["uz"])
                             await bot.send_message(
                                 g["group_id"],
-                                TEXTS["uz"]["bedtime_reminder"],
-                                reply_markup=get_bedtime_inline_keyboard("uz"),
+                                t_grp_bed["bedtime_reminder"],
+                                reply_markup=get_bedtime_inline_keyboard(g_lang),
                                 parse_mode=ParseMode.MARKDOWN
                             )
                             await asyncio.sleep(0.05)
@@ -3479,35 +3672,56 @@ async def scheduler_loop(bot: Bot):
             # 3. MORNING CHECK-IN OPEN / CLOSE FOR GROUPS
             for g in groups:
                 gid = g["group_id"]
-                s_t, e_t = g["checkin_start"], g["checkin_end"]
+                g_dict = dict(g)
+                s_t, e_t = g_dict.get("checkin_start", "04:30"), g_dict.get("checkin_end", "06:00")
+                g_lang = g_dict.get("lang") or "uz"
+                t_grp = TEXTS.get(g_lang, TEXTS["uz"])
+                realm = g_dict.get("active_universe", "standard") if g_dict.get("roleplay_enabled") else "standard"
 
                 if hhmm == s_t and sent_start.get(f"{gid}_{today_str}") != True:
                     sent_start[f"{gid}_{today_str}"] = True
                     db_reset_group_snoozed(gid)
-                    await bot.send_message(
-                        gid,
-                        "🌅 **THE 5 AM CLUB: CHECK-IN IS OPEN!**\n\n"
-                        f"⏰ Window: `{s_t}` — `{e_t}`\n"
-                        "⚡ Tap the button below or send a photo to prove you're awake!",
-                        reply_markup=get_checkin_inline_keyboard("uz"), parse_mode=ParseMode.MARKDOWN
+
+                    open_msg = (
+                        f"🌅 **THE 5 AM CLUB: {t_grp.get('checkin_btn_inline', 'CHECK-IN IS OPEN!')}**\n\n"
+                        f"⏰ **{t_grp.get('setup_group', 'Window')}:** `{s_t}` — `{e_t}`\n"
+                        f"⚡ {t_grp.get('checkin_btn_inline', 'Tap the button below or send a photo to prove you are awake!')}"
                     )
+
+                    try:
+                        banner = generate_announcement_banner("5 AM CLUB CHECK-IN OPEN", f"Window: {s_t} - {e_t}", "🌅", realm)
+                        sent_msg = await bot.send_photo(gid, photo=BufferedInputFile(banner, filename="checkin.png"), caption=open_msg, reply_markup=get_reaction_inline_keyboard(gid, 0, realm, g_lang), parse_mode=ParseMode.MARKDOWN)
+                        REACTIONS_STORE[f"{gid}_{sent_msg.message_id}"] = {"0": 0, "1": 0, "2": 0, "users": {}}
+                        await bot.edit_message_reply_markup(gid, sent_msg.message_id, reply_markup=get_reaction_inline_keyboard(gid, sent_msg.message_id, realm, g_lang))
+                    except Exception:
+                        await bot.send_message(gid, open_msg, reply_markup=get_reaction_inline_keyboard(gid, 0, realm, g_lang), parse_mode=ParseMode.MARKDOWN)
 
                 if hhmm == e_t and sent_end.get(f"{gid}_{today_str}") != True:
                     sent_end[f"{gid}_{today_str}"] = True
                     report = db_get_group_attendance_report(gid)
                     awake, sleepers = [], []
                     for m in report:
-                        if m["status"] == "awake":
-                            awake.append(f"• **{html.escape(m['first_name'])}** (`{m['last_checkin_time']}`) — 🔥 `{m['streak']}d`")
+                        raw_first_name = m.get('first_name') or 'Member'
+                        first_name = html.escape(raw_first_name).replace("[", "").replace("]", "").replace("*", "").replace("_", "").replace("`", "")
+                        user_id = m['user_id']
+                        username = m.get('username')
+                        if username:
+                            mention = f"[{first_name}](https://t.me/{username})"
                         else:
-                            sleepers.append(f"• **{html.escape(m['first_name'])}** 😴")
+                            mention = f"[{first_name}](tg://user?id={user_id})"
 
-                    g_dict = dict(g)
-                    quote = await fetch_motivational_quote(0, "uz", g_dict.get("active_universe") if g_dict.get("roleplay_enabled") else None)
+                        if m["status"] == "awake":
+                            awake.append(f"• {mention} (`{m['last_checkin_time']}`) — 🔥 `{m['streak']}d`")
+                        else:
+                            sleepers.append(f"• {mention} 😴")
+
+                    quote = await fetch_motivational_quote(0, g_lang, realm)
+                    awake_title = t_grp.get("grp_awake_title", "🌅 AWAKE MEMBERS:")
+                    graveyard_title = t_grp.get("grp_graveyard_title", "😴 GRAVEYARD OF SLEEPERS:")
                     rep_msg = (
                         f"🔒 **CHECK-IN CLOSED ({e_t})**\n\n"
-                        f"🌅 **AWAKE MEMBERS:**\n" + ("\n".join(awake) if awake else "None 😞") + "\n\n"
-                        f"😴 **GRAVEYARD OF SLEEPERS:**\n" + ("\n".join(sleepers) if sleepers else "No sleepers! 🎉") + "\n\n"
+                        f"{awake_title}\n" + ("\n".join(awake) if awake else "None 😞") + "\n\n"
+                        f"{graveyard_title}\n" + ("\n".join(sleepers) if sleepers else "No sleepers! 🎉") + "\n\n"
                         f"💡 **QUOTE:**\n{quote}"
                     )
                     await bot.send_message(gid, rep_msg, parse_mode=ParseMode.MARKDOWN)
@@ -3571,8 +3785,17 @@ async def api_auth_validate(req):
                 db_user = db_get_user(user_id)
                 if not db_user:
                     db_register_user(user_id, user_data.get("username", ""), user_data.get("first_name", ""))
-                    db_user = db_get_user(user_id)
 
+                if "active_universe" in body:
+                    db_update_user_setting(user_id, "active_universe", body["active_universe"])
+                if "roleplay_enabled" in body:
+                    db_update_user_setting(user_id, "roleplay_enabled", 1 if body["roleplay_enabled"] else 0)
+                if "interactive_enabled" in body:
+                    db_update_user_setting(user_id, "interactive_enabled", 1 if body["interactive_enabled"] else 0)
+                if "target_goal" in body:
+                    db_update_user_setting(user_id, "target_goal", int(body["target_goal"]))
+
+                db_user = db_get_user(user_id)
                 db_user_dict = dict(db_user)
                 stamina = db_calculate_and_update_stamina(db_user_dict)
                 xp = db_user_dict.get("xp") or 0

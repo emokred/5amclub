@@ -619,6 +619,11 @@ class SoundEffects {
         this.playTone(659.25, "sawtooth", 0.08, 0.05, 0.18);
         this.playTone(783.99, "sawtooth", 0.12, 0.11, 0.2);
     }
+
+    pop() {
+        if (state.user && !state.user.interactive_enabled) return;
+        this.playTone(600, "sine", 0.05, 0, 0.12);
+    }
 }
 const sfx = new SoundEffects();
 window.addEventListener("touchstart", () => { sfx.init(); }, { passive: true });
@@ -1302,122 +1307,113 @@ function renderHDCanvasCertificate() {
     canvas.width = width;
     canvas.height = height;
 
-    // 1. Luxury Dark Obsidian / Celestial Gradient Background
-    const bgGrad = ctx.createRadialGradient(width / 2, height / 2, 50, width / 2, height / 2, 700);
-    bgGrad.addColorStop(0, "#131b2e");
-    bgGrad.addColorStop(0.6, "#0b0f19");
-    bgGrad.addColorStop(1, "#05070c");
-    ctx.fillStyle = bgGrad;
+    // 1. Luxury Canva-Style Ivory Parchment Background (#fcfbf7)
+    ctx.fillStyle = "#fcfbf7";
     ctx.fillRect(0, 0, width, height);
 
-    // 2. Subtle Star Dust Particles
-    ctx.fillStyle = "rgba(251, 191, 36, 0.25)";
-    for (let i = 0; i < 45; i++) {
-        const x = (i * 97) % width;
-        const y = (i * 123) % height;
-        const r = (i % 3) + 1;
+    // Subtle Parchment Texture & Starburst Overlay
+    ctx.fillStyle = "rgba(217, 119, 6, 0.03)";
+    for (let i = 0; i < 60; i++) {
+        const x = (i * 137) % width;
+        const y = (i * 149) % height;
         ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
         ctx.fill();
     }
 
-    // 3. Ornate Double Gold Outer Border
-    ctx.strokeStyle = "#f59e0b";
-    ctx.lineWidth = 8;
+    // 2. Ornate Double Gold Outer Guilloche Border
+    ctx.strokeStyle = "#d97706";
+    ctx.lineWidth = 10;
     ctx.strokeRect(30, 30, width - 60, height - 60);
 
-    ctx.strokeStyle = "rgba(251, 191, 36, 0.4)";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(42, 42, width - 84, height - 84);
-
-    // 4. Corner Ornaments
-    const drawCorner = (cx, cy) => {
-        ctx.fillStyle = "#fbbf24";
-        ctx.fillRect(cx - 6, cy - 6, 12, 12);
-    };
-    drawCorner(30, 30);
-    drawCorner(width - 30, 30);
-    drawCorner(30, height - 30);
-    drawCorner(width - 30, height - 30);
-
-    // 5. Crown Crest & Top Header
-    ctx.textAlign = "center";
-    ctx.font = "bold 42px 'Outfit', sans-serif";
-    ctx.fillStyle = "#fbbf24";
-    ctx.fillText("🏆 THE 5 AM CLUB 🏆", width / 2, 110);
-
-    ctx.font = "600 18px 'Plus Jakarta Sans', sans-serif";
-    ctx.fillStyle = "#94a3b8";
-    ctx.letterSpacing = "4px";
-    ctx.fillText("OFFICIAL DISCIPLINE & MASTERY CERTIFICATE", width / 2, 145);
-
-    // 6. Presentation Line
-    ctx.font = "500 16px 'Plus Jakarta Sans', sans-serif";
-    ctx.fillStyle = "#cbd5e1";
-    ctx.fillText("THIS CERTIFICATE IS PROUDLY CONFERRED UPON", width / 2, 220);
-
-    // 7. Dynamic Recipient Name
-    const recipientName = (state.user.name || "CHAMPION").toUpperCase();
-    ctx.font = "900 52px 'Outfit', sans-serif";
-    const nameGrad = ctx.createLinearGradient(width / 2 - 250, 0, width / 2 + 250, 0);
-    nameGrad.addColorStop(0, "#fbbf24");
-    nameGrad.addColorStop(0.5, "#ffffff");
-    nameGrad.addColorStop(1, "#f59e0b");
-    ctx.fillStyle = nameGrad;
-    ctx.shadowColor = "rgba(245, 158, 11, 0.5)";
-    ctx.shadowBlur = 16;
-    ctx.fillText(`★ ${recipientName} ★`, width / 2, 300);
-    ctx.shadowBlur = 0;
-
-    // 8. Citation Paragraph
-    ctx.font = "500 20px 'Plus Jakarta Sans', sans-serif";
-    ctx.fillStyle = "#e2e8f0";
-    ctx.fillText("For mastering morning discipline, waking up at 5:00 AM for 21 consecutive days,", width / 2, 380);
-    ctx.fillText(`and elevating personal excellence to the prestigious rank of ${state.user.rank}.`, width / 2, 415);
-
-    // 9. Motto
-    ctx.font = "italic 600 22px 'Outfit', sans-serif";
-    ctx.fillStyle = "#fbbf24";
-    ctx.fillText("“Own Your Morning. Elevate Your Life.”", width / 2, 490);
-
-    // 10. Seal & Verification Footer
-    const todayStr = new Date().toLocaleDateString(state.lang === "uz" ? "uz-UZ" : (state.lang === "ru" ? "ru-RU" : "en-US"), {
-        year: 'numeric', month: 'long', day: 'numeric'
-    });
-
-    // Left block: Date
-    ctx.textAlign = "left";
-    ctx.font = "600 15px 'Plus Jakarta Sans', sans-serif";
-    ctx.fillStyle = "#94a3b8";
-    ctx.fillText(`Date of Issue: ${todayStr}`, 80, 680);
-    ctx.fillText(`Discipline Streak: ${state.user.streak} Days Verified`, 80, 710);
-
-    // Right block: Security ID Hash
-    ctx.textAlign = "right";
-    const certUID = `5AM-${state.user.id.toString().slice(-4)}-${new Date().getFullYear()}`;
-    ctx.fillText(`Verification Code: ${certUID}`, width - 80, 680);
-    ctx.fillText("Robin Sharma 5 AM Club Standard", width - 80, 710);
-
-    // Center Gold Seal
-    ctx.textAlign = "center";
-    ctx.beginPath();
-    ctx.arc(width / 2, 675, 48, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(245, 158, 11, 0.15)";
-    ctx.fill();
-    ctx.strokeStyle = "#fbbf24";
+    ctx.strokeStyle = "#b45309";
     ctx.lineWidth = 3;
+    ctx.strokeRect(44, 44, width - 88, height - 88);
+
+    ctx.strokeStyle = "rgba(217, 119, 6, 0.4)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(50, 50, width - 100, height - 100);
+
+    // 3. Corner Flourish Ornaments
+    const drawFlourishCorner = (cx, cy) => {
+        ctx.fillStyle = "#d97706";
+        ctx.fillRect(cx - 8, cy - 8, 16, 16);
+        ctx.strokeStyle = "#b45309";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(cx - 12, cy - 12, 24, 24);
+    };
+    drawFlourishCorner(30, 30);
+    drawFlourishCorner(width - 30, 30);
+    drawFlourishCorner(30, height - 30);
+    drawFlourishCorner(width - 30, height - 30);
+
+    // 4. Header Section
+    ctx.textAlign = "center";
+    ctx.font = "900 44px 'Outfit', sans-serif";
+    ctx.fillStyle = "#0f172a";
+    ctx.fillText("THE 5 AM CLUB", width / 2, 115);
+
+    ctx.font = "bold 16px 'Plus Jakarta Sans', sans-serif";
+    ctx.fillStyle = "#d97706";
+    ctx.letterSpacing = "6px";
+    ctx.fillText("INTERNATIONAL DISCIPLINE & MASTERY CERTIFICATE", width / 2, 150);
+
+    // 5. Conferred Line
+    ctx.font = "500 17px 'Plus Jakarta Sans', sans-serif";
+    ctx.fillStyle = "#475569";
+    ctx.fillText("THIS OFFICIAL DIPLOMA IS PROUDLY AWARDED TO", width / 2, 230);
+
+    // 6. Dynamic Recipient Name (Navy & Gold Gradient)
+    const recipientName = (state.user.name || "CHAMPION").toUpperCase();
+    ctx.font = "900 54px 'Outfit', sans-serif";
+    const nameGrad = ctx.createLinearGradient(width / 2 - 300, 0, width / 2 + 300, 0);
+    nameGrad.addColorStop(0, "#0f172a");
+    nameGrad.addColorStop(0.5, "#d97706");
+    nameGrad.addColorStop(1, "#0f172a");
+    ctx.fillStyle = nameGrad;
+    ctx.fillText(`★  ${recipientName}  ★`, width / 2, 310);
+
+    // Divider Line under Name
+    ctx.strokeStyle = "#d97706";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(width / 2 - 280, 335);
+    ctx.lineTo(width / 2 + 280, 335);
     ctx.stroke();
 
-    ctx.font = "bold 12px 'Outfit', sans-serif";
-    ctx.fillStyle = "#fbbf24";
-    ctx.fillText("★ 5 AM CLUB ★", width / 2, 665);
-    ctx.fillText("VERIFIED", width / 2, 680);
-    ctx.fillText("GOLD SEAL", width / 2, 695);
-}
+    // 7. Citation Text
+    ctx.font = "500 20px 'Plus Jakarta Sans', sans-serif";
+    ctx.fillStyle = "#1e293b";
+    ctx.fillText("For demonstrating extraordinary willpower by waking up at 05:00 AM for 21 consecutive days,", width / 2, 410);
+    ctx.fillText(`and achieving the prestigious rank of ${state.user.rank} in The 5 AM Club Architecture.`, width / 2, 445);
 
-function openCertificateModal() {
+    // 8. Robin Sharma Motto
+    ctx.font = "italic 600 22px 'Outfit', sans-serif";
+    ctx.fillStyle = "#b45309";
+    ctx.fillText("“Own Your Morning. Elevate Your Life.”", width / 2, 520);
+
+        // LOCKED STATE
+        if (lockedBox) lockedBox.style.display = "block";
+        if (canvasWrapper) canvasWrapper.style.display = "none";
+        if (actions) actions.style.display = "none";
+
+        const fill = document.getElementById("cert-lock-progress-fill");
+        const text = document.getElementById("cert-lock-progress-text");
+        const pct = Math.min(100, Math.round((state.user.streak / 21) * 100));
+        if (fill) fill.style.width = `${pct}%`;
+        if (text) text.innerText = `${state.user.streak} / 21 Kun (${pct}%)`;
+
+        if (modal) modal.style.display = "flex";
+        showToast("🔒 Sertifikatni ochish uchun 21 kunlik streak kerak!", "error");
+        return;
+    }
+
+    // UNLOCKED STATE
+    if (lockedBox) lockedBox.style.display = "none";
+    if (canvasWrapper) canvasWrapper.style.display = "block";
+    if (actions) actions.style.display = "flex";
+
     renderHDCanvasCertificate();
-    const modal = document.getElementById("cert-modal");
     if (modal) {
         modal.style.display = "flex";
         sfx.victory();
@@ -1431,6 +1427,132 @@ function closeCertificateModal() {
     if (modal) modal.style.display = "none";
 }
 window.closeCertificateModal = closeCertificateModal;
+
+// ==================== SUBSTACK-STYLE INSTAGRAM STORY STAMP CANVAS ENGINE ====================
+function renderSubstackStoryStamp() {
+    const canvas = document.getElementById("stamp-canvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const width = 750;
+    const height = 1000;
+    canvas.width = width;
+    canvas.height = height;
+
+    // 1. Dark Glassmorphism Obsidian Gradient
+    const bgGrad = ctx.createLinearGradient(0, 0, width, height);
+    bgGrad.addColorStop(0, "#0f172a");
+    bgGrad.addColorStop(0.5, "#1e1b4b");
+    bgGrad.addColorStop(1, "#020617");
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, width, height);
+
+    // Inner Glass Card Frame
+    ctx.fillStyle = "rgba(255, 255, 255, 0.04)";
+    ctx.roundRect(40, 40, width - 80, height - 80, 24);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.12)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // 2. Verified Header Badge
+    ctx.textAlign = "center";
+    ctx.font = "bold 15px 'Outfit', sans-serif";
+    ctx.fillStyle = "#fbbf24";
+    ctx.fillText("⚡ THE 5 AM CLUB • VERIFIED STORY CARD", width / 2, 90);
+
+    // 3. User Avatar Circle / Icon
+    ctx.beginPath();
+    ctx.arc(width / 2, 180, 50, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(245, 158, 11, 0.2)";
+    ctx.fill();
+    ctx.strokeStyle = "#fbbf24";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.font = "38px 'Outfit', sans-serif";
+    ctx.fillText("🌅", width / 2, 193);
+
+    // 4. User Name & Rank
+    ctx.font = "bold 32px 'Outfit', sans-serif";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText((state.user.name || "CHAMPION").toUpperCase(), width / 2, 270);
+
+    ctx.font = "600 18px 'Plus Jakarta Sans', sans-serif";
+    ctx.fillStyle = "#fbbf24";
+    ctx.fillText(state.user.rank, width / 2, 305);
+
+    // 5. Huge Streak Pill Badge
+    const pillGrad = ctx.createLinearGradient(width / 2 - 160, 0, width / 2 + 160, 0);
+    pillGrad.addColorStop(0, "rgba(245, 158, 11, 0.35)");
+    pillGrad.addColorStop(1, "rgba(239, 68, 68, 0.35)");
+    ctx.fillStyle = pillGrad;
+    ctx.roundRect(width / 2 - 160, 340, 320, 60, 30);
+    ctx.fill();
+    ctx.strokeStyle = "#fbbf24";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.font = "bold 24px 'Outfit', sans-serif";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText(`🔥 ${state.user.streak} DAYS STREAK`, width / 2, 378);
+
+    // 6. Substack Quote Container Box
+    ctx.fillStyle = "rgba(15, 23, 42, 0.6)";
+    ctx.roundRect(80, 440, width - 160, 340, 20);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(251, 191, 36, 0.3)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.font = "italic 500 22px 'Outfit', sans-serif";
+    ctx.fillStyle = "#f1f5f9";
+    ctx.fillText("“Ertalabki vaqtingizga egalik qiling.", width / 2, 530);
+    ctx.fillText("Hayotingizni yuksaltiring.”", width / 2, 570);
+
+    ctx.font = "bold 16px 'Plus Jakarta Sans', sans-serif";
+    ctx.fillStyle = "#94a3b8";
+    ctx.fillText("— Robin Sharma, 5 AM Club", width / 2, 630);
+
+    // Timestamp & Stats
+    const todayStr = new Date().toLocaleDateString(state.lang === "uz" ? "uz-UZ" : (state.lang === "ru" ? "ru-RU" : "en-US"), {
+        year: 'numeric', month: 'long', day: 'numeric'
+    });
+    ctx.font = "600 16px 'Plus Jakarta Sans', sans-serif";
+    ctx.fillStyle = "#fbbf24";
+    ctx.fillText(`VERIFIED CHECK-IN • ${todayStr}`, width / 2, 730);
+
+    // 7. Substack Footer Watermark Stamp
+    ctx.font = "bold 14px 'Outfit', sans-serif";
+    ctx.fillStyle = "#64748b";
+    ctx.fillText("JOIN THE MOVEMENT • @FIVEAMCLUBBOT", width / 2, 920);
+}
+
+function openSubstackStoryStampModal() {
+    renderSubstackStoryStamp();
+    const modal = document.getElementById("stamp-modal");
+    if (modal) {
+        modal.style.display = "flex";
+        sfx.pop();
+    }
+}
+window.openSubstackStoryStampModal = openSubstackStoryStampModal;
+
+function closeStampModal() {
+    const modal = document.getElementById("stamp-modal");
+    if (modal) modal.style.display = "none";
+}
+window.closeStampModal = closeStampModal;
+
+function downloadStampStoryHD() {
+    const canvas = document.getElementById("stamp-canvas");
+    if (!canvas) return;
+    const link = document.createElement("a");
+    link.download = `5AM-Story-Stamp-${state.user.id}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+    showToast("📸 Story Card HD PNG holida yuklandi!", "success");
+}
+window.downloadStampStoryHD = downloadStampStoryHD;
 
 function downloadCertificateHD() {
     const canvas = document.getElementById("cert-canvas");
@@ -2217,7 +2339,7 @@ const BADGES_DATABASE = [
         id: "lion_legend",
         icon: "🦁",
         name: { uz: "5 AM Legend", ru: "Легенда 5 AM", en: "5 AM Legend" },
-        desc: { uz: "30 kunlik intizom cho'qqisini fohishasiz bosib o'tish", ru: "Достижение 30 дней непрерывной дисциплины", en: "Reach ultimate 30-day discipline milestone" },
+        desc: { uz: "30 kunlik intizom cho'qqisini uzluksiz bosib o'tish", ru: "Достижение 30 дней непрерывной дисциплины", en: "Reach ultimate 30-day discipline milestone" },
         req: "30 Days Streak",
         target: 30,
         current: (u) => u.streak
