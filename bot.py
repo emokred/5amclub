@@ -235,7 +235,6 @@ REALM_REACTION_EMOJIS = {
 }
 
 def get_reaction_inline_keyboard(chat_id: int, message_id: int, realm: str = "standard", lang: str = "uz") -> InlineKeyboardMarkup:
-    t = TEXTS.get(lang, TEXTS["uz"])
     key = f"{chat_id}_{message_id}"
     store = REACTIONS_STORE.get(key, {"0": 0, "1": 0, "2": 0, "users": {}})
 
@@ -246,8 +245,6 @@ def get_reaction_inline_keyboard(chat_id: int, message_id: int, realm: str = "st
     btn3 = f"{emojis[2][0]} {store.get('2', 0)}"
 
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=t["checkin_btn_inline"], callback_data="do_checkin")],
-        [InlineKeyboardButton(text=t.get("grp_register_btn", "✋ Guruhda Registratsiyadan O'tish"), callback_data="group_join_member")],
         [
             InlineKeyboardButton(text=btn1, callback_data=f"react_0_{realm}"),
             InlineKeyboardButton(text=btn2, callback_data=f"react_1_{realm}"),
@@ -259,7 +256,7 @@ def get_random_photo_mission(lang: str = "uz") -> str:
     missions = PHOTO_MISSIONS.get(lang, PHOTO_MISSIONS["uz"])
     return random.choice(missions)
 
-# ==================== 7 MULTIVERSE ROLEPLAY REALMS ====================
+# ==================== 7 MULTIVERSE ROLEPLAY REALMS + STANDARD ====================
 REALMS = {
     "marvel": {
         "name": "🦸 Marvel Avengers Universe",
@@ -272,18 +269,30 @@ REALMS = {
         "quips": {
             "uz": [
                 "Avengers, Assemble! Jarvis tizimlari 05:00 da to'liq shay holatda! 🛡️⚡",
-                "Spider-Man: 'Buyuk intizom katta mas'uliyat demakdir!' 🕷️⚡",
-                "Stark Tech ertalabki energiya reaktorini 100% ga quvvatladi! Wakanda Forever! 🦾🔥"
+                "Spider-Man: 'Buyuk intizom — buyuk mas'uliyat demakdir!' 🕷️⚡",
+                "Stark Tech ertalabki Arc Reaktorini 100% ga quvvatladi! Wakanda Forever! 🦾🔥",
+                "Tor chaqmoqlari bilan tongni yoritdi: 'Asgard intizomi bilan hech kim bellasha olmaydi!' ⚡🔨",
+                "Kapitan Amerika: 'Biz buni butun kun davomida bajara olamiz!' 🛡️🌟",
+                "Doktor Strendj 14 million kelajakni ko'rdi, faqat 05:00 da uyg'onganlar g'alaba qozonmoqda! 🔮⏳",
+                "Qora Pantera: 'Wakandada intizom — eng buyuk kuchdir!' 🐾👑"
             ],
             "ru": [
                 "Мстители, общий сбор! Системы Джарвиса готовы к утреннему бою! 🛡️⚡",
-                "Человек-Паук: «С большой дисциплиной приходит большая сила!» 🕷️⚡",
-                "Технологии Старка зарядили ваш ядерный реактор на 100%! Ваканда Навеки! 🦾🔥"
+                "Человек-Паук: «С большой дисциплиной приходит великая сила!» 🕷️⚡",
+                "Технологии Старка зарядили ваш ядерный реактор на 100%! Ваканда Навеки! 🦾🔥",
+                "Тор осветил рассвет молнией: «Ничто не сравнится с дисциплиной Асгарда!» ⚡🔨",
+                "Капитан Америка: «Я могу делать это весь день!» 🛡️🌟",
+                "Доктор Стрэндж посмотрел 14 миллионов исходов: побеждают только вставшие в 5 утра! 🔮⏳",
+                "Черная Пантера: «В Ваканде дисциплина — это высшая сила!» 🐾👑"
             ],
             "en": [
                 "Avengers, Assemble! Jarvis systems online and fully operational! 🛡️⚡",
                 "Spider-Man: 'With great morning discipline comes great power!' 🕷️⚡",
-                "Stark Tech initialized your morning Arc Reactor to 100%! Wakanda Forever! 🦾🔥"
+                "Stark Tech initialized your morning Arc Reactor to 100%! Wakanda Forever! 🦾🔥",
+                "Thor strikes the dawn with thunder: 'None can match the discipline of Asgard!' ⚡🔨",
+                "Captain America: 'I can do this all day!' 🛡️🌟",
+                "Doctor Strange saw 14 million futures: only 5 AM risers conquer them all! 🔮⏳",
+                "Black Panther: 'In Wakanda, discipline is the ultimate power!' 🐾👑"
             ]
         },
         "wisdom_prefix": "🦸 **MARVEL HERO WISDOM:** "
@@ -299,18 +308,30 @@ REALMS = {
         "quips": {
             "uz": [
                 "Katana birinchi quyosh nuri tushmasidan oldin qinidan chiqarildi! Musashi intizomiga tasanno! ⚔️🌸",
-                "Bushido Qoidasi #1: Haqiqiy usta uyqu ustidan jimjitlikda g'alaba qozonadi! 🏯⚡",
-                "Sensei sizga chuqur ta'zim qiladi. Ruhingiz charxlangan po'latdek porlamoqda! 🌸🔥"
+                "Bushido Qoidasi #1: Haqiqiy usta uyqu ustidan sukunatda g'alaba qozonadi! 🏯⚡",
+                "Sensei sizga chuqur ta'zim qiladi. Ruhingiz charxlangan yapon po'latidek porlamoqda! 🌸🔥",
+                "Ronin yo'li — bu tonggi 05:00 da o'z nafsini yengish san'atidir! 🗡️⛩️",
+                "Gilos gullari to'kilguncha, siz allaqachon zafarga erishdingiz! 🌸✨",
+                "Miyamoto Musashi: 'Barcha jangga kirishdan oldin tongni yeng!' ⚔️🥋",
+                "Buyuk Syogun sizning temir irodangizni e'tirof etdi! 🏯👑"
             ],
             "ru": [
                 "Катана обнажена до первого луча солнца! Слава твоей дисциплине, Ронин! ⚔️🌸",
                 "Кодекс Бусидо №1: Настоящий мастер побеждает сон в абсолютной тишине! 🏯⚡",
-                "Сенсей кланяется вам. Ваш дух сияет как закаленная сталь! 🌸🔥"
+                "Сенсей кланяется вам. Ваш дух сияет как закаленная сталь! 🌸🔥",
+                "Путь Ронина — это искусство побеждать себя каждое утро в 05:00! 🗡️⛩️",
+                "Сакура еще не осыпалась, а вы уже совершили утреннюю победу! 🌸✨",
+                "Миямото Мусаси: «Прежде чем победить врага, победи свое утро!» ⚔️🥋",
+                "Великий Сёгун признал вашу железную волю! 🏯👑"
             ],
             "en": [
-                "The Katana is unsheathed before the first ray of dawn! Honor to your discipline, Ronin! ⚔️🌸",
+                "The Katana is unsheathed before dawn! Honor to your discipline, Ronin! ⚔️🌸",
                 "Bushido Code #1: A true master conquers sleep in quiet solitude! 🏯⚡",
-                "The Sensei bows in deep respect. Your spirit shines like polished steel! 🌸🔥"
+                "The Sensei bows in deep respect. Your spirit shines like polished steel! 🌸🔥",
+                "The Way of the Ronin: Master yourself every day at 5 AM sharp! 🗡️⛩️",
+                "Before the cherry blossoms fall, your morning victory is secured! 🌸✨",
+                "Miyamoto Musashi: 'Before conquering any battle, conquer the dawn!' ⚔️🥋",
+                "The Grand Shogun salutes your unbreakable warrior willpower! 🏯👑"
             ]
         },
         "wisdom_prefix": "🗡️ **BUSHIDO CODE WISDOM:** "
@@ -325,19 +346,31 @@ REALMS = {
         },
         "quips": {
             "uz": [
-                "Ekskalibur qilichi tongda baland ko'tarildi! Qirol Artur sizning intizomingizni ulug'laydi! 🏰⚔️",
+                "Ekskalibur qilichi tongda baland ko'tarildi! Qirol Artur sizning jasoratingizni ulug'laydi! 🏰⚔️",
                 "Davra stoli ritsarlari buyrug'i bilan sizning tonggi zafaringiz oltin bilan bitildi! 🛡️✨",
-                "Qal'amiz devorlari ritsarlarimiz hushyor turganda aslo qulamaydi! 🏰🔥"
+                "Qal'amiz devorlari ritsarlarimiz hushyor turganda aslo qulamaydi! 🏰🔥",
+                "Ser Lanselot: 'Haqiqiy ritsarlik — har tong o'z so'zida turishdir!' 🛡️👑",
+                "Qal'a minorasida zafar karnaylari yangradi! 05:00 intizom qahramoniga salom! 🎺🏰",
+                "Gral kosasi erta turgan sharafli jangchilarga nasib etadi! 🏆✨",
+                "Qirol Artur ritsarlari safiga xush kelibsiz, tonggi jasorat sohibi! 👑⚔️"
             ],
             "ru": [
                 "Меч Экскалибур поднят на рассвете! Король Артур чтит твою доблесть! 🏰⚔️",
                 "По указу Рыцарей Круглого Стола твоя победа вписана золотом! 🛡️✨",
-                "Стены нашего замка нерушимы, пока рыцари не спят! 🏰🔥"
+                "Стены нашего замка нерушимы, пока рыцари встречают рассвет на страже! 🏰🔥",
+                "Сэр Ланселот: «Истинное рыцарство — это держать слово каждое утро!» 🛡️👑",
+                "На башнях замка звучат фанфары победы! Честь герою 5 утра! 🎺🏰",
+                "Чаша Грааля покоряется лишь тем, кто бодрствует на заре! 🏆✨",
+                "Добро пожаловать в орден Круглого Стола, хранитель рассвета! 👑⚔️"
             ],
             "en": [
                 "Excalibur is raised high at dawn! King Arthur honors your noble valor! 🏰⚔️",
                 "By order of the Round Table, your morning victory is recorded in gold! 🛡️✨",
-                "Our castle walls stand indestructible while our Knights guard the dawn! 🏰🔥"
+                "Our castle walls stand indestructible while our Knights guard the dawn! 🏰🔥",
+                "Sir Lancelot: 'True chivalry is honoring your commitment every single dawn!' 🛡️👑",
+                "Castle horns sound across Camelot in honor of your 5 AM victory! 🎺🏰",
+                "The Holy Grail reveals itself only to those who conquer the early morning! 🏆✨",
+                "Welcome to the Knights of the Round Table, Master of Dawn! 👑⚔️"
             ]
         },
         "wisdom_prefix": "🏰 **EXCALIBUR KNIGHT WISDOM:** "
@@ -354,17 +387,29 @@ REALMS = {
             "uz": [
                 "Don Korleone o'z hurmatini yo'lladi. 05:00 da intizom ko'rsatganlarga oila yordam beradi! 🎩💼",
                 "Omertà intizom qoidasi: Oila ishlayotganda hech kim uxlab qolmaydi! 💼🔥",
-                "Ertalabki taklifdan voz kechib bo'lmaydi. 5 AM Oilasiga sodiqlik! 🎩👑"
+                "Ertalabki taklifdan voz kechib bo'lmaydi. 5 AM Oilasiga cheksiz sodiqlik! 🎩👑",
+                "Konsilyeri bu tonggi g'alabangizni maxsus daftarga qayd etdi! 🍷📑",
+                "Sindikatda faqat erta uyg'onib, reja tuzganlar shaharga hukmronlik qiladi! 💼🌆",
+                "Hech qanday bahona yo'q: hurmat qoidalari 05:00 da boshlanadi! 🎩⚡",
+                "Don siz bilan faxrlanadi. Ishlarimiz gullab-yashnamoqda! 🌹💼"
             ],
             "ru": [
                 "Дон Корлеоне шлет личное уважение. Семья всегда поддерживает дисциплинированных! 🎩💼",
                 "Омерта Дисциплины: Когда Семья работает, никто не спит! 💼🔥",
-                "Предложение, от которого рассвет не мог отказаться. Преданность Семье! 🎩👑"
+                "Предложение, от которого рассвет не мог отказаться. Преданность Семье! 🎩👑",
+                "Консильери внес твой утренний успех в золотую книгу Семьи! 🍷📑",
+                "В Синдикате правят те, кто просыпается на рассвете и строит планы! 💼🌆",
+                "Никаких оправданий: уважение и дисциплина начинаются ровно в 5 утра! 🎩⚡",
+                "Дон гордится вами. Наш Синдикат процветает! 🌹💼"
             ],
             "en": [
                 "Don Corleone sends his personal respects. Respect is earned at 5 AM sharp! 🎩💼",
                 "Omertà of Discipline: Never sleep when the Family is building its empire! 💼🔥",
-                "An offer the morning could not refuse. Absolute loyalty to the 5 AM Family! 🎩👑"
+                "An offer the morning could not refuse. Absolute loyalty to the 5 AM Family! 🎩👑",
+                "The Consigliere has recorded your dawn victory in the Family ledger! 🍷📑",
+                "In the Syndicate, only those who wake up early rule the city! 💼🌆",
+                "No excuses accepted: the rules of power begin at 05:00 AM! 🎩⚡",
+                "The Don is proud of you. Our empire grows stronger today! 🌹💼"
             ]
         },
         "wisdom_prefix": "🎩 **GODFATHER SYNDICATE WISDOM:** "
@@ -380,18 +425,30 @@ REALMS = {
         "quips": {
             "uz": [
                 "Zevs shiddatli chaqmoq yubordi! Olimpdagi ambroziya va shon-sharaf sizni kutmoqda! ⚡🏛️",
-                "Gerkules o'zining 13-jasoratini bajarib, Apollon aravasidan oldin uyg'ondi! 🏛️☀️",
-                "Titanlar sizning yengilmas tonggi intizomingizga ta'zim qilmoqda! 🌩️🔥"
+                "Gerkules 13-jasoratini bajarib, Apollon aravasidan oldin uyg'ondi! 🏛️☀️",
+                "Titanlar sizning yengilmas tonggi intizomingizga ta'zim qilmoqda! 🌩️🔥",
+                "Afinalik donishmandlar sizning tonggi qaroringizni e'tirof etdilar! 🦉✨",
+                "Poseydon to'lqinlari kabi shiddatli energiya vujudingizni qamrab oldi! 🔱🌊",
+                "Olimp xudolari bugungi kuningizga cheksiz omad ato etadi! ⚡🏛️",
+                "Axilles kabi yengilmas iroda: uyqu ustidan mutlaq g'alaba! 🛡️⚡"
             ],
             "ru": [
                 "Зевс метнул молнию победы! Амброзия и слава ждут тебя на Олимпе! ⚡🏛️",
-                "Геркулес совершил свой 13-й подвиг: проснулся раньше колесницы Аполлона! 🏛️☀️",
-                "Титаны склоняются перед твоей несокрушимой дисциплиной! 🌩️🔥"
+                "Геркулес совершил 13-й подвиг: проснулся раньше колесницы Аполлона! 🏛️☀️",
+                "Титаны склоняются перед твоей несокрушимой утренней дисциплиной! 🌩️🔥",
+                "Афина мудрости благословляет твой выбор вставать на рассвете! 🦉✨",
+                "Энергия, подобная штормам Посейдона, наполняет твой день! 🔱🌊",
+                "Боги Олимпа даруют тебе непобедимую силу духа! ⚡🏛️",
+                "Неуязвимость Ахиллеса в твоей дисциплине: абсолютная победа! 🛡️⚡"
             ],
             "en": [
                 "Zeus strikes the lightning bolt! Ambrosia and glory await on Mount Olympus! ⚡🏛️",
                 "Hercules completed his 13th labor: Waking up before Apollo's sun chariot! 🏛️☀️",
-                "The Titans bow to your invincible morning discipline! 🌩️🔥"
+                "The Titans bow to your invincible morning discipline! 🌩️🔥",
+                "Athena blesses your wisdom and relentless morning determination! 🦉✨",
+                "Poseidon's ocean power surges through your morning energy! 🔱🌊",
+                "The Olympian Gods grant victory and favor to your day! ⚡🏛️",
+                "Achilles-level willpower: total triumph over sleep and slumber! 🛡️⚡"
             ]
         },
         "wisdom_prefix": "⚡ **OLYMPIAN GODS WISDOM:** "
@@ -408,17 +465,29 @@ REALMS = {
             "uz": [
                 "Neyron sinxronizatsiya bajarildi! Night City fikserlari 5 AM xrom energiyangizni tasdiqladi! 🦾⚡",
                 "Varp dvigateli va uyqu kodi o'chirildi... Vitality Overdrive yoqildi! 🌃⚡",
-                "Uyg'on Samurai, bugun galaktikani yoqib yuboradigan kunimiz bor! 💥🦾"
+                "Uyg'on Samurai, bugun galaktikani zabt etadigan kunimiz bor! 💥🦾",
+                "Kiber-implantlar 100% yuklandi. Bugun siz tarmoqdagi eng tezkor Netrannersiz! 🌐⚡",
+                "Chooh2 yoqilg'isi quyildi! Kiber-poygada siz birinchi o'rindasiz! 🏎️💨",
+                "Matritsa xatosi tuzatildi: uyqu blokatori muvaffaqiyatli sindirildi! 🕶️🟩",
+                "Night City afsonasi sizsiz! 05:00 da xrom iroda sinovi topshirildi! 🦾👑"
             ],
             "ru": [
                 "Нейро-синхронизация завершена! Фиксеры Найт-Сити подтвердили ваш утренний буст! 🦾⚡",
                 "Сон отключен... Включен овердрайв бодрости и варп-двигатели! 🌃⚡",
-                "Проснись, Самурай, у нас есть галактика, которую надо зажечь! 💥🦾"
+                "Проснись, Самурай, у нас есть город, который ждет нашего прорыва! 💥🦾",
+                "Киберимпланты заряжены на 100%. Вы — самый быстрый Нетраннер в сети! 🌐⚡",
+                "Топливо Chooh2 залито! В утренней кибер-гонке вы на первом месте! 🏎️💨",
+                "Сбой Матрицы устранен: протокол сна успешно взломан! 🕶️🟩",
+                "Вы — новая легенда Найт-Сити! Хромовая воля активирована в 5 утра! 🦾👑"
             ],
             "en": [
                 "Neural sync complete! Night City fixers verified your 5 AM chrome boost! 🦾⚡",
                 "Sleep subroutine terminated... Vitality Overdrive engaged! 🌃⚡",
-                "Wake up Samurai, we have a galaxy to burn! 💥🦾"
+                "Wake up Samurai, we have a city to take over today! 💥🦾",
+                "Cyber implants at 100% efficiency. You are the apex Netrunner today! 🌐⚡",
+                "Chooh2 fuel loaded! You're dominating the morning cyber-race! 🏎️💨",
+                "Matrix glitch resolved: sleep firewall successfully bypassed! 🕶️🟩",
+                "Night City Legend status confirmed! 5 AM chrome discipline unlocked! 🦾👑"
             ]
         },
         "wisdom_prefix": "🚀 **CYBERPUNK SCI-FI WISDOM:** "
@@ -435,20 +504,71 @@ REALMS = {
             "uz": [
                 "Dattebayo! Nindo intizomingiz quyoshdan oldin portladi! 🥷⚡",
                 "Kamehameha! Ertalabki energiyangiz 9000 dan oshdi! 💥🔥",
-                "Bir zarbli uyg'onish! Saitama sizning irodangizga ta'zim qiladi! 👑🥊"
+                "Bir zarbli uyg'onish! Saitama sizning irodangizga ta'zim qiladi! 👑🥊",
+                "One Piece izlab yo'lga chiqqan qaroqchilar tongda dengizga chiqadi! 🏴‍☠️🌊",
+                "Sharingan ko'zlari ochildi: barcha to'siqlar va uyqu yo'q qilindi! 👁️🔥",
+                "Bankai! Ruhiy kuchingiz eng yuqori cho'qqiga yetdi! 🗡️✨",
+                "Hokage unvoni faqat har tong o'z so'zida turganlarga beriladi! 🥷👑"
             ],
             "ru": [
                 "Даттебайо! Твой путь ниндзя начался до восхода солнца! 🥷⚡",
                 "Камехамеха! Утренняя энергия зашкаливает за 9000! 💥🔥",
-                "Подъем с одного удара! Сайтама выражает глубокое уважение! 👑🥊"
+                "Подъем с одного удара! Сайтама выражает глубокое уважение! 👑🥊",
+                "Команда Ван Пис отправляется в плавание на рассвете! 🏴‍☠️🌊",
+                "Шаринган активирован: сон и лень побеждены без шансов! 👁️🔥",
+                "Банкай! Твоя духовная сила достигла абсолютного максимума! 🗡️✨",
+                "Титул Хокаге принадлежит лишь тем, кто никогда не отступает от своего слова! 🥷👑"
             ],
             "en": [
                 "Dattebayo! Your Ninja Way woke up before the sun! 🥷⚡",
                 "Kamehameha! Your morning power level is over 9000! 💥🔥",
-                "One-Punch Wakeup! Saitama respects your iron discipline! 👑🥊"
+                "One-Punch Wakeup! Saitama respects your iron discipline! 👑🥊",
+                "The Straw Hat crew sets sail at dawn! Adventure awaits! 🏴‍☠️🌊",
+                "Sharingan awakened: laziness and fatigue completely erased! 👁️🔥",
+                "Bankai! Your spiritual morning willpower has reached peak power! 🗡️✨",
+                "The title of Hokage belongs to those who conquer every single dawn! 🥷👑"
             ]
         },
         "wisdom_prefix": "🥷 **ANIME NINJA WISDOM:** "
+    },
+    "standard": {
+        "name": "⚡ The 5 AM Club Standard",
+        "emoji": "⚡",
+        "titles": {
+            "uz": ["🌅 Tonggi Yangi A'zo", "⚡ Tonggi Jangchi", "🦅 Lochin Nigoh", "🦁 Tonggi Arslon", "👑 5 AM Afsonasi"],
+            "ru": ["🌅 Новичок 5 AM", "⚡ Воин Рассвета", "🦅 Соколиный Взор", "🦁 Утренний Лев", "👑 Легенда 5 AM"],
+            "en": ["🌅 5 AM Initiate", "⚡ Dawn Warrior", "🦅 Falcon Sight", "🦁 Morning Lion", "👑 5 AM Legend"]
+        },
+        "quips": {
+            "uz": [
+                "Qarang, kim erta uyg'ondi! Kofe siz bilan faxrlanadi! ☕🔥",
+                "Quyoshdan oldin uyg'ondingiz-a! Haqiqiy arslon intizomi! 🦁⚡",
+                "Krovat sizni tutqinlikda ushlab turmoqchi edi, lekin iroda g'olib chiqdi! ⚔️😎",
+                "Ertalabki g'alaba bilan tabriklayman! Bugungi kun sizniki! 🚀",
+                "Dunyo uxlayotganda g'oliblar o'z kelajagini quradi! 🌟💪",
+                "5 AM intizomi — muvaffaqiyatning yagona va ishonchli kalitidir! 🔑✨",
+                "Uyg'onish g'alabasi muborak! Bugun buyuk ishlarni amalga oshiramiz! 🌅🏆"
+            ],
+            "ru": [
+                "Смотрите, кто проснулся раньше всех! Кофе гордится тобой! ☕🔥",
+                "Проснулся раньше солнца! Настоящий режим льва! 🦁⚡",
+                "Кровать пыталась удержать тебя, но железная дисциплина победила! ⚔️😎",
+                "Поздравляем с утренней победой! Этот день полностью твой! 🚀",
+                "Пока весь мир спит, чемпионы куют свое великое будущее! 🌟💪",
+                "Дисциплина 5 утра — это главный ключ к успеху и величию! 🔑✨",
+                "С победой над рассветом! Сегодня нас ждут великие дела! 🌅🏆"
+            ],
+            "en": [
+                "Look who decided to rise and conquer! Coffee is proud! ☕🔥",
+                "Woke up before the sun! Absolute beast mode activated! 🦁⚡",
+                "The bed tried to hold you hostage, but iron discipline won! ⚔️😎",
+                "Congrats on the morning victory! Today belongs to you! 🚀",
+                "While the world sleeps, champions forge their empire! 🌟💪",
+                "5 AM Club discipline: the golden key to extraordinary mastery! 🔑✨",
+                "Morning victory unlocked! Today we conquer greatness together! 🌅🏆"
+            ]
+        },
+        "wisdom_prefix": "⚡ **5 AM DISCIPLINE WISDOM:** "
     }
 }
 
@@ -702,39 +822,10 @@ async def fetch_motivational_quote(user_id: int = 0, lang: str = "uz", active_un
 
 # ==================== DYNAMIC QUIPS & ROLEPLAY TITLES ====================
 async def fetch_dynamic_quip(streak: int, name: str, lang: str = "uz", roleplay_enabled: int = 0, active_universe: str = "marvel") -> str:
-    if roleplay_enabled == 1 and active_universe in REALMS:
-        realm = REALMS[active_universe]
-        titles = realm["titles"].get(lang, realm["titles"]["uz"])
-        quips_list = realm["quips"].get(lang, realm["quips"]["uz"])
-        title = titles[min(len(titles) - 1, streak // 7)]
-        quip = random.choice(quips_list)
-        return f"{realm['emoji']} **{title} ({html.escape(name)}):**\n{quip}"
-
-    # Default fallback quips
-    quips_uz = [
-        "Qarang, kim erta uyg'ondi! Kofe siz bilan faxrlanadi! ☕🔥",
-        "Quyoshdan oldin uyg'ondingiz-a! Haqiqiy arslon intizomi! 🦁⚡",
-        "Krovat sizni tutqinlikda ushlab turmoqchi edi, lekin iroda g'olib chiqdi! ⚔️😎",
-        "Ertalabki g'alaba bilan tabriklayman! Bugungi kun sizniki! 🚀",
-        "Dunyo uxlayotganda g'oliblar o'z kelajagini quradi! 🌟💪"
-    ]
-    quips_ru = [
-        "Смотрите, кто проснулся раньше всех! Кофе гордится тобой! ☕🔥",
-        "Проснулся раньше солнца! Настоящий режим льва! 🦁⚡",
-        "Кровать пыталась удержать тебя, но дисциплина победила! ⚔️😎",
-        "Поздравляем с утренней победой! Этот день полностью твой! 🚀",
-        "Пока весь мир спит, чемпионы куют свое великое будущее! 🌟💪"
-    ]
-    quips_en = [
-        "Look who decided to rise and conquer! Coffee is proud! ☕🔥",
-        "Woke up before the sun! Absolute beast mode activated! 🦁⚡",
-        "The bed tried to hold you hostage, but iron discipline won! ⚔️😎",
-        "Congrats on the morning victory! Today belongs to you! 🚀",
-        "While the world sleeps, champions forge their empire! 🌟💪"
-    ]
-    pool = quips_uz if lang == "uz" else (quips_ru if lang == "ru" else quips_en)
-    base_quip = random.choice(pool)
-    return f"⚡ **5 AM Champion ({html.escape(name)}):**\n{base_quip}"
+    target_realm = active_universe if (roleplay_enabled and active_universe in REALMS) else "standard"
+    realm = REALMS.get(target_realm, REALMS["standard"])
+    quips_list = realm["quips"].get(lang, realm["quips"]["uz"])
+    return random.choice(quips_list)
 
 # ==================== ASYNC PILLOW PHOTO STAMPING & CERTIFICATES ====================
 def _sync_stamp_photo(image_bytes: bytes, name: str, streak: int, rank: str) -> bytes:
@@ -2627,6 +2718,31 @@ async def handle_callback_checkin(callback: CallbackQuery):
                     rank=rank
                 )
                 await callback.message.answer(msg_text, parse_mode=ParseMode.MARKDOWN)
+            else:
+                g = db_get_group(group_id)
+                g_dict = dict(g) if g else {}
+                g_lang = g_dict.get("lang") or lang
+                realm = g_dict.get("active_universe", "standard") if g_dict.get("roleplay_enabled") else (res.get("active_universe", "standard") if res.get("roleplay_enabled") else "standard")
+
+                quip_text = await fetch_dynamic_quip(res["streak"], user.first_name, lang=g_lang, roleplay_enabled=1 if realm != "standard" else 0, active_universe=realm)
+                raw_name = html.escape(user.first_name or "Champion").replace("[", "").replace("]", "").replace("*", "").replace("_", "").replace("`", "")
+                mention = f"[{raw_name}](https://t.me/{user.username})" if user.username else f"[{raw_name}](tg://user?id={user.id})"
+
+                group_celebration = f"⚡ **CHECK-IN MUVAFFAQIYATLI!**\n\n⚡ {mention}: {quip_text}"
+                try:
+                    sent_reply = await callback.message.answer(
+                        group_celebration,
+                        reply_markup=get_reaction_inline_keyboard(group_id, 0, realm, g_lang),
+                        parse_mode=ParseMode.MARKDOWN
+                    )
+                    REACTIONS_STORE[f"{group_id}_{sent_reply.message_id}"] = {"0": 0, "1": 0, "2": 0, "users": {}}
+                    await callback.bot.edit_message_reply_markup(
+                        chat_id=group_id,
+                        message_id=sent_reply.message_id,
+                        reply_markup=get_reaction_inline_keyboard(group_id, sent_reply.message_id, realm, g_lang)
+                    )
+                except Exception as ex:
+                    logging.error(f"Error sending group checkin celebration: {ex}")
         else:
             await callback.answer("⚡ Check-in bajarildi!", show_alert=True)
     except Exception as e:
@@ -3597,6 +3713,7 @@ async def check_weekly_tournament_reset(bot: Bot):
 
 async def scheduler_loop(bot: Bot):
     sent_start, sent_end, sent_bedtime = {}, {}, {}
+    sent_bedtime_grp_msgs = {}
     while True:
         try:
             tz = pytz.timezone(TIMEZONE_STR)
@@ -3618,12 +3735,13 @@ async def scheduler_loop(bot: Bot):
                             g_dict = dict(g)
                             g_lang = g_dict.get("lang") or "uz"
                             t_grp_bed = TEXTS.get(g_lang, TEXTS["uz"])
-                            await bot.send_message(
+                            b_msg = await bot.send_message(
                                 g["group_id"],
                                 t_grp_bed["bedtime_reminder"],
                                 reply_markup=get_bedtime_inline_keyboard(g_lang),
                                 parse_mode=ParseMode.MARKDOWN
                             )
+                            sent_bedtime_grp_msgs[f"{g['group_id']}_{today_str}"] = b_msg.message_id
                             await asyncio.sleep(0.05)
                         except Exception:
                             pass
@@ -3646,6 +3764,16 @@ async def scheduler_loop(bot: Bot):
                             await asyncio.sleep(0.05)
                         except Exception:
                             pass
+
+            # AUTO-DELETE BEDTIME MESSAGES AFTER WINDOW ENDS (23:00 PM)
+            if hhmm == "23:00":
+                for key, msg_id in list(sent_bedtime_grp_msgs.items()):
+                    try:
+                        g_id = int(key.split("_")[0])
+                        await bot.delete_message(chat_id=g_id, message_id=msg_id)
+                        del sent_bedtime_grp_msgs[key]
+                    except Exception:
+                        pass
 
             # 2. PM MORNING CHECK-IN REMINDERS
             all_users = db_get_all_users()
@@ -3682,19 +3810,33 @@ async def scheduler_loop(bot: Bot):
                     sent_start[f"{gid}_{today_str}"] = True
                     db_reset_group_snoozed(gid)
 
-                    open_msg = (
-                        f"🌅 **THE 5 AM CLUB: {t_grp.get('checkin_btn_inline', 'CHECK-IN IS OPEN!')}**\n\n"
-                        f"⏰ **{t_grp.get('setup_group', 'Window')}:** `{s_t}` — `{e_t}`\n"
-                        f"⚡ {t_grp.get('checkin_btn_inline', 'Tap the button below or send a photo to prove you are awake!')}"
-                    )
+                    if g_lang == "uz":
+                        open_msg = (
+                            f"🌅 **THE 5 AM CLUB: TONGGI CHECK-IN OCHILDI!**\n\n"
+                            f"⏰ **Uyg'onish vaqti:** `{s_t}` — `{e_t}`\n"
+                            f"⚡ *“Ertalabki vaqtingizga egalik qiling. Hayotingizni yuksaltiring!”*\n\n"
+                            f"👇 Uyg'ongan bo'lsangiz, quyidagi tugmani bosing:"
+                        )
+                    elif g_lang == "ru":
+                        open_msg = (
+                            f"🌅 **THE 5 AM CLUB: УТРЕННИЙ CHECK-IN ОТКРЫТ!**\n\n"
+                            f"⏰ **Время подъема:** `{s_t}` — `{e_t}`\n"
+                            f"⚡ *«Владейте своим утром. Поднимите свою жизнь!»*\n\n"
+                            f"👇 Если вы проснулись, нажмите кнопку ниже:"
+                        )
+                    else:
+                        open_msg = (
+                            f"🌅 **THE 5 AM CLUB: MORNING CHECK-IN IS OPEN!**\n\n"
+                            f"⏰ **Wake-up Window:** `{s_t}` — `{e_t}`\n"
+                            f"⚡ *“Own your morning. Elevate your life.”*\n\n"
+                            f"👇 If you are awake, tap the button below:"
+                        )
 
                     try:
                         banner = generate_announcement_banner("5 AM CLUB CHECK-IN OPEN", f"Window: {s_t} - {e_t}", "🌅", realm)
-                        sent_msg = await bot.send_photo(gid, photo=BufferedInputFile(banner, filename="checkin.png"), caption=open_msg, reply_markup=get_reaction_inline_keyboard(gid, 0, realm, g_lang), parse_mode=ParseMode.MARKDOWN)
-                        REACTIONS_STORE[f"{gid}_{sent_msg.message_id}"] = {"0": 0, "1": 0, "2": 0, "users": {}}
-                        await bot.edit_message_reply_markup(gid, sent_msg.message_id, reply_markup=get_reaction_inline_keyboard(gid, sent_msg.message_id, realm, g_lang))
+                        await bot.send_photo(gid, photo=BufferedInputFile(banner, filename="checkin.png"), caption=open_msg, reply_markup=get_checkin_inline_keyboard(g_lang), parse_mode=ParseMode.MARKDOWN)
                     except Exception:
-                        await bot.send_message(gid, open_msg, reply_markup=get_reaction_inline_keyboard(gid, 0, realm, g_lang), parse_mode=ParseMode.MARKDOWN)
+                        await bot.send_message(gid, open_msg, reply_markup=get_checkin_inline_keyboard(g_lang), parse_mode=ParseMode.MARKDOWN)
 
                 if hhmm == e_t and sent_end.get(f"{gid}_{today_str}") != True:
                     sent_end[f"{gid}_{today_str}"] = True
@@ -3718,12 +3860,37 @@ async def scheduler_loop(bot: Bot):
                     quote = await fetch_motivational_quote(0, g_lang, realm)
                     awake_title = t_grp.get("grp_awake_title", "🌅 AWAKE MEMBERS:")
                     graveyard_title = t_grp.get("grp_graveyard_title", "😴 GRAVEYARD OF SLEEPERS:")
-                    rep_msg = (
-                        f"🔒 **CHECK-IN CLOSED ({e_t})**\n\n"
-                        f"{awake_title}\n" + ("\n".join(awake) if awake else "None 😞") + "\n\n"
-                        f"{graveyard_title}\n" + ("\n".join(sleepers) if sleepers else "No sleepers! 🎉") + "\n\n"
-                        f"💡 **QUOTE:**\n{quote}"
-                    )
+
+                    if g_lang == "uz":
+                        rep_msg = (
+                            f"🔒 **THE 5 AM CLUB: CHECK-IN YOPILDI ({e_t})**\n\n"
+                            f"━━━━━━━━━━━━━━━━━━━━\n"
+                            f"{awake_title}\n" + ("\n".join(awake) if awake else "• *Hech kim uyg'onmadi* 😞") + "\n\n"
+                            f"━━━━━━━━━━━━━━━━━━━━\n"
+                            f"{graveyard_title}\n" + ("\n".join(sleepers) if sleepers else "• *Hamma vaqtida uyg'ondi!* 🎉") + "\n\n"
+                            f"━━━━━━━━━━━━━━━━━━━━\n"
+                            f"💡 **KUN HIKMATI:**\n{quote}"
+                        )
+                    elif g_lang == "ru":
+                        rep_msg = (
+                            f"🔒 **THE 5 AM CLUB: CHECK-IN ЗАКРЫТ ({e_t})**\n\n"
+                            f"━━━━━━━━━━━━━━━━━━━━\n"
+                            f"{awake_title}\n" + ("\n".join(awake) if awake else "• *Никто не проснулся* 😞") + "\n\n"
+                            f"━━━━━━━━━━━━━━━━━━━━\n"
+                            f"{graveyard_title}\n" + ("\n".join(sleepers) if sleepers else "• *Все проснулись вовремя!* 🎉") + "\n\n"
+                            f"━━━━━━━━━━━━━━━━━━━━\n"
+                            f"💡 **МУДРОСТЬ ДНЯ:**\n{quote}"
+                        )
+                    else:
+                        rep_msg = (
+                            f"🔒 **THE 5 AM CLUB: CHECK-IN CLOSED ({e_t})**\n\n"
+                            f"━━━━━━━━━━━━━━━━━━━━\n"
+                            f"{awake_title}\n" + ("\n".join(awake) if awake else "• *No one checked in* 😞") + "\n\n"
+                            f"━━━━━━━━━━━━━━━━━━━━\n"
+                            f"{graveyard_title}\n" + ("\n".join(sleepers) if sleepers else "• *Everyone is awake!* 🎉") + "\n\n"
+                            f"━━━━━━━━━━━━━━━━━━━━\n"
+                            f"💡 **QUOTE OF THE DAY:**\n{quote}"
+                        )
                     await bot.send_message(gid, rep_msg, parse_mode=ParseMode.MARKDOWN)
 
             # 4. SATURDAY WEEKLY INTERACTIVE EVENT & MULTIVERSE REALM ROTATION
@@ -3893,6 +4060,14 @@ async def api_action_bedtime(req):
             return web.json_response({"status": "error", "message": "Unauthorized"}, status=401)
 
         user_id = auth_result.get("user", {}).get("id")
+
+        # Check bedtime time window (21:00 - 04:00)
+        if not is_time_in_window("21:00", "04:00"):
+            return web.json_response({
+                "status": "not_in_window",
+                "message": "Hozir uyqu vaqti emas! Uyqu protokoli soat 21:00 - 23:00 oralig'ida ochiladi 🌙"
+            }, status=400)
+
         success, reason = db_record_bedtime(user_id)
         if success:
             user = db_get_user(user_id)

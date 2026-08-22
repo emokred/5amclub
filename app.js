@@ -1806,10 +1806,36 @@ function initActions() {
         });
     }
 
+function isCurrentTimeInBedtimeWindow() {
+    try {
+        const now = new Date();
+        const tashkentTimeStr = now.toLocaleTimeString("en-US", { timeZone: "Asia/Tashkent", hour12: false });
+        const [h, m] = tashkentTimeStr.split(":").map(Number);
+        const currentMins = h * 60 + m;
+
+        // Active between 21:00 (1260 mins) and 04:00 (240 mins)
+        return currentMins >= 1260 || currentMins <= 240;
+    } catch (e) {
+        return true;
+    }
+}
+
     // 2. Bedtime Protocol Button (21:30)
     const bedtimeBtn = document.getElementById("btn-bedtime-sleep");
     if (bedtimeBtn) {
         bedtimeBtn.addEventListener("click", async () => {
+            if (!isCurrentTimeInBedtimeWindow()) {
+                const notBedtimeMsg = state.lang === "uz"
+                    ? "⚠️ Hozir uyqu vaqti emas! Uyqu protokoli soat 21:00 - 23:00 oralig'ida ochiladi 🌙"
+                    : (state.lang === "ru"
+                        ? "⚠️ Сейчас не время для сна! Протокол сна доступен с 21:00 до 23:00 🌙"
+                        : "⚠️ It's not bedtime yet! Bedtime protocol opens between 21:00 - 23:00 🌙");
+                showToast(notBedtimeMsg, "error");
+                try { triggerHapticFeedback("error"); } catch(err) {}
+                try { sfx.click(); } catch(err) {}
+                return;
+            }
+
             sfx.bedtime();
             state.user.stamina = 100;
             state.user.tourneyPoints = (state.user.tourneyPoints || 0) + 25;
